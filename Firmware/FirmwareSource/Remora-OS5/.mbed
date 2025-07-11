@@ -1,6 +1,3 @@
 ROOT=.
-<<<<<<< refs/remotes/origin/main=undefined
-<<<<<<< Updated upstream=undefined
-=
->>>>>>> Stashed changes=undefined
->>>>>>> update=undefined
+TARGET=LPC1768
+TARGET_CODE=1010

@@ -63,7 +63,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "stepgen.h"
 #include "switch.h"
 #include "temperature.h"
-#include "tmc.h"
 #include "qei.h"
 
 /***********************************************************************
@@ -369,14 +368,6 @@ void loadModules()
             else if (!strcmp(type,"Motor Power"))
             {
                 createMotorPower();
-            }
-            else if (!strcmp(type,"TMC2208"))
-            {
-                createTMC2208();
-            }
-            else if (!strcmp(type,"TMC2209"))
-            {
-                createTMC2209();
             }
         }
     }
