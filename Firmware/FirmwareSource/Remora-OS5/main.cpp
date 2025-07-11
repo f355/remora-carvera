@@ -24,11 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string> 
 #include "FATFileSystem.h"
 
-#if defined TARGET_LPC176X || TARGET_STM32F1 
 #include "SDBlockDevice.h"
-#elif defined TARGET_SKRV2 || TARGET_OCTOPUS_446 || TARGET_BLACK_F407VE || TARGET_OCTOPUS_429
-#include "SDIOBlockDevice.h"
-#endif
 
 #include "configuration.h"
 #include "remora.h"
@@ -119,23 +115,8 @@ volatile uint16_t* ptrOutputs;
 ************************************************************************/
 
 // SD card access and Remora communication protocol
-#if defined TARGET_SKRV1_4
-    SDBlockDevice blockDevice(P0_9, P0_8, P0_7, P0_6);  // mosi, miso, sclk, cs
-    RemoraComms comms(ptrRxData, ptrTxData);
-
-#elif defined TARGET_SKRV2 || TARGET_OCTOPUS_446 || TARGET_BLACK_F407VE || TARGET_OCTOPUS_429
-    SDIOBlockDevice blockDevice;
-    RemoraComms comms(ptrRxData, ptrTxData, SPI1, PA_4);
-
-#elif defined TARGET_ROBIN_E3
-    SDBlockDevice blockDevice(PB_15, PB_14, PB_13, PA_15);  // mosi, miso, sclk, cs
-    RemoraComms comms(ptrRxData, ptrTxData, SPI1, PA_4);
-
-#elif defined TARGET_SKR_MINI_E3
-    SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_4);  // mosi, miso, sclk, cs
-    RemoraComms comms(ptrRxData, ptrTxData, SPI1, PC_1);    // use PC_1 as "slave select"
-
-#endif
+SDBlockDevice blockDevice(P0_9, P0_8, P0_7, P0_6);  // mosi, miso, sclk, cs
+RemoraComms comms(ptrRxData, ptrTxData);
 
 // Watchdog
 Watchdog& watchdog = Watchdog::get_instance();
@@ -207,16 +188,6 @@ void setup()
     printf("\n2. Setting up DMA and threads\n");
 
     // TODO: we can probably just deinit the blockdevice for all targets....?
-
-    #if defined TARGET_STM32F4
-    // deinitialise the SDIO device to avoid DMA issues with the SPI DMA Slave on the STM32F4
-    blockDevice.deinit();
-    #endif
-
-    #if defined TARGET_SKR_MINI_E3
-    // remove the SD device as we are sharing the SPI with the comms module
-    blockDevice.deinit();
-    #endif
 
     // initialise the Remora comms 
     comms.init();
