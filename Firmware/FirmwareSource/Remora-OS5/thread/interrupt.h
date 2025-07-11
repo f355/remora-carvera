@@ -20,7 +20,7 @@ class Interrupt
 		static void Register(int interruptNumber, Interrupt* intThisPtr);
 
 		// wrapper functions to ISR_Handler()
-		static void TIMER0_Wrapper();
+		static void TIMER3_Wrapper();
 		static void TIMER1_Wrapper();
         static void TIMER2_Wrapper();
         static void QEI_Wrapper();

@@ -12,9 +12,9 @@ void createThreads(void)
 
     NVIC_SetPriority(DMA_IRQn, 1);
 
-    baseThread = new pruThread(LPC_TIM0, TIMER0_IRQn, base_freq);
-    NVIC_SetVector(TIMER0_IRQn, (uint32_t)TIMER0_IRQHandler);
-    NVIC_SetPriority(TIMER0_IRQn, 2);
+    baseThread = new pruThread(LPC_TIM3, TIMER3_IRQn, base_freq);
+    NVIC_SetVector(TIMER3_IRQn, (uint32_t)TIMER3_IRQHandler);
+    NVIC_SetPriority(TIMER3_IRQn, 2);
 
     servoThread = new pruThread(LPC_TIM1, TIMER1_IRQn, servo_freq);
     NVIC_SetVector(TIMER1_IRQn, (uint32_t)TIMER1_IRQHandler);

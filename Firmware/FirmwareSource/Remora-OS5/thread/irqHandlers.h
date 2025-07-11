@@ -1,12 +1,12 @@
 #include "interrupt.h"
 
-void TIMER0_IRQHandler()
+void TIMER3_IRQHandler()
 {
     // Base thread interrupt handler
-    unsigned int isrMask = LPC_TIM0->IR;
-    LPC_TIM0->IR = isrMask; /* Clear the Interrupt Bit */
+    unsigned int isrMask = LPC_TIM3->IR;
+    LPC_TIM3->IR = isrMask; /* Clear the Interrupt Bit */
 
-    Interrupt::TIMER0_Wrapper();
+    Interrupt::TIMER3_Wrapper();
 }
 
 
