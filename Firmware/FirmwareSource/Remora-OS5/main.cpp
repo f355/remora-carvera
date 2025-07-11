@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "hardwarePwm.h"
 #include "mcp4451.h"
 #include "motorPower.h"
+#include "pulseCounter.h"
 #include "pwm.h"
 #include "rcservo.h"
 #include "resetPin.h"
@@ -307,6 +308,10 @@ void loadModules()
             else if (!strcmp(type,"Digital Pin"))
             {
                 createDigitalPin();
+            }
+            else if (!strcmp(type, "PulseCounter"))
+            {
+                createPulseCounter();
             }
             else if (!strcmp(type,"PWM"))
             {
