@@ -115,7 +115,7 @@ volatile uint16_t* ptrOutputs;
 ************************************************************************/
 
 // SD card access and Remora communication protocol
-SDBlockDevice blockDevice(P0_9, P0_8, P0_7, P0_6);  // mosi, miso, sclk, cs
+SDBlockDevice blockDevice(P0_18, P0_17, P0_15, P0_16);  // mosi, miso, sclk, cs
 RemoraComms comms(ptrRxData, ptrTxData);
 
 // Watchdog
@@ -186,8 +186,6 @@ void readJsonConfig()
 void setup()
 {
     printf("\n2. Setting up DMA and threads\n");
-
-    // TODO: we can probably just deinit the blockdevice for all targets....?
 
     // initialise the Remora comms 
     comms.init();

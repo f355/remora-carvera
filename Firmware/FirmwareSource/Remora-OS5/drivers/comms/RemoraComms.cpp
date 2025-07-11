@@ -5,7 +5,7 @@
 RemoraComms::RemoraComms(volatile rxData_t* ptrRxData, volatile txData_t* ptrTxData) :
     ptrRxData(ptrRxData),
     ptrTxData(ptrTxData),
-    spiSlave(MOSI0, MISO0, SCK0, SSEL0)
+    spiSlave(MOSI1, MISO1, SCK1, SSEL1)
 {
     spiSlave.frequency(48000000);
 }
@@ -28,7 +28,7 @@ void RemoraComms::init()
         ->transferSize  ( SPI_BUFF_SIZE )
         ->transferType  ( MODDMA::m2p )
         ->srcConn       ( 0 )
-        ->dstConn       ( MODDMA::SSP0_Tx )
+        ->dstConn       ( MODDMA::SSP1_Tx )
         ->attach_tc     ( this, &RemoraComms::tc0_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
     ;
@@ -40,7 +40,7 @@ void RemoraComms::init()
         ->transferSize  ( SPI_BUFF_SIZE )
         ->transferType  ( MODDMA::m2p )
         ->srcConn       ( 0 )
-        ->dstConn       ( MODDMA::SSP0_Tx )
+        ->dstConn       ( MODDMA::SSP1_Tx )
         ->attach_tc     ( this, &RemoraComms::tc1_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
     ;
@@ -51,7 +51,7 @@ void RemoraComms::init()
         ->dstMemAddr    ( (uint32_t) &spiRxBuffer1 )
         ->transferSize  ( SPI_BUFF_SIZE )
         ->transferType  ( MODDMA::p2m )
-        ->srcConn       ( MODDMA::SSP0_Rx )
+        ->srcConn       ( MODDMA::SSP1_Rx )
         ->dstConn       ( 0 )
         ->attach_tc     ( this, &RemoraComms::tc2_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
@@ -63,7 +63,7 @@ void RemoraComms::init()
         ->dstMemAddr    ( (uint32_t) &spiRxBuffer2 )
         ->transferSize  ( SPI_BUFF_SIZE )
         ->transferType  ( MODDMA::p2m )
-        ->srcConn       ( MODDMA::SSP0_Rx )
+        ->srcConn       ( MODDMA::SSP1_Rx )
         ->dstConn       ( 0 )
         ->attach_tc     ( this, &RemoraComms::tc3_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
@@ -95,9 +95,9 @@ void RemoraComms::start()
     dma.Prepare( spiDMArx1 );
     dma.Prepare( spiDMAtx1 );
 
-    // Enable SSP0 for DMA
-    LPC_SSP0->DMACR = 0;
-    LPC_SSP0->DMACR = (1<<1)|(1<<0); // TX,RX DMA Enable
+    // Enable SSP1 for DMA
+    LPC_SSP1->DMACR = 0;
+    LPC_SSP1->DMACR = (1<<1)|(1<<0); // TX,RX DMA Enable
 }
 
 

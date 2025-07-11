@@ -7,10 +7,10 @@
 #include "MODDMA.h"
 
 // RPi SPI
-#define MOSI0               P0_18
-#define MISO0               P0_17
-#define SCK0                P0_15
-#define SSEL0               P0_16
+#define MOSI1               P0_9
+#define MISO1               P0_8
+#define SCK1                P0_7
+#define SSEL1               P0_6
 
 class RemoraComms
 {
