@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "irqHandlers.h"
 #include "interrupt.h"
 #include "pruThread.h"
-#include "createThreads.h"
 
 // modules
 #include "module.h"
@@ -60,7 +59,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "stepgen.h"
 #include "switch.h"
 #include "temperature.h"
-#include "qei.h"
 
 /***********************************************************************
 *                STRUCTURES AND GLOBAL VARIABLES                       *
@@ -89,11 +87,8 @@ bool threadsRunning = false;
 // pointers to objects with global scope
 pruThread* servoThread;
 pruThread* baseThread;
-pruThread* commsThread;
 
 // unions for RX and TX data
-//volatile rxData_t spiRxBuffer1;  // this buffer is used to check for valid data before moving it to rxData
-//volatile rxData_t spiRxBuffer2;  // this buffer is used to check for valid data before moving it to rxData
 volatile rxData_t rxData;
 volatile txData_t txData;
 
@@ -325,10 +320,6 @@ void loadModules()
             {
                 createSwitch();
             }
-            else if (!strcmp(type,"QEI"))
-            {
-                createQEI();
-            }
         }
         else if (!strcmp(thread,"On load"))
         {
@@ -347,30 +338,24 @@ void loadModules()
     }
 }
 
-
-void debugThreadHigh()
+void createThreads(void)
 {
-    //Module* debugOnB = new Debug("PC_1", 1);
-    //baseThread->registerModule(debugOnB);
+    // Create the thread objects and set the interrupt vectors to RAM. This is needed
+    // as we are using the USB bootloader that requires a different code starting
+    // address. Also set interrupt priority with NVIC_SetPriority.
+    //
+    // Note: DMAC has highest priority, then Base thread and then Servo thread
+    //       to ensure SPI data transfer is reliable
 
-    //Module* debugOnS = new Debug("PC_3", 1);
-    //servoThread->registerModule(debugOnS);
+    NVIC_SetPriority(DMA_IRQn, 1);
 
-    //Module* debugOnC = new Debug("PE_6", 1);
-    //commsThread->registerModule(debugOnC);
-}
+    baseThread = new pruThread(LPC_TIM1, TIMER1_IRQn, base_freq);
+    NVIC_SetVector(TIMER1_IRQn, (uint32_t)TIMER1_IRQHandler);
+    NVIC_SetPriority(TIMER1_IRQn, 2);
 
-void debugThreadLow()
-{
-    //Module* debugOffB = new Debug("PC_1", 0);
-    //baseThread->registerModule(debugOffB); 
-
-    //Module* debugOffS = new Debug("PC_3", 0);
-    //servoThread->registerModule(debugOffS);
-
-    //commsThread->startThread();
-    //Module* debugOffC = new Debug("PE_6", 0);
-    //commsThread->registerModule(debugOffC); 
+    servoThread = new pruThread(LPC_TIM2, TIMER1_IRQn, servo_freq);
+    NVIC_SetVector(TIMER2_IRQn, (uint32_t)TIMER2_IRQHandler);
+    NVIC_SetPriority(TIMER2_IRQn, 3);
 }
 
 int main()

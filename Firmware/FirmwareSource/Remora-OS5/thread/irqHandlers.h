@@ -1,15 +1,5 @@
 #include "interrupt.h"
 
-void TIMER3_IRQHandler()
-{
-    // Base thread interrupt handler
-    unsigned int isrMask = LPC_TIM3->IR;
-    LPC_TIM3->IR = isrMask; /* Clear the Interrupt Bit */
-
-    Interrupt::TIMER3_Wrapper();
-}
-
-
 void TIMER1_IRQHandler(void)
 {
     // Servo thread interrupt handler
@@ -22,17 +12,9 @@ void TIMER1_IRQHandler(void)
 
 void TIMER2_IRQHandler(void)
 {
-    // Servo thread interrupt handler
+    // Base thread interrupt handler
     unsigned int isrMask = LPC_TIM2->IR;
     LPC_TIM2->IR = isrMask; /* Clear the Interrupt Bit */
 
     Interrupt::TIMER2_Wrapper();
-}
-
-
-void QEI_IRQHandler(void)
-{
-    // QEI (quatrature encoder interface) index interrupt handler
-    LPC_QEI->QEICLR = ((uint32_t)(1<<0));   
-    Interrupt:: QEI_Wrapper();
 }

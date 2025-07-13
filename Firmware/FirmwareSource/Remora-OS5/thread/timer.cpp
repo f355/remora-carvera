@@ -43,12 +43,7 @@ void pruTimer::timerTick(void)
 
 void pruTimer::startTimer(void)
 {
-    if (this->timer == LPC_TIM3)
-    {
-        printf("	power on Timer 3\n");
-        LPC_SC->PCONP |= (1<<SBIT_TIMER3);
-    }
-    else if (this->timer == LPC_TIM1)
+    if (this->timer == LPC_TIM1)
     {
         printf("	power on Timer 1\n");
         LPC_SC->PCONP |= (1<<SBIT_TIMER1);
