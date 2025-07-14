@@ -43,7 +43,7 @@ typedef union
     int32_t header;
     int32_t jointFeedback[JOINTS];	  // Base thread feedback ??
     float processVariable[VARIABLES];		     // Servo thread feedback ??
-	uint16_t inputs;
+    uint16_t inputs;
   };
 } txData_t;
 

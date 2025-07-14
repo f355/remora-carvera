@@ -10,24 +10,24 @@ Module* createTemperature(JsonObject module, PRUThread* thread, RemoraComms* com
 class Temperature : public Module
 {
   private:
-    std::string pinSensor;	             // physical pins connections
+    std::string pinSensor; // physical pins connections
 
-    volatile float* ptrFeedback;       	   // pointer where to put the feedback
+    volatile float* ptrFeedback; // pointer where to put the feedback
 
     float temperaturePV;
 
     // thermistor parameters
     float beta;
     float r0;
-		float t0;
+    float t0;
 
   public:
 
-    Temperature(volatile float&, int32_t, int32_t, std::string, float, int, int);  // Thermistor type constructor
+    Temperature(volatile float&, int32_t, int32_t, std::string, float, int, int);
 
     TempSensor* Sensor;
 
-    virtual void update(void);           // Module default interface
+    virtual void update(void);
     virtual void slowUpdate(void);
 };
 

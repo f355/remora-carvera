@@ -1,9 +1,5 @@
 #include "eStop.h"
 
-/***********************************************************************
-                MODULE CONFIGURATION AND CREATION FROM JSON     
-************************************************************************/
-
 Module* createEStop(JsonObject module, RemoraComms* comms)
 {
     const char* pin = module["pin"];
@@ -12,15 +8,11 @@ Module* createEStop(JsonObject module, RemoraComms* comms)
 }
 
 
-/***********************************************************************
-                METHOD DEFINITIONS
-************************************************************************/
-
 eStop::eStop(volatile int32_t &ptrTxHeader, std::string portAndPin) :
     ptrTxHeader(&ptrTxHeader),
-	portAndPin(portAndPin)
+    portAndPin(portAndPin)
 {
-	this->pin = new Pin(this->portAndPin, 0);		// Input 0x0, Output 0x1
+    this->pin = new Pin(this->portAndPin, 0);		// Input 0x0, Output 0x1
 }
 
 
@@ -37,5 +29,5 @@ void eStop::update()
 
 void eStop::slowUpdate()
 {
-	return;
+    return;
 }

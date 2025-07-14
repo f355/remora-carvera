@@ -6,16 +6,16 @@ using namespace std;
 
 // Thread constructor
 PRUThread::PRUThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority) :
-	frequency(frequency)
+    frequency(frequency)
 {
-	printf("Creating thread %d\n", this->frequency);
-	this->timer = lpcTimers[timerNumber];
-	this->timer->configure(this, this->frequency, priority);
+    printf("Creating thread %d\n", this->frequency);
+    this->timer = lpcTimers[timerNumber];
+    this->timer->configure(this, this->frequency, priority);
 }
 
 void PRUThread::startThread(void)
 {
-	this->timer->start();
+    this->timer->start();
 }
 
 void PRUThread::stopThread(void)
@@ -25,24 +25,24 @@ void PRUThread::stopThread(void)
 
 void PRUThread::registerModule(Module* module)
 {
-	this->vThread.push_back(module);
-	if (module->hasPost) {
-		this->vThreadPost.push_back(module);
-	}
+    this->vThread.push_back(module);
+    if (module->hasPost) {
+        this->vThreadPost.push_back(module);
+    }
 }
 
 void PRUThread::unregisterModule(Module* module)
 {
-	iter = std::remove(vThread.begin(),vThread.end(), module);
+    iter = std::remove(vThread.begin(),vThread.end(), module);
     vThread.erase(iter, vThread.end());
 }
 
 void PRUThread::handleInterrupt()
 {
-	// iterate over the Thread pointer vector to run all instances of Module::runModule()
-	for (iter = vThread.begin(); iter != vThread.end(); ++iter) (*iter)->runModule();
+    // iterate over the Thread pointer vector to run all instances of Module::runModule()
+    for (iter = vThread.begin(); iter != vThread.end(); ++iter) (*iter)->runModule();
 
     // iterate over the second vector that contains module pointers to run after (post) the main vector
-	for (iter = vThreadPost.begin(); iter != vThreadPost.end(); ++iter) (*iter)->runModulePost();
+    for (iter = vThreadPost.begin(); iter != vThreadPost.end(); ++iter) (*iter)->runModulePost();
 
 }

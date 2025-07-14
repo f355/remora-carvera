@@ -7,24 +7,23 @@ Module* createSwitch(JsonObject module, RemoraComms* comms);
 
 class Switch : public Module
 {
+    private:
 
-	private:
+        volatile float* ptrPV; // pointer to the data source
+        float PV;
+        float SP;
+        bool mode; // 0 switch off, 1 switch on
+        std::string portAndPin;
 
-		volatile float* ptrPV; 			// pointer to the data source
-		float 			PV;
-		float 			SP;
-		bool			mode;			// 0 switch off, 1 switch on
-		std::string 	portAndPin;
-
-		Pin 			*pin;
+        Pin *pin;
 
 
-	public:
+    public:
 
-		Switch(float, volatile float&, std::string, bool);
+        Switch(float, volatile float&, std::string, bool);
 
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif

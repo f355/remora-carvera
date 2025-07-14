@@ -1,10 +1,5 @@
 #include "stepgen.h"
 
-
-/***********************************************************************
-                MODULE CONFIGURATION AND CREATION FROM JSON     
-************************************************************************/
-
 Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
 {
     int joint = module["joint"];
@@ -24,11 +19,6 @@ Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
         comms->ptrRxData->jointEnable
     );
 }
-
-
-/***********************************************************************
-                METHOD DEFINITIONS
-************************************************************************/
 
 Stepgen::Stepgen(
     int32_t threadFreq,

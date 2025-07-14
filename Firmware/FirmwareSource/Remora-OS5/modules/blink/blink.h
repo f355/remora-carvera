@@ -7,21 +7,20 @@ Module* createBlink(JsonObject module, PRUThread* thread);
 
 class Blink : public Module
 {
+    private:
 
-	private:
+        bool bState;
+        uint32_t periodCount;
+        uint32_t blinkCount;
 
-		bool 		bState;
-		uint32_t 	periodCount;
-		uint32_t 	blinkCount;
+        Pin *blinkPin;
 
-		Pin *blinkPin;	// class object members - Pin objects
+    public:
 
-	public:
+        Blink(std::string, uint32_t, uint32_t);
 
-		Blink(std::string, uint32_t, uint32_t);
-
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif

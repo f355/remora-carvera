@@ -15,15 +15,15 @@ Module* createPulseCounter(JsonObject module, RemoraComms* comms)
 }
 
 PulseCounter::PulseCounter(volatile float &ptrPulseCount, std::string pin, int modifier) :
-	ptrPulseCount(&ptrPulseCount),
-	pin(pin),
+    ptrPulseCount(&ptrPulseCount),
+    pin(pin),
     modifier(modifier)
 {
-	this->count = 0;
+    this->count = 0;
 
     // set up an interrupt handler
     Pin *dummy = new Pin(this->pin, INPUT, this->modifier);
-	PinName pinname = dummy->pinToPinName();
+    PinName pinname = dummy->pinToPinName();
     this->interrupt = new mbed::InterruptIn(pinname);
     interrupt->rise(this, &PulseCounter::interruptHandler);
     NVIC_SetPriority(EINT3_IRQn, 16);

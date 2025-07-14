@@ -8,44 +8,44 @@
 using namespace std;
 
 SoftPWM::SoftPWM(std::string pin) :
-	pin(pin),
-	pwmMax(PID_PWM_MAX-1),
-	pwmSP(0),
-	SDaccumulator(0),
-	SDdirection(false)
+    pin(pin),
+    pwmMax(PID_PWM_MAX-1),
+    pwmSP(0),
+    SDaccumulator(0),
+    SDdirection(false)
 {
-	this->pwmPin = new Pin(this->pin, OUTPUT);
+    this->pwmPin = new Pin(this->pin, OUTPUT);
 }
 
 
 void SoftPWM::setMaxPwm(int pwmMax)
 {
-	this->pwmMax = confine(pwmMax, 0, PID_PWM_MAX-1);
+    this->pwmMax = confine(pwmMax, 0, PID_PWM_MAX-1);
 }
 
 
 void SoftPWM::setPwmSP(int newPwmSP)
 {
-	this->pwmSP = newPwmSP; //confine(newPwmSP, 0, pwmMax);
+    this->pwmSP = newPwmSP; //confine(newPwmSP, 0, pwmMax);
 }
 
 
 void SoftPWM::update()
 {
-	// Use the standard Moudle interface
+    // Use the standard Moudle interface
 
-	if ((this->pwmSP < 0) || this->pwmSP >= PID_PWM_MAX)
-	{
+    if ((this->pwmSP < 0) || this->pwmSP >= PID_PWM_MAX)
+    {
         return;
     }
     else if (this->pwmSP == 0)
-	{
-		this->pwmPin->set(false);
+    {
+        this->pwmPin->set(false);
         return;
     }
     else if (this->pwmSP == PID_PWM_MAX-1)
-	{
-		this->pwmPin->set(true);
+    {
+        this->pwmPin->set(true);
         return;
     }
 
@@ -75,12 +75,12 @@ void SoftPWM::update()
             this->SDdirection = false;
     }
 
-	this->pwmPin->set(this->SDdirection);
+    this->pwmPin->set(this->SDdirection);
 
     return;
 }
 
 void SoftPWM::slowUpdate()
 {
-	return;
+    return;
 }

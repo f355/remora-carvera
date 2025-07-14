@@ -7,21 +7,19 @@ Module* createEStop(JsonObject module, RemoraComms* comms);
 
 class eStop : public Module
 {
-
-	private:
+    private:
 
         volatile int32_t *ptrTxHeader;
-		std::string 	portAndPin;
+        std::string portAndPin;
 
         Pin *pin;
 
+    public:
 
-	public:
+        eStop(volatile int32_t&, std::string);
 
-		eStop(volatile int32_t&, std::string);
-
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif

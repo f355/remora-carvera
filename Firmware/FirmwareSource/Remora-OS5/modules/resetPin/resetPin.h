@@ -7,18 +7,18 @@ Module* createResetPin(JsonObject module, RemoraComms* comms);
 
 class ResetPin : public Module
 {
-	private:
+    private:
 
-		volatile bool *ptrReset; 	// pointer to the data source
-		std::string portAndPin;
+        volatile bool *ptrReset; // pointer to the data source
+        std::string portAndPin;
 
-		Pin *pin;
+        Pin *pin;
 
-	public:
+    public:
 
-		ResetPin(volatile bool&, std::string);
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        ResetPin(volatile bool&, std::string);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif

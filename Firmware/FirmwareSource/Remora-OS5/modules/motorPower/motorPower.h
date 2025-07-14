@@ -7,17 +7,17 @@ void createMotorPower(JsonObject module);
 
 class MotorPower : public Module
 {
-	private:
+    private:
 
-		std::string portAndPin;
+        std::string portAndPin;
 
-		Pin *pin;
+        Pin *pin;
 
-	public:
+    public:
 
         MotorPower(std::string);
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif

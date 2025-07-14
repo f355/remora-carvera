@@ -7,24 +7,24 @@ Module* createDigitalPin(JsonObject module, RemoraComms* comms);
 
 class DigitalPin : public Module
 {
-	private:
+    private:
 
-		volatile uint16_t *ptrData; 	// pointer to the data source
-		int bitNumber;				// location in the data source
-		bool invert;
-		int mask;
+        volatile uint16_t *ptrData;
+        int bitNumber;
+        bool invert;
+        int mask;
 
-		int mode;
+        int mode;
         int modifier;
-		std::string portAndPin;
+        std::string portAndPin;
 
-		Pin *pin;
+        Pin *pin;
 
-	public:
+    public:
 
         DigitalPin(volatile uint16_t&, int, std::string, int, bool, int);
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif

@@ -1,9 +1,5 @@
 #include "switch.h"
 
-/***********************************************************************
-                MODULE CONFIGURATION AND CREATION FROM JSON     
-************************************************************************/
-
 Module* createSwitch(JsonObject module, RemoraComms* comms)
 {
     const char* pin = module["pin"];
@@ -26,43 +22,36 @@ Module* createSwitch(JsonObject module, RemoraComms* comms)
 }
 
 Switch::Switch(float SP, volatile float &ptrPV, std::string portAndPin, bool mode) :
-	SP(SP),
-	ptrPV(&ptrPV),
-	portAndPin(portAndPin),
-	mode(mode)
+    SP(SP),
+    ptrPV(&ptrPV),
+    portAndPin(portAndPin),
+    mode(mode)
 {
-	int output = 0x1; // an output
-	this->pin = new Pin(this->portAndPin, output);
+    int output = 0x1; // an output
+    this->pin = new Pin(this->portAndPin, output);
 }
-
-
-/***********************************************************************
-                METHOD DEFINITIONS
-************************************************************************/
 
 void Switch::update()
 {
-	bool pinState;
+    bool pinState;
 
-	pinState = this->mode;
+    pinState = this->mode;
 
-	// update the SP
-	this->PV = *(this->ptrPV);
+    this->PV = *(this->ptrPV);
 
-	if (this->PV > this->SP)
-	{
-		this->pin->set(pinState);
-	}
-	else
-	{
-		pinState = !pinState;
-		this->pin->set(pinState);
-	}
+    if (this->PV > this->SP)
+    {
+        this->pin->set(pinState);
+    }
+    else
+    {
+        pinState = !pinState;
+        this->pin->set(pinState);
+    }
 
 }
 
-
 void Switch::slowUpdate()
 {
-	return;
+    return;
 }

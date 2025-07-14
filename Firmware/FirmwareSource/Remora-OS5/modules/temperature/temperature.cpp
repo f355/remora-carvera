@@ -1,10 +1,5 @@
 #include "temperature.h"
 
-
-/***********************************************************************
-                MODULE CONFIGURATION AND CREATION FROM JSON     
-************************************************************************/
-
 Module* createTemperature(JsonObject module, PRUThread* thread, RemoraComms* comms)
 {
     int pv = module["process_variable"];
@@ -18,19 +13,14 @@ Module* createTemperature(JsonObject module, PRUThread* thread, RemoraComms* com
     return new Temperature(comms->ptrTxData->processVariable[pv], thread->frequency, updateHz, pinSensor, beta, r0, t0);
 }
 
-/***********************************************************************
-*                METHOD DEFINITIONS                                    *
-************************************************************************/
-
 Temperature::Temperature(volatile float &ptrFeedback, int32_t threadFreq, int32_t slowUpdateFreq, std::string pinSensor, float beta, int r0, int t0) :
   Module(threadFreq, slowUpdateFreq),
   ptrFeedback(&ptrFeedback),
   pinSensor(pinSensor),
-	beta(beta),
-	r0(r0),
-	t0(t0)
+    beta(beta),
+    r0(r0),
+    t0(t0)
 {
-    //cout <<"Creating Thermistor Tempearture measurement @ pin " << this->pinSensor << endl;
     this->Sensor = new Thermistor(this->pinSensor, this->beta, this->r0, this->t0);
  
     // Take some readings to get the ADC up and running before moving on
@@ -46,7 +36,7 @@ void Temperature::update()
 
 void Temperature::slowUpdate()
 {
-	this->temperaturePV = this->Sensor->getTemperature();
+    this->temperaturePV = this->Sensor->getTemperature();
 
     // check for disconnected temperature sensor
     if (this->temperaturePV > 0)

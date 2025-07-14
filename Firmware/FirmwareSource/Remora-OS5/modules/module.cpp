@@ -7,19 +7,19 @@
 
 Module::Module()
 {
-	this->counter = 0;
-	this->updateCount = 1;
-	printf("\nCreating a std module\n");
+    this->counter = 0;
+    this->updateCount = 1;
+    printf("\nCreating a std module\n");
 }
 
 
 Module::Module(int32_t threadFreq, int32_t slowUpdateFreq) :
-	threadFreq(threadFreq),
-	slowUpdateFreq(slowUpdateFreq)
+    threadFreq(threadFreq),
+    slowUpdateFreq(slowUpdateFreq)
 {
-	this->counter = 0;
-	this->updateCount = this->threadFreq / this->slowUpdateFreq;
-	printf("\nCreating a slower module, updating every %d thread cycles\n",this->updateCount);
+    this->counter = 0;
+    this->updateCount = this->threadFreq / this->slowUpdateFreq;
+    printf("\nCreating a slower module, updating every %d thread cycles\n",this->updateCount);
 }
 
 Module::~Module(){}
@@ -27,20 +27,20 @@ Module::~Module(){}
 
 void Module::runModule()
 {
-	++this->counter;
+    ++this->counter;
 
-	if (this->counter >= this->updateCount)
-	{
-		this->slowUpdate();
-		this->counter = 0;
-	}
+    if (this->counter >= this->updateCount)
+    {
+        this->slowUpdate();
+        this->counter = 0;
+    }
 
-	this->update();
+    this->update();
 }
 
 void Module::runModulePost()
 {
-	this->updatePost();
+    this->updatePost();
 }
 
 void Module::update(){}
@@ -49,7 +49,7 @@ void Module::slowUpdate(){}
 void Module::configure(){}
 
 int Module::parseModifier(const char* modName) {
-	if (!strcmp(modName, "open_drain"))
+    if (!strcmp(modName, "open_drain"))
     {
         return OPENDRAIN;
     }

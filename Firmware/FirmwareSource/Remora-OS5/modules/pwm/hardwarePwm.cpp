@@ -7,7 +7,7 @@ using namespace std;
 HardwarePWM::HardwarePWM(volatile float &ptrPwmPulseWidth, int pwmPeriod, std::string pin) :
     ptrPwmPulseWidth(&ptrPwmPulseWidth),
     pwmPeriod(pwmPeriod),
-	pin(pin)
+    pin(pin)
 {
     variablePeriod = false;
 
@@ -31,7 +31,7 @@ HardwarePWM::HardwarePWM(volatile float &ptrPwmPeriod, volatile float &ptrPwmPul
     ptrPwmPeriod(&ptrPwmPeriod),
     ptrPwmPulseWidth(&ptrPwmPulseWidth),
     pwmPeriod(pwmPeriod),
-	pin(pin)
+    pin(pin)
 {
     cout << "Creating variable frequency Hardware PWM at pin " << this->pin << endl;
 
@@ -83,5 +83,5 @@ void HardwarePWM::update()
 
 void HardwarePWM::slowUpdate()
 {
-	return;
+    return;
 }

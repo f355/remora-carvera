@@ -8,32 +8,32 @@
 
 class SoftPWM : public Module
 {
-	private:
+    private:
 
-		std::string pin;			// PWM output pin
-		int pwmMax;						// maximum PWM output: 8 bit resolution (ie 0 to 255)
-		int pwmSP;						// PWM setpoint as a percentage of maxPwm
-		int SDaccumulator;		// Sigma-Delta accumulator
-		bool SDdirection;			// direction the SD accumulator is being updated
+        std::string pin;			// PWM output pin
+        int pwmMax;						// maximum PWM output: 8 bit resolution (ie 0 to 255)
+        int pwmSP;						// PWM setpoint as a percentage of maxPwm
+        int SDaccumulator;		// Sigma-Delta accumulator
+        bool SDdirection;			// direction the SD accumulator is being updated
 
-		Pin* pwmPin;					// pin object
+        Pin* pwmPin;					// pin object
 
-	public:
+    public:
 
-		SoftPWM(std::string);					// constructor
+        SoftPWM(std::string);					// constructor
 
-		void setMaxPwm(int pwmMax);
-		void setPwmSP(int newPwmSP);
+        void setMaxPwm(int pwmMax);
+        void setPwmSP(int newPwmSP);
 
-		virtual void update(void);           // Module default interface
-		virtual void slowUpdate(void);           // Module default interface
+        virtual void update(void);           // Module default interface
+        virtual void slowUpdate(void);           // Module default interface
 };
 
 #endif
 
 
 /*
-	 The following is taken from Smoothieware...
+     The following is taken from Smoothieware...
 
      * Sigma-Delta PWM algorithm
      *

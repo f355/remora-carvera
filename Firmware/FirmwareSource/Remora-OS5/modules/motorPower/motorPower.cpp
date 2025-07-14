@@ -1,9 +1,5 @@
 #include "motorPower.h"
 
-/***********************************************************************
-                MODULE CONFIGURATION AND CREATION FROM JSON     
-************************************************************************/
-
 void createMotorPower(JsonObject module)
 {
     const char* pin = module["pin"];
@@ -13,24 +9,20 @@ void createMotorPower(JsonObject module)
 }
 
 
-/***********************************************************************
-                METHOD DEFINITIONS
-************************************************************************/
-
 MotorPower::MotorPower(std::string portAndPin) :
-	portAndPin(portAndPin)
+    portAndPin(portAndPin)
 {
-	this->pin = new Pin(this->portAndPin, 0x1);		// Input 0x0, Output 0x1
+    this->pin = new Pin(this->portAndPin, 0x1); // Input 0x0, Output 0x1
     this->update();
 }
 
 
 void MotorPower::update()
 {
-	this->pin->set(true);			// turn motor power ON
+    this->pin->set(true);
 }
 
 void MotorPower::slowUpdate()
 {
-	return;
+    return;
 }

@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mbed.h"
 #include <cstdio>
 #include <cerrno>
-#include <string> 
-#include "FATFileSystem.h"
+#include <string>
 
+#include "FATFileSystem.h"
 #include "SDBlockDevice.h"
 
 #include "configuration.h"
@@ -72,8 +72,6 @@ enum State {
 };
 
 uint8_t resetCnt;
-
-volatile bool PRUreset;
 
 bool threadsRunning = false;
 
@@ -333,7 +331,7 @@ int main()
                 wait(1);
             }
 
-            if (PRUreset)
+            if (comms->pruReset)
             {
                 // RPi outputs default is high until configured when LinuxCNC Remora component is started, PRUreset pin will be high
                 // stay in start state until LinuxCNC is started
@@ -368,7 +366,7 @@ int main()
                 currentState = ST_RUNNING;
             }
 
-            if (PRUreset) 
+            if (comms->pruReset)
             {
                 currentState = ST_WDRESET;
             }
@@ -410,7 +408,7 @@ int main()
                 currentState = ST_RESET;
             }
 
-            if (PRUreset) 
+            if (comms->pruReset)
             {
                 currentState = ST_WDRESET;
             }

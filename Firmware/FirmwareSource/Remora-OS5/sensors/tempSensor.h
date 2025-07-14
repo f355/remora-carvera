@@ -5,11 +5,11 @@
 
 class TempSensor
 {
-	public:
-		virtual ~TempSensor() {}
+    public:
+        virtual ~TempSensor() {}
 
-		// Return temperature in degrees Celsius.
-		virtual float getTemperature() { return -1.0F; }
+        // Return temperature in degrees Celsius.
+        virtual float getTemperature() { return -1.0F; }
 
 };
 

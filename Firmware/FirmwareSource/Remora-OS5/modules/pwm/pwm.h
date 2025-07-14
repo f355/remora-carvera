@@ -8,24 +8,23 @@ Module* createPWM(JsonObject module, RemoraComms* comms);
 
 class PWM : public Module
 {
+    private:
 
-	private:
+        volatile float* ptrSP; // pointer to the data source
+        int SP;
+        std::string portAndPin;
+        int pwmMax;
 
-		volatile float* ptrSP; 			// pointer to the data source
-		int 			SP;
-		std::string 	portAndPin;
-		int 			pwmMax;
-
-		SoftPWM* 		pwm;			// pointer to PWM object - output
+        SoftPWM* pwm; // pointer to PWM object - output
 
 
-	public:
+    public:
 
-		PWM(volatile float&, std::string);
-		PWM(volatile float&, std::string, int);
+        PWM(volatile float&, std::string);
+        PWM(volatile float&, std::string, int);
 
-		virtual void update(void);
-		virtual void slowUpdate(void);
+        virtual void update(void);
+        virtual void slowUpdate(void);
 };
 
 #endif
