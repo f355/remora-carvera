@@ -1,6 +1,7 @@
 # Remora for Carvera
 
 This is a fork of fantastic [Remora](https://github.com/scottalford75/Remora) for use with the Carvera family of machines by [Makera Inc](https://www.makera.com/).
+It is heavily work in progress (almost nothing works!) and would likely support only Carvera Air in the foreseeable future, as I (@f355) don't have the big-brother Carvera.
 
 The Remora authors [say they "dont ...not support"](https://github.com/scottalford75/Remora/issues/78#issuecomment-2584956914) LPC1768-based boards,
 so this is more of a hard-fork, the changes are not intended to be upstreamed.
