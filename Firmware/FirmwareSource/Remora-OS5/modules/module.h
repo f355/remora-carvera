@@ -2,9 +2,11 @@
 #define MODULE_H
 
 #include <cstdint>
+#include <string>
 
 #include "ArduinoJson.h"
 #include "thread/pruThread.h"
+#include "drivers/pin/pin.h"
 #include "drivers/comms/RemoraComms.h"
 
 // Module base class

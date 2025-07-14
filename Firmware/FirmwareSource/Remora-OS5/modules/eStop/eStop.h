@@ -1,15 +1,7 @@
 #ifndef ESTOP_H
 #define ESTOP_H
 
-#include <cstdint>
-#include <iostream>
-#include <string>
-
-#include "../../configuration.h"
-#include "../../remora.h"
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
-
 
 Module* createEStop(JsonObject module, RemoraComms* comms);
 

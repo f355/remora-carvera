@@ -3,7 +3,6 @@
 
 #include "mbed.h"
 #include "configuration.h"
-#include "remora.h"
 #include "MODDMA.h"
 
 // RPi SPI

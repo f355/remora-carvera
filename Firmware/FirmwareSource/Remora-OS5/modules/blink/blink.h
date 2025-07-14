@@ -1,13 +1,7 @@
 #ifndef BLINK_H
 #define BLINK_H
 
-#include <cstdint>
-#include <string>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
-
-#include "remora.h"
 
 Module* createBlink(JsonObject module, pruThread* thread);
 

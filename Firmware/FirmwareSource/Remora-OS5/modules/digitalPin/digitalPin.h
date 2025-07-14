@@ -1,10 +1,7 @@
 #ifndef DIGITALPIN_H
 #define DIGITALPIN_H
 
-#include <cstdint>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 Module* createDigitalPin(JsonObject module, RemoraComms* comms);
 

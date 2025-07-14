@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "SDBlockDevice.h"
 
 #include "configuration.h"
-#include "remora.h"
 
 // libraries
 #include "ArduinoJson.h"

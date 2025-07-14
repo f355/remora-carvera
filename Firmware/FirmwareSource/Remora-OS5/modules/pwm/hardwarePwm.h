@@ -1,11 +1,7 @@
 #ifndef HARDWAREPWM_H
 #define HARDWAREPWM_H
 
-#include <string>
-#include <iostream>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 class HardwarePWM : public Module
 {

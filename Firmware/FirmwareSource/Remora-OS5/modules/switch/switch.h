@@ -1,12 +1,7 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
-#include <cstdint>
-//#include <iostream>
-#include <string>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 Module* createSwitch(JsonObject module, RemoraComms* comms);
 

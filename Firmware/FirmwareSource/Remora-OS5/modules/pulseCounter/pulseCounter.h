@@ -1,16 +1,9 @@
 #ifndef PULSECOUNTER_H
 #define PULSECOUNTER_H
 
-#include <cstdint>
-#include <iostream>
-#include <string>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 #include "mbed.h"
-#include "port_api.h"
-#include "LPC17xx.h"
 
 
 Module* createPulseCounter(JsonObject module, RemoraComms* comms);

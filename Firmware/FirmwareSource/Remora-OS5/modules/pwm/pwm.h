@@ -1,10 +1,6 @@
 #ifndef PWM_H
 #define PWM_H
 
-#include <cstdint>
-//#include <iostream>
-#include <string>
-
 #include "modules/module.h"
 #include "drivers/softPwm/softPwm.h"
 

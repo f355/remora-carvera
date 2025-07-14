@@ -1,11 +1,7 @@
 #ifndef RCSERVO_H
 #define RCSERVO_H
 
-#include <cstdint>
-#include <string>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 Module* createRCServo(JsonObject module, pruThread* thread, RemoraComms* comms);
 

@@ -1,10 +1,6 @@
 #ifndef TEMPERATURE_H
 #define TEMPERATURE_H
 
-#include <cstdint>
-#include <string>
-//#include <iostream>
-
 #include "modules/module.h"
 #include "sensors/tempSensor.h"
 #include "sensors/thermistor/thermistor.h"

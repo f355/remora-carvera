@@ -1,12 +1,7 @@
 #ifndef STEPGEN_H
 #define STEPGEN_H
 
-#include <cstdint>
-#include <string>
-#include <iostream>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 Module* createStepgen(JsonObject module, pruThread* thread, RemoraComms* comms);
 

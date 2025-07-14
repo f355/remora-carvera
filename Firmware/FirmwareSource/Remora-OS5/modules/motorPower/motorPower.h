@@ -1,10 +1,7 @@
 #ifndef MOTORPOWER_H
 #define MOTORPOWER_H
 
-#include <cstdint>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 void createMotorPower(JsonObject module);
 

@@ -1,10 +1,7 @@
 #ifndef RESETPIN_H
 #define RESETPIN_H
 
-#include <cstdint>
-
 #include "modules/module.h"
-#include "drivers/pin/pin.h"
 
 Module* createResetPin(JsonObject module, RemoraComms* comms);
 

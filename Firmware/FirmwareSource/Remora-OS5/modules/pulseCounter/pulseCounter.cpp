@@ -1,5 +1,8 @@
 #include "pulseCounter.h"
 
+#include "port_api.h"
+#include "LPC17xx.h"
+
 Module* createPulseCounter(JsonObject module, RemoraComms* comms)
 {
     int pv = module["process_variable"];
