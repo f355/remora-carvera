@@ -100,9 +100,9 @@ string readJsonConfig()
      }
 
     // Open the config file
-    printf("Opening \"/fs/config.txt\"... ");
+    printf("Opening \"/fs/config.json\"... ");
     fflush(stdout);
-    FILE *jsonFile = fopen("/fs/config.txt", "r+");
+    FILE *jsonFile = fopen("/fs/config.json", "r+");
     if (!jsonFile) {
         error("Error opening config");
     }
@@ -125,7 +125,7 @@ string readJsonConfig()
     // Remove comments from next line to print out the JSON config file
     //printf("%s\n", strJson.c_str());
 
-    printf("\rClosing \"/fs/config.txt\"... ");
+    printf("\rClosing \"/fs/config.json\"... ");
     fflush(stdout);
     fclose(jsonFile);
 
@@ -135,7 +135,7 @@ string readJsonConfig()
 
 DynamicJsonDocument deserialiseJSON(const char *json)
 {
-    printf("\n3. Parsing json configuration file\n");
+    printf("\nParsing json configuration file\n");
 
     DynamicJsonDocument doc(JSON_BUFF_SIZE);
     DeserializationError err = deserializeJson(doc, json);
