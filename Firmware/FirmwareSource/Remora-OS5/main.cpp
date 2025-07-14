@@ -52,8 +52,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "switch.h"
 #include "thermistor.h"
 
-#include <map>
-
 /***********************************************************************
 *                STRUCTURES AND GLOBAL VARIABLES                       *
 ************************************************************************/
@@ -88,7 +86,12 @@ string readJsonConfig()
     printf("Mounting the filesystem... ");
     fflush(stdout);
  
-    SDBlockDevice blockDevice(P0_18, P0_17, P0_15, P0_16);  // mosi, miso, sclk, cs
+    SDBlockDevice blockDevice(
+        MBED_CONF_SD_SPI_MOSI,
+        MBED_CONF_SD_SPI_MISO,
+        MBED_CONF_SD_SPI_CLK,
+        MBED_CONF_SD_SPI_CS
+    );
     FATFileSystem fileSystem("fs");
     int err = fileSystem.mount(&blockDevice);
     

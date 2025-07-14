@@ -23,9 +23,4 @@
 // SPI configuration
 #define SPI_BUFF_SIZE 64 // Size of SPI recieve buffer - same as HAL component, 64
 
-#define MOSI0 P0_18
-#define MISO0 P0_17
-#define SCK0 P0_15
-#define SSEL0 P0_16
-
 #endif
