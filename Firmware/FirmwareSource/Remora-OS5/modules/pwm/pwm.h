@@ -8,9 +8,7 @@
 #include "modules/module.h"
 #include "drivers/softPwm/softPwm.h"
 
-#include "extern.h"
-
-void createPWM(void);
+Module* createPWM(JsonObject module, RemoraComms* comms);
 
 class PWM : public Module
 {

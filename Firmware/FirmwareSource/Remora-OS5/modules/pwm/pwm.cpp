@@ -8,40 +8,29 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createPWM()
+Module* createPWM(JsonObject module, RemoraComms* comms)
 {
-    const char* comment = module["Comment"];
-    printf("%s\n",comment);
+    int sp = module["set_point"];
+    int pwmMax = module["pwm_max"];
+    const char* pin = module["pwm_pin"];
 
-    int sp = module["SP[i]"];
-    int pwmMax = module["PWM Max"];
-    const char* pin = module["PWM Pin"];
+    bool hardware = module["use_hardware"];
+    bool variable = module["variable_frequency"];
+    int period_sp = module["period_set_point"];
+    int period = module["period_us"];
 
-    const char* hardware = module["Hardware PWM"];
-    const char* variable = module["Variable Freq"];
-    int period_sp = module["Period SP[i]"];
-    int period = module["Period us"];
-
-    printf("Make PWM at pin %s\n", pin);
-    
-    ptrSetPoint[sp] = &rxData.setPoint[sp];
-
-    if (!strcmp(hardware,"True"))
+    if (hardware)
     {
         // Hardware PWM
-        if (!strcmp(variable,"True"))
+        if (variable)
         {
             // Variable frequency hardware PWM
-            ptrSetPoint[period_sp] = &rxData.setPoint[period_sp];
-
-            Module* pwm = new HardwarePWM(*ptrSetPoint[period_sp], *ptrSetPoint[sp], period, pin);
-            servoThread->registerModule(pwm);
+            return new HardwarePWM(comms->ptrRxData->setPoint[period_sp], comms->ptrRxData->setPoint[sp], period, pin);
         }
         else
         {
             // Fixed frequency hardware PWM
-            Module* pwm = new HardwarePWM(*ptrSetPoint[sp], period, pin);
-            servoThread->registerModule(pwm);
+            return new HardwarePWM(comms->ptrRxData->setPoint[sp], period, pin);
         }
     }
     else
@@ -49,13 +38,11 @@ void createPWM()
         // Software PWM
         if (pwmMax != 0) // use configuration file value for pwmMax - useful for 12V on 24V systems
         {
-            Module* pwm = new PWM(*ptrSetPoint[sp], pin, pwmMax);
-            servoThread->registerModule(pwm);
+            return new PWM(comms->ptrRxData->setPoint[sp], pin, pwmMax);
         }
         else // use default value of pwmMax
         {
-            Module* pwm = new PWM(*ptrSetPoint[sp], pin);
-            servoThread->registerModule(pwm);
+            return new PWM(comms->ptrRxData->setPoint[sp], pin);
         }
     }
 }
@@ -69,9 +56,6 @@ PWM::PWM(volatile float &ptrSP, std::string portAndPin) :
 	ptrSP(&ptrSP),
 	portAndPin(portAndPin)
 {
-	printf("Creating software PWM @ pin %s\n", this->portAndPin.c_str());
-    //cout << "Creating software PWM @ pin " << this->portAndPin << endl;
-
 	this->pwm = new SoftPWM(this->portAndPin);
 	this->pwmMax = PID_PWM_MAX-1;
 	this->pwm->setMaxPwm(this->pwmMax);
@@ -83,9 +67,6 @@ PWM::PWM(volatile float &ptrSP, std::string portAndPin, int pwmMax) :
 	portAndPin(portAndPin),
 	pwmMax(pwmMax)
 {
-	printf("Creating software PWM with PWM Max @ pin %s\n", this->portAndPin.c_str());
-    //cout << "Creating software PWM with PWM Max @ pin " << this->portAndPin << endl;
-
 	this->pwm = new SoftPWM(this->portAndPin);
 	this->pwm->setMaxPwm(this->pwmMax);
 }

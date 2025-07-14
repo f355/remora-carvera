@@ -6,9 +6,7 @@
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
-
-void createMotorPower(void);
+void createMotorPower(JsonObject module);
 
 class MotorPower : public Module
 {

@@ -9,8 +9,6 @@ HardwarePWM::HardwarePWM(volatile float &ptrPwmPulseWidth, int pwmPeriod, std::s
     pwmPeriod(pwmPeriod),
 	pin(pin)
 {
-    cout << "Creating Hardware PWM at pin " << this->pin << endl;
-
     variablePeriod = false;
 
     if (pwmPeriod == 0)
@@ -22,9 +20,7 @@ HardwarePWM::HardwarePWM(volatile float &ptrPwmPulseWidth, int pwmPeriod, std::s
     this->pwmPin = dummyPin->hardware_pwm();
 
     if (this->pwmPin == NULL) {
-        printf("  Error: Hardware PWM cannot this pin (P2.0 - P2.5, P1.18, P1.20, P1.21, P1.23, P1.24, P1.26, P3.25, P3.26 only)\n");
-        delete dummyPin;
-        return;
+        error("  Error: Hardware PWM cannot this pin (P2.0 - P2.5, P1.18, P1.20, P1.21, P1.23, P1.24, P1.26, P3.25, P3.26 only)\n");
     }
 
     this->pwmPin->period_us(this->pwmPeriod);

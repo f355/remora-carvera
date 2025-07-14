@@ -12,6 +12,44 @@
 #define SCK1                P0_7
 #define SSEL1               P0_6
 
+#pragma pack(push, 1)
+
+typedef union
+{
+  // this allow structured access to the incoming SPI data without having to move it
+  struct
+  {
+    uint8_t rxBuffer[SPI_BUFF_SIZE];
+  };
+  struct
+  {
+    int32_t header;
+    volatile int32_t jointFreqCmd[JOINTS]; 	// Base thread commands ?? - basically motion
+    volatile float setPoint[VARIABLES];		  // Servo thread commands ?? - temperature SP, PWM etc
+    uint8_t jointEnable;
+    uint16_t outputs;
+    uint8_t spare0;
+  };
+} rxData_t;
+
+typedef union
+{
+  // this allow structured access to the out going SPI data without having to move it
+  struct
+  {
+    uint8_t txBuffer[SPI_BUFF_SIZE];
+  };
+  struct
+  {
+    int32_t header;
+    int32_t jointFeedback[JOINTS];	  // Base thread feedback ??
+    float processVariable[VARIABLES];		     // Servo thread feedback ??
+	uint16_t inputs;
+  };
+} txData_t;
+
+#pragma pack(pop)
+
 class RemoraComms
 {
     private:
@@ -27,8 +65,6 @@ class RemoraComms
         MODDMA_Config*      spiDMAmemcpy1;
         MODDMA_Config*      spiDMAmemcpy2;
 
-        volatile rxData_t*  ptrRxData;
-        volatile txData_t*  ptrTxData;
         rxData_t            spiRxBuffer1;
         rxData_t            spiRxBuffer2;
         uint8_t             rejectCnt;
@@ -37,7 +73,11 @@ class RemoraComms
         
     public:
 
-        RemoraComms(volatile rxData_t*, volatile txData_t*);
+        RemoraComms();
+
+        volatile bool pruReset;
+        rxData_t volatile * ptrRxData;
+        txData_t volatile * ptrTxData;
 
         void tc0_callback(void);
         void tc1_callback(void);

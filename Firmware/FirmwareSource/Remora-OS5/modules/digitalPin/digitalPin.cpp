@@ -4,67 +4,27 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createDigitalPin()
+Module* createDigitalPin(JsonObject module, RemoraComms* comms)
 {
-    const char* comment = module["Comment"];
-    printf("%s\n",comment);
+    const char* pin = module["pin"];
+    const char* mode = module["mode"];
+    bool invert = module["invert"];
+    const char* modifier = module["modifier"];
+    int dataBit = module["data_bit"];
 
-    const char* pin = module["Pin"];
-    const char* mode = module["Mode"];
-    const char* invert = module["Invert"];
-    const char* modifier = module["Modifier"];
-    int dataBit = module["Data Bit"];
+    int mod = Module::parseModifier(modifier);
 
-    int mod;
-    bool inv;
-
-    if (!strcmp(modifier,"Open Drain"))
+    if (!strcmp(mode,"out"))
     {
-        mod = OPENDRAIN;
+        return new DigitalPin(comms->ptrRxData->outputs, 1, pin, dataBit, invert, mod);
     }
-    else if (!strcmp(modifier,"Pull Up"))
+    else if (!strcmp(mode,"in"))
     {
-        mod = PULLUP;
-    }
-    else if (!strcmp(modifier,"Pull Down"))
-    {
-        mod = PULLDOWN;
-    }
-    else if (!strcmp(modifier,"Pull None"))
-    {
-        mod = PULLNONE;
+        return new DigitalPin(comms->ptrTxData->inputs, 0, pin, dataBit, invert, mod);
     }
     else
     {
-        mod = NONE;
-    }
-
-    if (!strcmp(invert,"True"))
-    {
-        inv = true;
-    }
-    else inv = false;
-
-    ptrOutputs = &rxData.outputs;
-    ptrInputs = &txData.inputs;
-
-    printf("Make Digital %s at pin %s\n", mode, pin);
-
-    if (!strcmp(mode,"Output"))
-    {
-        //Module* digitalPin = new DigitalPin(*ptrOutputs, 1, pin, dataBit, invert);
-        Module* digitalPin = new DigitalPin(*ptrOutputs, 1, pin, dataBit, inv, mod);
-        servoThread->registerModule(digitalPin);
-    }
-    else if (!strcmp(mode,"Input"))
-    {
-        //Module* digitalPin = new DigitalPin(*ptrInputs, 0, pin, dataBit, invert);
-        Module* digitalPin = new DigitalPin(*ptrInputs, 0, pin, dataBit, inv, mod);
-        servoThread->registerModule(digitalPin);
-    }
-    else
-    {
-        printf("Error - incorrectly defined Digital Pin\n");
+        error("Error - unknown Digital Pin mode [%s]\n", mode);
     }
 }
 

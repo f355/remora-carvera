@@ -6,9 +6,7 @@
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
-
-void createDigitalPin(void);
+Module* createDigitalPin(JsonObject module, RemoraComms* comms);
 
 class DigitalPin : public Module
 {

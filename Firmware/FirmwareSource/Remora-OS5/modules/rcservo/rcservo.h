@@ -3,14 +3,11 @@
 
 #include <cstdint>
 #include <string>
-//#include <iostream>
 
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
-
-void createRCServo(void);
+Module* createRCServo(JsonObject module, pruThread* thread, RemoraComms* comms);
 
 class RCServo : public Module
 {

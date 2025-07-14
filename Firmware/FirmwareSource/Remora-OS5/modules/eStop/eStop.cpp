@@ -4,19 +4,11 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createEStop()
+Module* createEStop(JsonObject module, RemoraComms* comms)
 {
-    const char* comment = module["Comment"];
-    printf("%s\n",comment);
+    const char* pin = module["pin"];
 
-    const char* pin = module["Pin"];
-
-    ptrTxHeader = &txData.header;
-
-    printf("Make eStop at pin %s\n", pin);
-
-    Module* estop = new eStop(*ptrTxHeader, pin);
-    servoThread->registerModule(estop);
+    return new eStop(comms->ptrTxData->header, pin);
 }
 
 

@@ -1,331 +1,267 @@
 {
-    "Board": "Carvera Air CA1",
-    "Threads":[
-        {
-            "Thread": "Base",
-            "Frequency": 80000
+    "board": "Carvera Air CA1",
+    "threads": {
+        "base": {
+            "timer": 1,
+            "frequency": 40000,
+            "priority": 2,
+            "modules": [
+                {
+                    "comment": "X - Joint 0 step generator",
+                    "type": "stepgen",
+                    "joint": 0,
+                    "step_pin": "1.28",
+                    "direction_pin": "1.29"
+                },
+                {
+                    "comment": "Y - Joint 1 step generator (inverted)",
+                    "type": "stepgen",
+                    "joint": 1,
+                    "step_pin": "1.26",
+                    "direction_pin": "1.27"
+                },
+                {
+                    "comment": "Z - Joint 2 step generator",
+                    "type": "stepgen",
+                    "joint": 2,
+                    "step_pin": "1.24",
+                    "direction_pin": "1.25"
+                },
+                {
+                    "comment": "A - Joint 3 step generator (inverted)",
+                    "type": "stepgen",
+                    "joint": 3,
+                    "step_pin": "1.21",
+                    "direction_pin": "1.23"
+                }
+            ]
+        },
+        "servo": {
+            "timer": 2,
+            "frequency": 1000,
+            "priority": 3,
+            "modules": [
+                {
+                    "comment": "Reset pin",
+                    "type": "reset_pin",
+                    "pin": "2.10"
+                },
+                {
+                    "comment": "e-stop pin",
+                    "type": "e_stop",
+                    "pin": "0.20"
+                },
+
+                {
+                    "comment": "Spindle",
+                    "type": "pwm",
+                    "set_point": 0,
+                    "period_set_point": 1,
+                    "pwm_pin": "2.5",
+                    "pwm_max": 256,
+                    "use_hardware": true,
+                    "period_us": 10000
+                },
+                {
+                    "comment": "Spindle feedback",
+                    "type": "pulse_counter",
+                    "process_variable": 0
+                },
+
+                {
+                    "comment": "Power fan (PWM) - TODO",
+                    "type": "pwm",
+                    "set_point": 2,
+                    "period_set_point": 3,
+                    "pwm_pin": "2.3",
+                    "pwm_max": 256,
+                    "use_hardware": true,
+                    "period_us": 200
+                },
+                {
+                    "comment": "Spindle fan (PWM) - TODO",
+                    "type": "pwm",
+                    "set_point": 4,
+                    "period_set_point": 5,
+                    "pwm_pin": "2.1",
+                    "pwm_max": 256,
+                    "use_hardware": true,
+                    "period_us": 200
+                },
+
+                {
+                    "comment": "Light switch",
+                    "type": "digital_pin",
+                    "mode": "out",
+                    "data_bit": 0,
+                    "pin": "2.0"
+                },
+                {
+                    "comment": "Tool sensor switch",
+                    "type": "digital_pin",
+                    "mode": "out",
+                    "data_bit": 1,
+                    "pin": "0.11"
+                },
+                {
+                    "comment": "Beep switch",
+                    "type": "digital_pin",
+                    "mode": "out",
+                    "data_bit": 2,
+                    "pin": "1.14",
+                    "modifier": "pull_down"
+                },
+                {
+                    "comment": "EXT out",
+                    "type": "digital_pin",
+                    "mode": "out",
+                    "data_bit": 3,
+                    "pin": "0.21"
+                },
+                {
+                    "comment": "12V power switch",
+                    "mode": "out",
+                    "data_bit": 4,
+                    "type": "digital_pin",
+                    "pin": "0.22"
+                },
+                {
+                    "comment": "24V power switch",
+                    "mode": "out",
+                    "data_bit": 5,
+                    "type": "digital_pin",
+                    "pin": "0.10"
+                },
+
+
+                {
+                    "comment": "Spindle alarm",
+                    "mode": "in",
+                    "data_bit": 0,
+                    "type": "digital_pin",
+                    "pin": "0.19",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "X axis stall alarm",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 1,
+                    "pin": "0.1",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "Y axis stall alarm",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 2,
+                    "pin": "0.0",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "Z axis stall alarm",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 3,
+                    "pin": "3.25",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "Lid sensor",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 4,
+                    "pin": "1.8",
+                    "modifier": "pull_up",
+                    "invert": true
+                },
+                {
+                    "comment": "Main button",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 5,
+                    "pin": "2.13",
+                    "modifier": "pull_up",
+                    "invert": true
+                },
+                {
+                    "comment": "EXT in",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 6,
+                    "pin": "2.2",
+                    "modifier": "pull_down"
+                },
+                {
+                    "comment": "X endstop",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 7,
+                    "pin": "0.24",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "Y endstop",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 8,
+                    "pin": "0.25",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "Z endstop",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 9,
+                    "pin": "1.1",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "A endstop",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 10,
+                    "pin": "1.9",
+                    "modifier": "pull_up"
+                },
+                {
+                    "comment": "Probe",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 11,
+                    "pin": "2.6",
+                    "modifier": "pull_down"
+                },
+                {
+                    "comment": "Probe calibrate",
+                    "type": "digital_pin",
+                    "mode": "in",
+                    "data_bit": 12,
+                    "pin": "0.5",
+                    "modifier": "pull_up"
+                },
+
+
+                {
+                    "comment": "Spindle temperature",
+                    "type": "temperature",
+                    "process_variable": 1,
+                    "pin": "1.31",
+                    "beta": 3950,
+                    "r0": 100000,
+                    "t0": 25
+                },
+                {
+                    "comment": "Power supply temperature",
+                    "type": "temperature",
+                    "process_variable": 2,
+                    "pin": "0.26",
+                    "beta": 3950,
+                    "r0": 100000,
+                    "t0": 25
+                }
+            ]
         }
-    ],
-    "Modules":[
-        {
-            "Comment": "Reset pin",
-            "Thread": "Servo",
-            "Type": "Reset Pin",
-            "Pin": "2.10"
-        },
-        {
-            "Comment": "e-stop pin",
-            "Thread": "Servo",
-            "Type": "eStop",
-            "Pin": "0.20"
-        },
-
-
-        {
-            "Comment": "X - Joint 0 step generator",
-            "Thread": "Base",
-            "Type": "Stepgen",
-            "Joint Number": 0,
-            "Step Pin": "1.28",
-            "Direction Pin": "1.29",
-            "Enable Pin": ""
-        },
-        {
-            "Comment": "Y - Joint 1 step generator (inverted)",
-            "Thread": "Base",
-            "Type": "Stepgen",
-            "Joint Number": 1,
-            "Step Pin": "1.26",
-            "Direction Pin": "1.27",
-            "Enable Pin": ""
-        },
-        {
-            "Comment": "Z - Joint 2 step generator",
-            "Thread": "Base",
-            "Type": "Stepgen",
-            "Joint Number": 2,
-            "Step Pin": "1.24",
-            "Direction Pin": "1.25",
-            "Enable Pin": ""
-        },
-        {
-            "Comment": "A - Joint 3 step generator (inverted)",
-            "Thread": "Base",
-            "Type": "Stepgen",
-            "Joint Number": 2,
-            "Step Pin": "1.21",
-            "Direction Pin": "1.23",
-            "Enable Pin": "1.30"
-        },
-
-
-        {
-            "Comment": "Spindle",
-            "Thread": "Servo",
-            "Type": "PWM",
-            "SP[i]": 0,
-            "PWM Pin": "2.5",
-            "PWM Max": 256,
-            "Hardware PWM": "True",
-            "Period SP[i]": 1,
-            "Period us": 10000
-        },
-        {
-            "Comment": "Spindle feedback",
-            "Thread": "Servo",
-            "Type": "PulseCounter",
-            "Modifier": "Pull None",
-            "PV[i]": 0
-        },
-
-
-        {
-            "Comment": "Power fan (PWM) - TODO",
-            "Thread": "Servo",
-            "Type": "PWM",
-            "SP[i]": 2,
-            "PWM Pin": "2.3",
-            "PWM Max": 256,
-            "Hardware PWM": "True",
-            "Variable Freq": "True",
-            "Period SP[i]": 3,
-            "Period us": 200
-        },
-        {
-            "Comment": "Spindle fan (PWM) - TODO",
-            "Thread": "Servo",
-            "Type": "PWM",
-            "SP[i]": 4,
-            "PWM Pin": "2.1",
-            "PWM Max": 256,
-            "Hardware PWM": "True",
-            "Variable Freq": "True",
-            "Period SP[i]": 5,
-            "Period us": 200
-        },
-
-
-        {
-            "Comment": "Light switch",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "2.0",
-            "Mode": "Output",
-            "Modifier": "Pull None",
-            "Invert": "False",
-            "Data Bit": 0
-        },
-        {
-            "Comment": "Tool sensor switch",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.11",
-            "Mode": "Output",
-            "Modifier": "Pull None",
-            "Invert": "False",
-            "Data Bit": 1
-        },
-        {
-            "Comment": "Beep switch",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "1.14",
-            "Mode": "Output",
-            "Modifier": "Pull Down",
-            "Invert": "False",
-            "Data Bit": 2
-        },
-        {
-            "Comment": "EXT out",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.21",
-            "Mode": "Output",
-            "Modifier": "Pull None",
-            "Invert": "False",
-            "Data Bit": 3
-        },
-        {
-            "Comment": "12V power switch",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.22",
-            "Mode": "Output",
-            "Modifier": "Pull None",
-            "Invert": "False",
-            "Data Bit": 4
-        },
-        {
-            "Comment": "24V power switch",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.10",
-            "Mode": "Output",
-            "Modifier": "Pull None",
-            "Invert": "False",
-            "Data Bit": 5
-        },
-
-
-        {
-            "Comment": "Spindle alarm",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.19",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 0
-        },
-        {
-            "Comment": "X axis stall alarm",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.1",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 1
-        },
-        {
-            "Comment": "Y axis stall alarm",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.0",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 2
-        },
-        {
-            "Comment": "Z axis stall alarm",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "3.25",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 3
-        },
-        {
-            "Comment": "Cover",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "1.8",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "True",
-            "Data Bit": 4
-        },
-        {
-            "Comment": "Main button",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "2.13",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "True",
-            "Data Bit": 5
-        },
-        {
-            "Comment": "EXT in",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "2.2",
-            "Mode": "Input",
-            "Modifier": "Pull Down",
-            "Invert": "False",
-            "Data Bit": 6
-        },
-        {
-            "Comment": "X endstop",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.24",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 7
-        },
-        {
-            "Comment": "Y endstop",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.25",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 8
-        },
-        {
-            "Comment": "Z endstop",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "1.1",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 9
-        },
-        {
-            "Comment": "A endstop",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "1.9",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 10
-        },
-        {
-            "Comment": "Probe",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "2.6",
-            "Mode": "Input",
-            "Modifier": "Pull Down",
-            "Invert": "False",
-            "Data Bit": 11
-        },
-        {
-            "Comment": "Probe calibrate",
-            "Thread": "Servo",
-            "Type": "Digital Pin",
-            "Pin": "0.5",
-            "Mode": "Input",
-            "Modifier": "Pull Up",
-            "Invert": "False",
-            "Data Bit": 12
-        },
-
-
-        {
-            "Comment": "Spindle temperature",
-            "Thread": "Servo",
-            "Type": "Temperature",
-            "PV[i]": "1",
-            "Sensor": "Thermistor",
-            "Thermistor":
-            {
-                "Pin": "1.31",
-                "beta": 3950,
-                "r0": 100000,
-                "t0": 25
-            }
-        },
-        {
-            "Comment": "Power temperature",
-            "Thread": "Servo",
-            "Type": "Temperature",
-            "PV[i]": "2",
-            "Sensor": "Thermistor",
-            "Thermistor":
-            {
-                "Pin": "0.26",
-                "beta": 3950,
-                "r0": 100000,
-                "t0": 25
-            }
-        }
-    ]
+    },
+    "run_on_load": []
 }

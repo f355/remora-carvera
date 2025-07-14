@@ -1,6 +1,18 @@
+# Remora for Carvera
+
+This is a fork of fantastic [Remora](https://github.com/scottalford75/Remora) for use with the Carvera family of machines by [Makera Inc].
+The Remora authors [say they "dont ...not support"](https://github.com/scottalford75/Remora/issues/78#issuecomment-2584956914) LPC1768-based boards,
+so this is more of a hard-fork, the changes are not intended to be upstreamed.
+
+# Building
+
+Due to historical reasons, the project is using Mbed OS 5.x which is pretty tricky to get working with any sensible build tooling -
+the Mbed CLI into a dependency hell on modern systems.
+
+Don't bother, just download the Mbed Studio, open `Firmware/FirmwareSource/Remora-OS5`, choose the `mbed LPC1768` target and the `Release` profile, then build.
 
 
-# Remora
+# Remora - the original README
 
 The full documentation is at <https://remora-docs.readthedocs.io/en/latest/>
 Note: Docs have not been updated for 1.0.0_rc

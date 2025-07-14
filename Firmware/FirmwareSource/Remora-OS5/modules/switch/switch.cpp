@@ -4,31 +4,24 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createSwitch()
+Module* createSwitch(JsonObject module, RemoraComms* comms)
 {
-    const char* comment = module["Comment"];
-    printf("%s\n",comment);
+    const char* pin = module["pin"];
+    const char* mode = module["mode"];
+    int pv = module["process_variable"];
+    float sp = module["set_point"];
 
-    const char* pin = module["Pin"];
-    const char* mode = module["Mode"];
-    int pv = module["PV[i]"];
-    float sp = module["SP"];
-
-    printf("Make Switch (%s) at pin %s\n", mode, pin);
-
-    if (!strcmp(mode,"On"))
+    if (!strcmp(mode,"on"))
     {
-        Module* SoftSwitch = new Switch(sp, *ptrProcessVariable[pv], pin, 1);
-        servoThread->registerModule(SoftSwitch);
+        return new Switch(sp, comms->ptrTxData->processVariable[pv], pin, 1);
     }
-    else if (!strcmp(mode,"Off"))
+    else if (!strcmp(mode,"off"))
     {
-        Module* SoftSwitch = new Switch(sp, *ptrProcessVariable[pv], pin, 0);
-        servoThread->registerModule(SoftSwitch);
+        return new Switch(sp, comms->ptrTxData->processVariable[pv], pin, 0);
     }
     else
     {
-        printf("Error - incorrectly defined Switch\n");
+        error("Error - incorrectly defined Switch\n");
     }
 }
 
@@ -38,8 +31,6 @@ Switch::Switch(float SP, volatile float &ptrPV, std::string portAndPin, bool mod
 	portAndPin(portAndPin),
 	mode(mode)
 {
-    printf("Creating a Switch\n");
-	//cout << "Creating a Switch @ pin " << this->portAndPin << endl;
 	int output = 0x1; // an output
 	this->pin = new Pin(this->portAndPin, output);
 }

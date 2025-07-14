@@ -1,6 +1,9 @@
 #include "module.h"
 
 #include <cstdio>
+#include <string>
+
+#include "drivers/pin/pin.h"
 
 Module::Module()
 {
@@ -44,3 +47,26 @@ void Module::update(){}
 void Module::updatePost(){}
 void Module::slowUpdate(){}
 void Module::configure(){}
+
+int Module::parseModifier(const char* modName) {
+	if (!strcmp(modName, "open_drain"))
+    {
+        return OPENDRAIN;
+    }
+    else if (!strcmp(modName, "pull_up"))
+    {
+        return PULLUP;
+    }
+    else if (!strcmp(modName, "pull_down"))
+    {
+        return PULLDOWN;
+    }
+    else if (!strcmp(modName, "none"))
+    {
+        return PULLNONE;
+    }
+    else
+    {
+        return NONE;
+    }
+}

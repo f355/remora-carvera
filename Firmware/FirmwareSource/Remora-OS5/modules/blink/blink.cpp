@@ -4,15 +4,12 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createBlink()
+Module* createBlink(JsonObject module, pruThread* thread)
 {
-    const char* pin = module["Pin"];
-    int frequency = module["Frequency"];
-    
-    printf("Make Blink at pin %s\n", pin);
+    const char* pin = module["pin"];
+    int frequency = module["frequency"];
         
-    Module* blink = new Blink(pin, PRU_SERVOFREQ, frequency);
-    servoThread->registerModule(blink);
+    return new Blink(pin, thread->frequency, frequency);
 }
 
 

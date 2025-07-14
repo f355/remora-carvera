@@ -19,7 +19,7 @@
 #define STEP_MASK			(1L<<STEPBIT)
 #define STEP_OFFSET			(1L<<(STEPBIT-1))
 
-#define PRU_BASEFREQ		80000 		// Base freq of the PRU stepgen in Hz
+#define PRU_BASEFREQ		40000 		// Base freq of the PRU stepgen in Hz
 
 
 

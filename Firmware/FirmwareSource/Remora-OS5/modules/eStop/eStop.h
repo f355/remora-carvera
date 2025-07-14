@@ -10,9 +10,8 @@
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
 
-void createEStop(void);
+Module* createEStop(JsonObject module, RemoraComms* comms);
 
 class eStop : public Module
 {

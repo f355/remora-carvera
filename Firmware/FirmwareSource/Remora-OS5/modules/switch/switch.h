@@ -8,9 +8,7 @@
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
-
-void createSwitch(void);
+Module* createSwitch(JsonObject module, RemoraComms* comms);
 
 class Switch : public Module
 {

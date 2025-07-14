@@ -2,12 +2,12 @@
 #include "RemoraComms.h"
 
 
-RemoraComms::RemoraComms(volatile rxData_t* ptrRxData, volatile txData_t* ptrTxData) :
-    ptrRxData(ptrRxData),
-    ptrTxData(ptrTxData),
+RemoraComms::RemoraComms() :
     spiSlave(MOSI1, MISO1, SCK1, SSEL1)
 {
-    spiSlave.frequency(48000000);
+    this->ptrRxData = new rxData_t();
+    this->ptrTxData = new txData_t();
+    this->spiSlave.frequency(48000000);
 }
 
 void RemoraComms::init()
@@ -72,7 +72,7 @@ void RemoraComms::init()
     spiDMAmemcpy1
         ->channelNum    ( MODDMA::Channel_4 )
         ->srcMemAddr    ( (uint32_t) &spiRxBuffer1 )
-        ->dstMemAddr    ( (uint32_t) &rxData )
+        ->dstMemAddr    ( (uint32_t) ptrRxData )
         ->transferSize  ( SPI_BUFF_SIZE )
         ->transferType  ( MODDMA::m2m )
     ;
@@ -80,7 +80,7 @@ void RemoraComms::init()
     spiDMAmemcpy2
         ->channelNum    ( MODDMA::Channel_5 )
         ->srcMemAddr    ( (uint32_t) &spiRxBuffer2 )
-        ->dstMemAddr    ( (uint32_t) &rxData )
+        ->dstMemAddr    ( (uint32_t) ptrRxData )
         ->transferSize  ( SPI_BUFF_SIZE )
         ->transferType  ( MODDMA::m2m )
     ;
@@ -89,6 +89,8 @@ void RemoraComms::init()
 
 void RemoraComms::start()
 {
+    NVIC_SetPriority(DMA_IRQn, 1);
+
     this->ptrTxData->header = PRU_DATA;
 
     // Pass the configurations to the controller

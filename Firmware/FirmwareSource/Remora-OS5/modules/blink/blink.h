@@ -7,9 +7,9 @@
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
+#include "remora.h"
 
-void createBlink(void);
+Module* createBlink(JsonObject module, pruThread* thread);
 
 class Blink : public Module
 {

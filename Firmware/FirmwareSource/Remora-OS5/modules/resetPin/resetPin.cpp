@@ -4,19 +4,11 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createResetPin()
+Module* createResetPin(JsonObject module, RemoraComms* comms)
 {
-    const char* comment = module["Comment"];
-    printf("%s\n",comment);
+    const char* pin = module["pin"];
 
-    const char* pin = module["Pin"];
-
-    ptrPRUreset = &PRUreset;
-
-    printf("Make Reset Pin at pin %s\n", pin);
-
-    Module* resetPin = new ResetPin(*ptrPRUreset, pin);
-    servoThread->registerModule(resetPin);
+    return new ResetPin(comms->pruReset, pin);
 }
 
 

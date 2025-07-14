@@ -38,19 +38,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "softPwm.h"
 
 // threads
-#include "irqHandlers.h"
-#include "interrupt.h"
 #include "pruThread.h"
 
 // modules
 #include "module.h"
 #include "blink.h"
-#include "debug.h"
 #include "digitalPin.h"
-#include "encoder.h"
 #include "eStop.h"
 #include "hardwarePwm.h"
-#include "mcp4451.h"
 #include "motorPower.h"
 #include "pulseCounter.h"
 #include "pwm.h"
@@ -59,6 +54,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "stepgen.h"
 #include "switch.h"
 #include "temperature.h"
+
+#include <map>
 
 /***********************************************************************
 *                STRUCTURES AND GLOBAL VARIABLES                       *
@@ -76,67 +73,19 @@ enum State {
 };
 
 uint8_t resetCnt;
-uint32_t base_freq = PRU_BASEFREQ;
-uint32_t servo_freq = PRU_SERVOFREQ;
 
-// boolean
 volatile bool PRUreset;
-bool configError = false;
+
 bool threadsRunning = false;
-
-// pointers to objects with global scope
-pruThread* servoThread;
-pruThread* baseThread;
-
-// unions for RX and TX data
-volatile rxData_t rxData;
-volatile txData_t txData;
-
-// pointers to data
-volatile rxData_t*  ptrRxData = &rxData;
-volatile txData_t*  ptrTxData = &txData;
-volatile int32_t* ptrTxHeader;  
-volatile bool*    ptrPRUreset;
-volatile int32_t* ptrJointFreqCmd[JOINTS];
-volatile int32_t* ptrJointFeedback[JOINTS];
-volatile uint8_t* ptrJointEnable;
-volatile float*   ptrSetPoint[VARIABLES];
-volatile float*   ptrProcessVariable[VARIABLES];
-volatile uint16_t* ptrInputs;
-volatile uint16_t* ptrOutputs;
-
-
-/***********************************************************************
-        OBJECTS etc                                           
-************************************************************************/
-
-// SD card access and Remora communication protocol
-SDBlockDevice blockDevice(P0_18, P0_17, P0_15, P0_16);  // mosi, miso, sclk, cs
-RemoraComms comms(ptrRxData, ptrTxData);
 
 // Watchdog
 Watchdog& watchdog = Watchdog::get_instance();
-
-// Json configuration file stuff
-FATFileSystem fileSystem("fs");
-FILE *jsonFile;
-string strJson;
-DynamicJsonDocument doc(JSON_BUFF_SIZE);
-JsonObject thread;
-JsonObject module;
-
-/***********************************************************************
-        INTERRUPT HANDLERS - add NVIC_SetVector etc to setup()
-************************************************************************/
-
-// Add these to /thread/irqHandlers.h in the TARGET_target
-
 
 /***********************************************************************
         ROUTINES
 ************************************************************************/
 
-void readJsonConfig()
+string readJsonConfig()
 {
     printf("1. Reading json configuration file\n");
 
@@ -144,26 +93,32 @@ void readJsonConfig()
     printf("Mounting the filesystem... ");
     fflush(stdout);
  
+    SDBlockDevice blockDevice(P0_18, P0_17, P0_15, P0_16);  // mosi, miso, sclk, cs
+    FATFileSystem fileSystem("fs");
     int err = fileSystem.mount(&blockDevice);
+    
     printf("%s\n", (err ? "Fail :(" : "OK"));
     if (err) {
-        printf("No filesystem found... ");
-        fflush(stdout);
+        error("No filesystem found... ");
      }
 
     // Open the config file
     printf("Opening \"/fs/config.txt\"... ");
     fflush(stdout);
-    jsonFile = fopen("/fs/config.txt", "r+");
-    printf("%s\n", (!jsonFile ? "Fail :(" : "OK"));
+    FILE *jsonFile = fopen("/fs/config.txt", "r+");
+    if (!jsonFile) {
+        error("Error opening config");
+    }
 
     fseek (jsonFile, 0, SEEK_END);
     int32_t length = ftell (jsonFile);
     fseek (jsonFile, 0, SEEK_SET);
 
-    printf("Json config file lenght = %2d\n", length);
+    printf("Json config file length = %2d\n", length);
 
-    strJson.reserve(length+1);
+    string strJson;
+
+    strJson.reserve(length + 1);
 
     while (!feof(jsonFile)) {
         int c = fgetc(jsonFile);
@@ -176,196 +131,147 @@ void readJsonConfig()
     printf("\rClosing \"/fs/config.txt\"... ");
     fflush(stdout);
     fclose(jsonFile);
+
+    return strJson;
 }
 
 
-void setup()
-{
-    printf("\n2. Setting up DMA and threads\n");
-
-    // initialise the Remora comms 
-    comms.init();
-    comms.start();
-}
-
-
-void deserialiseJSON()
+DynamicJsonDocument deserialiseJSON(const char *json)
 {
     printf("\n3. Parsing json configuration file\n");
 
-    const char *json = strJson.c_str();
-
-    // parse the json configuration file
-    DeserializationError error = deserializeJson(doc, json);
+    DynamicJsonDocument doc(JSON_BUFF_SIZE);
+    DeserializationError err = deserializeJson(doc, json);
 
     printf("Config deserialisation - ");
 
-    switch (error.code())
+    switch (err.code())
     {
         case DeserializationError::Ok:
             printf("Deserialization succeeded\n");
-            break;
+            return doc;
         case DeserializationError::InvalidInput:
-            printf("Invalid input!\n");
-            configError = true;
+            error("Invalid input!\n");
             break;
         case DeserializationError::NoMemory:
-            printf("Not enough memory\n");
-            configError = true;
+            error("Not enough memory\n");
             break;
         default:
-            printf("Deserialization failed\n");
-            configError = true;
-            break;
+            error("Deserialization failed\n");
     }
 }
 
 
-void configThreads()
+void loadModules(pruThread* thread, JsonArray modules, RemoraComms* comms)
 {
-    if (configError) return;
-
-    printf("\n4. Config threads\n");
-
-    JsonArray Threads = doc["Threads"];
-
     // create objects from json data
-    for (JsonArray::iterator it=Threads.begin(); it!=Threads.end(); ++it)
+    for (JsonArray::iterator it = modules.begin(); it != modules.end(); ++it)
     {
-        thread = *it;
+        JsonObject moduleDef = *it;
         
-        const char* configor = thread["Thread"];
-        uint32_t    freq = thread["Frequency"];
+        const char* type = moduleDef["type"];
+        const char* comment = moduleDef["comment"];
 
-        if (!strcmp(configor,"Base"))
+        printf("creating %s module: [%s]\n", type, comment);
+
+        Module* module = NULL;
+
+        if (!strcmp(type, "stepgen"))
         {
-            base_freq = freq;
-            printf("Setting BASE thread frequency to %d\n", base_freq);
+            module = createStepgen(moduleDef, thread, comms);
         }
-        else if (!strcmp(configor,"Servo"))
+        else if (!strcmp(type, "rc_servo"))
         {
-            servo_freq = freq;
-            printf("Setting SERVO thread frequency to %d\n", servo_freq);
+            module = createRCServo(moduleDef, thread, comms);
+        }
+        else if (!strcmp(type, "e_stop"))
+        {
+            module = createEStop(moduleDef, comms);
+        }
+        else if (!strcmp(type, "reset_pin"))
+        {
+            module = createResetPin(moduleDef, comms);
+        }
+        else if (!strcmp(type, "blink"))
+        {
+            module = createBlink(moduleDef, thread);
+        }
+        else if (!strcmp(type, "digital_pin"))
+        {
+            module = createDigitalPin(moduleDef, comms);
+        }
+        else if (!strcmp(type, "pulse_counter"))
+        {
+            module = createPulseCounter(moduleDef, comms);
+        }
+        else if (!strcmp(type, "pwm"))
+        {
+            module = createPWM(moduleDef, comms);
+        }
+        else if (!strcmp(type, "temperature"))
+        { 
+            module = createTemperature(moduleDef, thread, comms);
+        }
+        else if (!strcmp(type, "switch"))
+        {
+            module = createSwitch(moduleDef, comms);
+        }
+        else if (!strcmp(type, "motor_power"))
+        {
+            createMotorPower(moduleDef);
+        }
+        else {
+            error("module [%s]: unknown type [%s]\n", comment, type);
+        }
+
+        if (module) {
+            thread->registerModule(module);
         }
     }
 }
 
-
-void loadModules()
+vector<pruThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
 {
-    if (configError) return;
+    printf("\ncreating threads\n");
 
-    printf("\n5. Loading modules\n");
+    vector<pruThread*> threads;
+    JsonObject threadDefs = doc["threads"];
 
-    JsonArray Modules = doc["Modules"];
-
-    // create objects from json data
-    for (JsonArray::iterator it=Modules.begin(); it!=Modules.end(); ++it)
+    for (JsonObject::iterator it = threadDefs.begin(); it != threadDefs.end(); ++it)
     {
-        module = *it;
+        const char* threadName = (*it).key().c_str();
+        JsonObject threadDef = (*it).value();
+
+        printf("creating thread %s\n", threadName);
         
-        const char* thread = module["Thread"];
-        const char* type = module["Type"];
+        uint32_t frequency = threadDef["frequency"];
+        uint32_t priority = threadDef["priority"];
+        uint32_t timerNum = threadDef["timer_number"];
 
-        if (!strcmp(thread,"Base"))
-        {
-            printf("\nBase thread object\n");
+        pruThread* thread = new pruThread(timerNum, frequency, priority);
 
-            if (!strcmp(type,"Stepgen"))
-            {
-                createStepgen();
-            }
-            else if (!strcmp(type,"Encoder"))
-            {
-                createEncoder();
-            }
-            else if (!strcmp(type,"RCServo"))
-            {
-                createRCServo();
-            }
-        }
-        else if (!strcmp(thread,"Servo"))
-        {
-            printf("\nServo thread object\n");
+        loadModules(thread, threadDef["modules"], comms);
 
-            if (!strcmp(type, "eStop"))
-            {
-                createEStop();
-            }
-            else if (!strcmp(type, "Reset Pin"))
-            {
-                createResetPin();
-            }
-            else if (!strcmp(type, "Blink"))
-            {
-                createBlink();
-            }
-            else if (!strcmp(type,"Digital Pin"))
-            {
-                createDigitalPin();
-            }
-            else if (!strcmp(type, "PulseCounter"))
-            {
-                createPulseCounter();
-            }
-            else if (!strcmp(type,"PWM"))
-            {
-                createPWM();
-            }
-            else if (!strcmp(type,"Temperature"))
-            { 
-                createTemperature();
-            }
-            else if (!strcmp(type,"Switch"))
-            {
-                createSwitch();
-            }
-        }
-        else if (!strcmp(thread,"On load"))
-        {
-            printf("\nOn load - run once module\n");
-
-
-            if (!strcmp(type,"MCP4451")) // digipot
-            {
-				createMCP4451();
-            }
-            else if (!strcmp(type,"Motor Power"))
-            {
-                createMotorPower();
-            }
-        }
+        threads.push_back(thread);
     }
-}
 
-void createThreads(void)
-{
-    // Create the thread objects and set the interrupt vectors to RAM. This is needed
-    // as we are using the USB bootloader that requires a different code starting
-    // address. Also set interrupt priority with NVIC_SetPriority.
-    //
-    // Note: DMAC has highest priority, then Base thread and then Servo thread
-    //       to ensure SPI data transfer is reliable
+    JsonArray run_once = doc["run_once"];
+    loadModules(NULL, run_once, comms);
 
-    NVIC_SetPriority(DMA_IRQn, 1);
-
-    baseThread = new pruThread(LPC_TIM1, TIMER1_IRQn, base_freq);
-    NVIC_SetVector(TIMER1_IRQn, (uint32_t)TIMER1_IRQHandler);
-    NVIC_SetPriority(TIMER1_IRQn, 2);
-
-    servoThread = new pruThread(LPC_TIM2, TIMER1_IRQn, servo_freq);
-    NVIC_SetVector(TIMER2_IRQn, (uint32_t)TIMER2_IRQHandler);
-    NVIC_SetPriority(TIMER2_IRQn, 3);
+    return threads;
 }
 
 int main()
 {
-    
+    vector<pruThread*> threads;
+
     enum State currentState;
     enum State prevState;
 
-    comms.setStatus(false);
-    comms.setError(false);
+    RemoraComms* comms = new RemoraComms();
+
+    comms->setStatus(false);
+    comms->setError(false);
     currentState = ST_SETUP;
     prevState = ST_RESET;
 
@@ -384,6 +290,7 @@ int main()
 
     switch(currentState){
         case ST_SETUP:
+        {
             // do setup tasks
             if (currentState != prevState)
             {
@@ -391,18 +298,20 @@ int main()
             }
             prevState = currentState;
 
-            readJsonConfig();
-            setup();
-            deserialiseJSON();
-            configThreads();
-            createThreads();
-            //debugThreadHigh();
-            loadModules();
-            //debugThreadLow();
+            printf("\nSetting up DMA and threads\n");
+
+            // initialise the Remora comms 
+            comms->init();
+            comms->start();
+
+            string strJson = readJsonConfig();
+            DynamicJsonDocument doc = deserialiseJSON(strJson.c_str());
+
+            threads = createThreads(doc, comms);
 
             currentState = ST_START;
             break; 
-
+        }
         case ST_START:
             // do start tasks
             if (currentState != prevState)
@@ -414,11 +323,10 @@ int main()
             if (!threadsRunning)
             {
                 // Start the threads
-                printf("\nStarting the BASE thread\n");
-                baseThread->startThread();
-                
-                printf("\nStarting the SERVO thread\n");
-                servoThread->startThread();
+                for (std::vector<pruThread*>::const_iterator it = threads.begin(); it != threads.end(); ++it)
+                {
+                    (*it)->startThread();
+                }
 
                 threadsRunning = true;
 
@@ -449,14 +357,14 @@ int main()
             prevState = currentState;
 
             // check to see if there there has been SPI errors
-            if (comms.getError())
+            if (comms->getError())
             {
                 printf("Communication data error\n");
-                comms.setError(false);
+                comms->setError(false);
             }
 
             //wait for SPI data before changing to running state
-            if (comms.getStatus())
+            if (comms->getStatus())
             {
                 currentState = ST_RUNNING;
             }
@@ -477,17 +385,17 @@ int main()
             prevState = currentState;
 
             // check to see if there there has been SPI errors 
-            if (comms.getError())
+            if (comms->getError())
             {
                 printf("Communication data error\n");
-                comms.setError(false);
+                comms->setError(false);
             }
             
-            if (comms.getStatus())
+            if (comms->getStatus())
             {
                 // SPI data received by DMA
                 resetCnt = 0;
-                comms.setStatus(false);
+                comms->setStatus(false);
             }
             else
             {
@@ -534,10 +442,10 @@ int main()
             // rxData.rxBuffer is volatile so need to do this the long way. memset cannot be used for volatile
             printf("   Resetting rxBuffer\n");
             {
-                int n = sizeof(rxData.rxBuffer);
+                int n = sizeof(comms->ptrRxData->rxBuffer);
                 while(n-- > 0)
                 {
-                    rxData.rxBuffer[n] = 0;
+                    comms->ptrRxData->rxBuffer[n] = 0;
                 }
             }
 

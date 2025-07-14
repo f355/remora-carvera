@@ -3,6 +3,10 @@
 
 #include <cstdint>
 
+#include "ArduinoJson.h"
+#include "thread/pruThread.h"
+#include "drivers/comms/RemoraComms.h"
+
 // Module base class
 // All modules are derived from this base class
 
@@ -15,11 +19,12 @@ class Module
 		int32_t updateCount;
 		int32_t counter;
 
-
 	public:
 
 		Module();					// constructor to run the module at the thread frequency
 		Module(int32_t, int32_t);	// constructor to run the module at a "slow update frequency" < thread frequency
+
+		bool hasPost = false;
 
 		virtual ~Module();
 		void runModule();			// the standard interface that the thread runs at the thread frequency, this calls update() at the module frequency
@@ -29,6 +34,7 @@ class Module
 		virtual void slowUpdate();	// the standard interface for the slow update - use for PID controller etc
         virtual void configure();   // the standard interface for one off configuration
 
+		static int parseModifier(const char* modName);
 };
 
 #endif

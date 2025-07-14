@@ -4,14 +4,9 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-void createMotorPower()
+void createMotorPower(JsonObject module)
 {
-    const char* comment = module["Comment"];
-    printf("%s\n",comment);
-
-    const char* pin = module["Pin"];
-
-    printf("Make Motor Power at pin %s\n", pin);
+    const char* pin = module["pin"];
 
     Module* motPower = new MotorPower(pin);
     delete motPower;

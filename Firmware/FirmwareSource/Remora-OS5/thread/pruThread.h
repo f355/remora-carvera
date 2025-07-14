@@ -2,7 +2,7 @@
 #define PRUTHREAD_H
 
 #include "LPC17xx.h"
-#include "timer.h"
+#include "lpcTimer.h"
 
 // Standard Template Library (STL) includes
 #include <iostream>
@@ -12,18 +12,11 @@ using namespace std;
 
 class Module;
 
-class pruThread
+class pruThread: public InterruptHandler
 {
 
 	private:
-
-		pruTimer* 		    TimerPtr;
-	
-		LPC_TIM_TypeDef* 	timer;
-		IRQn_Type 			irq;
-		uint32_t 			frequency;
-
-        bool hasThreadPost;		// run updatePost() vector
+		LPCTimer *timer;
 
 		vector<Module*> vThread;		// vector containing pointers to Thread modules
         vector<Module*> vThreadPost;		// vector containing pointers to Thread modules that run after the main vector modules
@@ -31,14 +24,15 @@ class pruThread
 
 	public:
 
-		pruThread(LPC_TIM_TypeDef* timer, IRQn_Type irq, uint32_t frequency);
+		pruThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority);
+
+		uint32_t frequency;
 
 		void registerModule(Module *module);
-        void registerModulePost(Module *module);
         void unregisterModule(Module *module);
 		void startThread(void);
         void stopThread(void);
-		void run(void);
+		void handleInterrupt(void);
 };
 
 #endif

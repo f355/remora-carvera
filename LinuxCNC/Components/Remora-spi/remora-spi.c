@@ -44,7 +44,7 @@
 #include "spi-dw.c"
 #include "remora.h"
 
-#define MODNAME "remora"
+#define MODNAME "remora-spi"
 #define PREFIX "remora"
 
 MODULE_AUTHOR("Scott Alford AKA scotta");

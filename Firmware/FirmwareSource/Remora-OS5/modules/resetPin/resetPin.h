@@ -6,9 +6,7 @@
 #include "modules/module.h"
 #include "drivers/pin/pin.h"
 
-#include "extern.h"
-
-void createResetPin(void);
+Module* createResetPin(JsonObject module, RemoraComms* comms);
 
 class ResetPin : public Module
 {
