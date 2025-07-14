@@ -252,8 +252,8 @@ vector<PRUThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
         threads.push_back(thread);
     }
 
-    JsonArray run_once = doc["run_once"];
-    loadModules(NULL, run_once, comms);
+    JsonArray runOnLoad = doc["run_on_load"];
+    loadModules(NULL, runOnLoad, comms);
 
     return threads;
 }
