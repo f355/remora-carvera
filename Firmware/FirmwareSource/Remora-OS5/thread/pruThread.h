@@ -12,7 +12,7 @@ using namespace std;
 
 class Module;
 
-class pruThread: public InterruptHandler
+class PRUThread: public InterruptHandler
 {
 
 	private:
@@ -24,7 +24,7 @@ class pruThread: public InterruptHandler
 
 	public:
 
-		pruThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority);
+		PRUThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority);
 
 		uint32_t frequency;
 

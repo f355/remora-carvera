@@ -3,7 +3,7 @@
 
 #include "modules/module.h"
 
-Module* createRCServo(JsonObject module, pruThread* thread, RemoraComms* comms);
+Module* createRCServo(JsonObject module, PRUThread* thread, RemoraComms* comms);
 
 class RCServo : public Module
 {

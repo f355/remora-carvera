@@ -1,6 +1,6 @@
 #include "rcservo.h"
 
-Module* createRCServo(JsonObject module, pruThread* thread, RemoraComms* comms)
+Module* createRCServo(JsonObject module, PRUThread* thread, RemoraComms* comms)
 {
     int sp = module["set_point"];
     const char* pin = module["pin"];

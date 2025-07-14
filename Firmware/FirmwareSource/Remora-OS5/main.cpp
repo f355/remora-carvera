@@ -161,7 +161,7 @@ DynamicJsonDocument deserialiseJSON(const char *json)
 }
 
 
-void loadModules(pruThread* thread, JsonArray modules, RemoraComms* comms)
+void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
 {
     // create objects from json data
     for (JsonArray::iterator it = modules.begin(); it != modules.end(); ++it)
@@ -229,11 +229,11 @@ void loadModules(pruThread* thread, JsonArray modules, RemoraComms* comms)
     }
 }
 
-vector<pruThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
+vector<PRUThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
 {
     printf("\ncreating threads\n");
 
-    vector<pruThread*> threads;
+    vector<PRUThread*> threads;
     JsonObject threadDefs = doc["threads"];
 
     for (JsonObject::iterator it = threadDefs.begin(); it != threadDefs.end(); ++it)
@@ -247,7 +247,7 @@ vector<pruThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
         uint32_t priority = threadDef["priority"];
         uint32_t timerNum = threadDef["timer_number"];
 
-        pruThread* thread = new pruThread(timerNum, frequency, priority);
+        PRUThread* thread = new PRUThread(timerNum, frequency, priority);
 
         loadModules(thread, threadDef["modules"], comms);
 
@@ -262,7 +262,7 @@ vector<pruThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
 
 int main()
 {
-    vector<pruThread*> threads;
+    vector<PRUThread*> threads;
 
     enum State currentState;
     enum State prevState;
@@ -322,7 +322,7 @@ int main()
             if (!threadsRunning)
             {
                 // Start the threads
-                for (std::vector<pruThread*>::const_iterator it = threads.begin(); it != threads.end(); ++it)
+                for (std::vector<PRUThread*>::const_iterator it = threads.begin(); it != threads.end(); ++it)
                 {
                     (*it)->startThread();
                 }

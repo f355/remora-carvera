@@ -4,7 +4,7 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-Module* createBlink(JsonObject module, pruThread* thread)
+Module* createBlink(JsonObject module, PRUThread* thread)
 {
     const char* pin = module["pin"];
     int frequency = module["frequency"];

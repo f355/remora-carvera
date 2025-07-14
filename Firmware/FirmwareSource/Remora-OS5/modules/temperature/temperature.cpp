@@ -5,7 +5,7 @@
                 MODULE CONFIGURATION AND CREATION FROM JSON     
 ************************************************************************/
 
-Module* createTemperature(JsonObject module, pruThread* thread, RemoraComms* comms)
+Module* createTemperature(JsonObject module, PRUThread* thread, RemoraComms* comms)
 {
     int pv = module["process_variable"];
     const char* pinSensor = module["pin"];

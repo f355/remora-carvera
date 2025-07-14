@@ -5,7 +5,7 @@
 #include "sensors/tempSensor.h"
 #include "sensors/thermistor/thermistor.h"
 
-Module* createTemperature(JsonObject module, pruThread* thread, RemoraComms* comms);
+Module* createTemperature(JsonObject module, PRUThread* thread, RemoraComms* comms);
 
 class Temperature : public Module
 {

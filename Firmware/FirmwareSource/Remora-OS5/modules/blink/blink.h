@@ -3,7 +3,7 @@
 
 #include "modules/module.h"
 
-Module* createBlink(JsonObject module, pruThread* thread);
+Module* createBlink(JsonObject module, PRUThread* thread);
 
 class Blink : public Module
 {
