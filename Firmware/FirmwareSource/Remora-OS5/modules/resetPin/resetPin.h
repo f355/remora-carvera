@@ -10,7 +10,6 @@ class ResetPin : public Module
     private:
 
         volatile bool *ptrReset; // pointer to the data source
-        std::string portAndPin;
 
         Pin *pin;
 
@@ -18,7 +17,6 @@ class ResetPin : public Module
 
         ResetPin(volatile bool&, std::string);
         virtual void update(void);
-        virtual void slowUpdate(void);
 };
 
 #endif

@@ -10,54 +10,88 @@
 
 #include "LPC17xx.h"
 
-#define INPUT 0x0
-#define OUTPUT 0x1
+#define PIN_MODE_INPUT 0
+#define PIN_MODE_OUTPUT 1
 
-#define NONE        0b000
-#define OPENDRAIN   0b001
-#define PULLUP      0b010
-#define PULLDOWN    0b011
-#define PULLNONE    0b100
-
-class Pin
-{
-    private:
-
-        std::string         portAndPin;
-        uint8_t             dir;
-        uint8_t             modifier;
-        uint8_t             portNumber;
-        uint8_t             pin;
-        LPC_GPIO_TypeDef*   port;
-
+class Pin {
     public:
+        Pin();
+        Pin(std::string portAndPin);
 
-        Pin(std::string, int);
-        Pin(std::string, int, int);
+        Pin* from_string(std::string value);
 
-        PwmOut* hardware_pwm();
+        inline bool connected(){
+            return this->valid;
+        }
 
-        void configPin();
-        void setAsOutput();
-        void setAsInput();
-        void as_open_drain();
-        void pull_none();
-        void pull_up();
-        void pull_down();
-        PinName pinToPinName();
+        inline bool equals(const Pin& other) const {
+            return (this->pin == other.pin) && (this->port == other.port);
+        }
 
-        inline bool get()
-        {
-            return ((this->port->FIOPIN >> this->pin ) & 1);
+        inline Pin* as_output(){
+            if (this->valid)
+                this->port->FIODIR |= 1<<this->pin;
+            return this;
+        }
+
+        inline Pin* as_input(){
+            if (this->valid)
+                this->port->FIODIR &= ~(1<<this->pin);
+            return this;
+        }
+
+        inline Pin* set_mode(int mode) {
+            if (mode == PIN_MODE_INPUT) {
+                this->as_input();
+            } else if (mode == PIN_MODE_OUTPUT) {
+                this->as_output();
+            } else {
+                error("unknown pin mode %d\n", mode);
+            }
+            return this;
+        }
+
+        Pin* as_open_drain(void);
+
+        Pin* as_repeater(void);
+
+        Pin* pull_up(void);
+
+        Pin* pull_down(void);
+
+        Pin* pull_none(void);
+
+        inline bool get() const{
+            if (!this->valid) return false;
+            return this->inverting ^ (( this->port->FIOPIN >> this->pin ) & 1);
         }
 
         inline void set(bool value)
         {
-            if (value)
+            if (!this->valid) return;
+            if ( this->inverting ^ value )
                 this->port->FIOSET = 1 << this->pin;
             else
                 this->port->FIOCLR = 1 << this->pin;
         }
+
+        mbed::PwmOut *hardware_pwm();
+
+        mbed::InterruptIn *interrupt_pin();
+
+        PinName to_pin_name();
+
+        // these should be private, and use getters
+        LPC_GPIO_TypeDef* port;
+
+        unsigned char pin;
+        char port_number;
+
+    private:
+        struct {
+            bool inverting:1;
+            bool valid:1;
+        };
 };
 
 #endif

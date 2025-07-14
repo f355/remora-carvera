@@ -10,7 +10,6 @@ class RCServo : public Module
 
     private:
 
-        std::string pin; // physical pin connection
         int threadFreq; // thread frequency
         int T_ms; // servo pulse period
         int T_compare; // thread period counts compare for 20ms (50hz) pulses

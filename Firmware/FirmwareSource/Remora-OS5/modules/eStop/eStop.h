@@ -10,8 +10,6 @@ class eStop : public Module
     private:
 
         volatile int32_t *ptrTxHeader;
-        std::string portAndPin;
-
         Pin *pin;
 
     public:
@@ -19,7 +17,6 @@ class eStop : public Module
         eStop(volatile int32_t&, std::string);
 
         virtual void update(void);
-        virtual void slowUpdate(void);
 };
 
 #endif

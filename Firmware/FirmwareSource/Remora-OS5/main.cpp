@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // drivers
 #include "RemoraComms.h"
 #include "pin.h"
-#include "softPwm.h"
 
 // threads
 #include "pruThread.h"
@@ -44,7 +43,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "blink.h"
 #include "digitalPin.h"
 #include "eStop.h"
-#include "hardwarePwm.h"
 #include "motorPower.h"
 #include "pulseCounter.h"
 #include "pwm.h"
@@ -52,7 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "resetPin.h"
 #include "stepgen.h"
 #include "switch.h"
-#include "temperature.h"
+#include "thermistor.h"
 
 #include <map>
 
@@ -205,9 +203,9 @@ void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
         {
             module = createPWM(moduleDef, comms);
         }
-        else if (!strcmp(type, "temperature"))
+        else if (!strcmp(type, "thermistor"))
         { 
-            module = createTemperature(moduleDef, thread, comms);
+            module = createThermistor(moduleDef, thread, comms);
         }
         else if (!strcmp(type, "switch"))
         {

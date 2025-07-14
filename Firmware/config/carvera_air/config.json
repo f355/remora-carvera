@@ -14,11 +14,11 @@
                     "direction_pin": "1.29"
                 },
                 {
-                    "comment": "Y - Joint 1 step generator (inverted)",
+                    "comment": "Y - Joint 1 step generator",
                     "type": "stepgen",
                     "joint": 1,
                     "step_pin": "1.26",
-                    "direction_pin": "1.27"
+                    "direction_pin": "1.27!"
                 },
                 {
                     "comment": "Z - Joint 2 step generator",
@@ -28,11 +28,11 @@
                     "direction_pin": "1.25"
                 },
                 {
-                    "comment": "A - Joint 3 step generator (inverted)",
+                    "comment": "A - Joint 3 step generator",
                     "type": "stepgen",
                     "joint": 3,
                     "step_pin": "1.21",
-                    "direction_pin": "1.23"
+                    "direction_pin": "1.23!"
                 }
             ]
         },
@@ -108,8 +108,7 @@
                     "type": "digital_pin",
                     "mode": "out",
                     "data_bit": 2,
-                    "pin": "1.14",
-                    "modifier": "pull_down"
+                    "pin": "1.14v"
                 },
                 {
                     "comment": "EXT out",
@@ -139,112 +138,97 @@
                     "mode": "in",
                     "data_bit": 0,
                     "type": "digital_pin",
-                    "pin": "0.19",
-                    "modifier": "pull_up"
+                    "pin": "0.19^"
                 },
                 {
                     "comment": "X axis stall alarm",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 1,
-                    "pin": "0.1",
-                    "modifier": "pull_up"
+                    "pin": "0.1^"
                 },
                 {
                     "comment": "Y axis stall alarm",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 2,
-                    "pin": "0.0",
-                    "modifier": "pull_up"
+                    "pin": "0.0^"
                 },
                 {
                     "comment": "Z axis stall alarm",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 3,
-                    "pin": "3.25",
-                    "modifier": "pull_up"
+                    "pin": "3.25^"
                 },
                 {
                     "comment": "Lid sensor",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 4,
-                    "pin": "1.8",
-                    "modifier": "pull_up",
-                    "invert": true
+                    "pin": "1.8!^"
                 },
                 {
                     "comment": "Main button",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 5,
-                    "pin": "2.13",
-                    "modifier": "pull_up",
-                    "invert": true
+                    "pin": "2.13!^"
                 },
                 {
                     "comment": "EXT in",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 6,
-                    "pin": "2.2",
-                    "modifier": "pull_down"
+                    "pin": "2.2v"
                 },
                 {
                     "comment": "X endstop",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 7,
-                    "pin": "0.24",
-                    "modifier": "pull_up"
+                    "pin": "0.24^"
                 },
                 {
                     "comment": "Y endstop",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 8,
-                    "pin": "0.25",
-                    "modifier": "pull_up"
+                    "pin": "0.25^"
                 },
                 {
                     "comment": "Z endstop",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 9,
-                    "pin": "1.1",
-                    "modifier": "pull_up"
+                    "pin": "1.1^"
                 },
                 {
                     "comment": "A endstop",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 10,
-                    "pin": "1.9",
-                    "modifier": "pull_up"
+                    "pin": "1.9^"
                 },
                 {
                     "comment": "Probe",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 11,
-                    "pin": "2.6",
-                    "modifier": "pull_down"
+                    "pin": "2.6v"
                 },
                 {
                     "comment": "Probe calibrate",
                     "type": "digital_pin",
                     "mode": "in",
                     "data_bit": 12,
-                    "pin": "0.5",
-                    "modifier": "pull_up"
+                    "pin": "0.5^"
                 },
 
 
                 {
                     "comment": "Spindle temperature",
-                    "type": "temperature",
+                    "type": "thermistor",
                     "process_variable": 1,
                     "pin": "1.31",
                     "beta": 3950,
@@ -253,7 +237,7 @@
                 },
                 {
                     "comment": "Power supply temperature",
-                    "type": "temperature",
+                    "type": "thermistor",
                     "process_variable": 2,
                     "pin": "0.26",
                     "beta": 3950,

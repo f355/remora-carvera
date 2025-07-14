@@ -1,5 +1,5 @@
 #include "mbed.h"
-
+#include "port_api.h"
 #include "pin.h"
 #include <cstdio>
 #include <cerrno>
@@ -7,211 +7,197 @@
 
 #include "LPC17xx.h"
 
-Pin::Pin(std::string portAndPin, int dir) :
-    portAndPin(portAndPin),
-    dir(dir)
+// taken from Smoothieware https://smoothieware.org/
+
+Pin::Pin()
 {
-    this->configPin();
+    this->inverting = false;
+    this->valid = false;
+    this->pin = 32;
+    this->port = nullptr;
 }
 
-Pin::Pin(std::string portAndPin, int dir, int modifier) :
-    portAndPin(portAndPin),
-    dir(dir),
-    modifier(modifier)
+Pin::Pin(std::string portAndPin): Pin()
 {
-    this->configPin();
+    this->from_string(portAndPin);
+}
 
-    if (this->dir == 0) //input
-    {
-        switch(this->modifier)
-        {
-            case OPENDRAIN:
-                printf("  Setting pin as open drain\n");
-                this->as_open_drain();
-                break;
-            case PULLUP:
-                printf("  Setting pin as pull_up\n");
-                this->pull_up();
-                break;
-            case PULLDOWN:
-                printf("  Setting pin as pull_down\n");
-                this->pull_down();
-                break;
-            case PULLNONE:
-                printf("  Setting pin as pull_none\n");
-                this->pull_none();
-                break;
-        }
+// Make a new pin object from a string
+Pin* Pin::from_string(std::string value)
+{
+    if(value == "nc") {
+        this->valid= false;
+        return this; // optimize the nc case
     }
-}
 
-void Pin::configPin()
-{
-    printf("Creating Pin @\n");
-
-    LPC_GPIO_TypeDef* gpios[5] ={LPC_GPIO0,LPC_GPIO1,LPC_GPIO2,LPC_GPIO3,LPC_GPIO4};
-
-    // The method below to determine the port and pin from the string is taken from Smoothieware, thanks!
+    LPC_GPIO_TypeDef* gpios[5] = { LPC_GPIO0, LPC_GPIO1, LPC_GPIO2, LPC_GPIO3, LPC_GPIO4 };
 
     // cs is the current position in the string
-    const char* cs = this->portAndPin.c_str();
-
+    const char* cs = value.c_str();
     // cn is the position of the next char after the number we just read
     char* cn = NULL;
+    valid = true;
 
     // grab first integer as port. pointer to first non-digit goes in cn
-    this->portNumber = std::strtol(cs, &cn, 10);
-
-    printf("  portNumber = %d\n", this->portNumber);
-
+    this->port_number = strtol(cs, &cn, 10);
     // if cn > cs then strtol read at least one digit
-    if ((cn > cs) && (this->portNumber <= 4))
-    {
+    if ((cn > cs) && (port_number <= 4)){
         // translate port index into something useful
-        this->port = gpios[this->portNumber];
-
+        this->port = gpios[(unsigned int) this->port_number];
         // if the char after the first integer is a . then we should expect a pin index next
-        if (*cn == '.')
-        {
+        if (*cn == '.'){
             // move pointer to first digit (hopefully) of pin index
             cs = ++cn;
 
             // grab pin index.
             this->pin = strtol(cs, &cn, 10);
 
-            printf("  pin = %d\n", this->pin);
-
             // if strtol read some numbers, cn will point to the first non-digit
-            if ((cn > cs) && (this->pin < 32) && (this->dir >= 0))
-            {
-                // configure pin direction: FIODIR
-                if (dir == INPUT)
-                {
-                    this->port->FIODIR &= ~(1<<this->pin);
-                }
-                else
-                {
-                    this->port->FIODIR |= 1<<this->pin;
-                }
-
-                // configure
+            if ((cn > cs) && (pin < 32)){
                 this->port->FIOMASK &= ~(1 << this->pin);
+
+                // now check for modifiers:-
+                // ! = invert pin
+                // o = set pin to open drain
+                // ^ = set pin to pull up
+                // v = set pin to pull down
+                // - = set pin to no pull up or down
+                for (; *cn; cn++) {
+                    switch(*cn) {
+                        case '!':
+                            this->inverting = true;
+                            break;
+                        case 'o':
+                            this->as_open_drain();
+                            break;
+                        case '^':
+                            this->pull_up();
+                            break;
+                        case 'v':
+                            this->pull_down();
+                            break;
+                        case '-':
+                            this->pull_none();
+                            break;
+                        default:
+                            // skip any whitespace following the pin index
+                            if ((*cn == ' ') || (*cn == '\t'))
+                                return this;
+                    }
+                }
+                return this;
             }
         }
     }
-}
 
-void Pin::setAsOutput()
-{
-    this->port->FIODIR |= 1<<this->pin;
-}
-
-
-void Pin::setAsInput()
-{
-    this->port->FIODIR &= ~(1<<this->pin);
+    // from_string failed. TODO: some sort of error
+    valid= false;
+    port_number = 0;
+    port = gpios[0];
+    pin = 32;
+    inverting = false;
+    return this;
 }
 
 // Configure this pin as OD
-void Pin::as_open_drain(){
-    if( this->portNumber == 0 ){ LPC_PINCON->PINMODE_OD0 |= (1<<this->pin); }
-    if( this->portNumber == 1 ){ LPC_PINCON->PINMODE_OD1 |= (1<<this->pin); }
-    if( this->portNumber == 2 ){ LPC_PINCON->PINMODE_OD2 |= (1<<this->pin); }
-    if( this->portNumber == 3 ){ LPC_PINCON->PINMODE_OD3 |= (1<<this->pin); }
-    if( this->portNumber == 4 ){ LPC_PINCON->PINMODE_OD4 |= (1<<this->pin); }
+Pin* Pin::as_open_drain(){
+    if (!this->valid) return this;
+    if( this->port_number == 0 ){ LPC_PINCON->PINMODE_OD0 |= (1<<this->pin); }
+    if( this->port_number == 1 ){ LPC_PINCON->PINMODE_OD1 |= (1<<this->pin); }
+    if( this->port_number == 2 ){ LPC_PINCON->PINMODE_OD2 |= (1<<this->pin); }
+    if( this->port_number == 3 ){ LPC_PINCON->PINMODE_OD3 |= (1<<this->pin); }
+    if( this->port_number == 4 ){ LPC_PINCON->PINMODE_OD4 |= (1<<this->pin); }
     pull_none(); // no pull up by default
+    return this;
 }
 
 // Configure this pin as no pullup or pulldown
-void Pin::pull_none()
-{
+Pin* Pin::pull_none(){
+    if (!this->valid) return this;
     // Set the two bits for this pin as 10
-    if( this->portNumber == 0 && this->pin < 16  ){ LPC_PINCON->PINMODE0 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE0 &= ~(1<<( this->pin    *2)); }
-    if( this->portNumber == 0 && this->pin >= 16 ){ LPC_PINCON->PINMODE1 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE1 &= ~(1<<((this->pin-16)*2)); }
-    if( this->portNumber == 1 && this->pin < 16  ){ LPC_PINCON->PINMODE2 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE2 &= ~(1<<( this->pin    *2)); }
-    if( this->portNumber == 1 && this->pin >= 16 ){ LPC_PINCON->PINMODE3 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE3 &= ~(1<<((this->pin-16)*2)); }
-    if( this->portNumber == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE4 &= ~(1<<( this->pin    *2)); }
-    if( this->portNumber == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE7 &= ~(1<<((this->pin-16)*2)); }
-    if( this->portNumber == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE9 &= ~(1<<((this->pin-16)*2)); }
+    if( this->port_number == 0 && this->pin < 16  ){ LPC_PINCON->PINMODE0 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE0 &= ~(1<<( this->pin    *2)); }
+    if( this->port_number == 0 && this->pin >= 16 ){ LPC_PINCON->PINMODE1 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE1 &= ~(1<<((this->pin-16)*2)); }
+    if( this->port_number == 1 && this->pin < 16  ){ LPC_PINCON->PINMODE2 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE2 &= ~(1<<( this->pin    *2)); }
+    if( this->port_number == 1 && this->pin >= 16 ){ LPC_PINCON->PINMODE3 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE3 &= ~(1<<((this->pin-16)*2)); }
+    if( this->port_number == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE4 &= ~(1<<( this->pin    *2)); }
+    if( this->port_number == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE7 &= ~(1<<((this->pin-16)*2)); }
+    if( this->port_number == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 |= (2<<( this->pin*2)); LPC_PINCON->PINMODE9 &= ~(1<<((this->pin-16)*2)); }
+    return this;
 }
 
 // Configure this pin as a pullup
-void Pin::pull_up()
-{
+Pin* Pin::pull_up(){
+    if (!this->valid) return this;
     // Set the two bits for this pin as 00
-    if( this->portNumber == 0 && this->pin < 16  ){ LPC_PINCON->PINMODE0 &= ~(3<<( this->pin    *2)); }
-    if( this->portNumber == 0 && this->pin >= 16 ){ LPC_PINCON->PINMODE1 &= ~(3<<((this->pin-16)*2)); }
-    if( this->portNumber == 1 && this->pin < 16  ){ LPC_PINCON->PINMODE2 &= ~(3<<( this->pin    *2)); }
-    if( this->portNumber == 1 && this->pin >= 16 ){ LPC_PINCON->PINMODE3 &= ~(3<<((this->pin-16)*2)); }
-    if( this->portNumber == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 &= ~(3<<( this->pin    *2)); }
-    if( this->portNumber == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 &= ~(3<<((this->pin-16)*2)); }
-    if( this->portNumber == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 &= ~(3<<((this->pin-16)*2)); }
+    if( this->port_number == 0 && this->pin < 16  ){ LPC_PINCON->PINMODE0 &= ~(3<<( this->pin    *2)); }
+    if( this->port_number == 0 && this->pin >= 16 ){ LPC_PINCON->PINMODE1 &= ~(3<<((this->pin-16)*2)); }
+    if( this->port_number == 1 && this->pin < 16  ){ LPC_PINCON->PINMODE2 &= ~(3<<( this->pin    *2)); }
+    if( this->port_number == 1 && this->pin >= 16 ){ LPC_PINCON->PINMODE3 &= ~(3<<((this->pin-16)*2)); }
+    if( this->port_number == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 &= ~(3<<( this->pin    *2)); }
+    if( this->port_number == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 &= ~(3<<((this->pin-16)*2)); }
+    if( this->port_number == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 &= ~(3<<((this->pin-16)*2)); }
+    return this;
 }
 
 // Configure this pin as a pulldown
-void Pin::pull_down()
-{
+Pin* Pin::pull_down(){
+    if (!this->valid) return this;
     // Set the two bits for this pin as 11
-    if( this->portNumber == 0 && this->pin < 16  ){ LPC_PINCON->PINMODE0 |= (3<<( this->pin    *2)); }
-    if( this->portNumber == 0 && this->pin >= 16 ){ LPC_PINCON->PINMODE1 |= (3<<((this->pin-16)*2)); }
-    if( this->portNumber == 1 && this->pin < 16  ){ LPC_PINCON->PINMODE2 |= (3<<( this->pin    *2)); }
-    if( this->portNumber == 1 && this->pin >= 16 ){ LPC_PINCON->PINMODE3 |= (3<<((this->pin-16)*2)); }
-    if( this->portNumber == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 |= (3<<( this->pin    *2)); }
-    if( this->portNumber == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 |= (3<<((this->pin-16)*2)); }
-    if( this->portNumber == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 |= (3<<((this->pin-16)*2)); }
+    if( this->port_number == 0 && this->pin < 16  ){ LPC_PINCON->PINMODE0 |= (3<<( this->pin    *2)); }
+    if( this->port_number == 0 && this->pin >= 16 ){ LPC_PINCON->PINMODE1 |= (3<<((this->pin-16)*2)); }
+    if( this->port_number == 1 && this->pin < 16  ){ LPC_PINCON->PINMODE2 |= (3<<( this->pin    *2)); }
+    if( this->port_number == 1 && this->pin >= 16 ){ LPC_PINCON->PINMODE3 |= (3<<((this->pin-16)*2)); }
+    if( this->port_number == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 |= (3<<( this->pin    *2)); }
+    if( this->port_number == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 |= (3<<((this->pin-16)*2)); }
+    if( this->port_number == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 |= (3<<((this->pin-16)*2)); }
+    return this;
 }
 
-// Convert a PortAndPin into a mBed Pin
-// allows use of standard mbed libraries, eg FastAnalogIn
-PinName Pin::pinToPinName()
+// Return mbed hardware pwm class for this pin
+mbed::PwmOut* Pin::hardware_pwm()
 {
-  if( this->port == LPC_GPIO0 && this->pin == 0 ) {
-      return p9;
-  } else if( this->port == LPC_GPIO0 && this->pin == 1 ) {
-      return p10;
-  } else if( this->port == LPC_GPIO0 && this->pin == 23 ) {
-      return p15;
-  } else if( this->port == LPC_GPIO0 && this->pin == 24 ) {
-      return p16;
-  } else if( this->port == LPC_GPIO0 && this->pin == 25 ) {
-      return p17;
-  } else if( this->port == LPC_GPIO0 && this->pin == 26 ) {
-      return p18;
-  } else if( this->port == LPC_GPIO1 && this->pin == 30 ) {
-      return p19;
-  } else if( this->port == LPC_GPIO1 && this->pin == 31 ) {
-      return p20;
-  } else {
-      //TODO: Error
-      return NC;
-  }
+    if (port_number == 1)
+    {
+        if (pin == 18) { return new mbed::PwmOut(P1_18); }
+        if (pin == 20) { return new mbed::PwmOut(P1_20); }
+        if (pin == 21) { return new mbed::PwmOut(P1_21); }
+        if (pin == 23) { return new mbed::PwmOut(P1_23); }
+        if (pin == 24) { return new mbed::PwmOut(P1_24); }
+        if (pin == 26) { return new mbed::PwmOut(P1_26); }
+    }
+    else if (port_number == 2)
+    {
+        if (pin == 0) { return new mbed::PwmOut(P2_0); }
+        if (pin == 1) { return new mbed::PwmOut(P2_1); }
+        if (pin == 2) { return new mbed::PwmOut(P2_2); }
+        if (pin == 3) { return new mbed::PwmOut(P2_3); }
+        if (pin == 4) { return new mbed::PwmOut(P2_4); }
+        if (pin == 5) { return new mbed::PwmOut(P2_5); }
+    }
+    else if (port_number == 3)
+    {
+        if (pin == 25) { return new mbed::PwmOut(P3_25); }
+        if (pin == 26) { return new mbed::PwmOut(P3_26); }
+    }
+    error("Pin is not PWM-capable!");
 }
 
-// If available on this pin, return mbed hardware pwm class for this pin
-PwmOut* Pin::hardware_pwm()
+mbed::InterruptIn* Pin::interrupt_pin()
 {
-    if (this->portNumber == 1)
-    {
-        if (this->pin == 18) { return new mbed::PwmOut(P1_18); }
-        if (this->pin == 20) { return new mbed::PwmOut(P1_20); }
-        if (this->pin == 21) { return new mbed::PwmOut(P1_21); }
-        if (this->pin == 23) { return new mbed::PwmOut(P1_23); }
-        if (this->pin == 24) { return new mbed::PwmOut(P1_24); }
-        if (this->pin == 26) { return new mbed::PwmOut(P1_26); }
+    if(!this->valid) return nullptr;
+
+    // set as input
+    as_input();
+
+    if (port_number == 0 || port_number == 2) {
+        PinName pinname = this->to_pin_name();
+        return new mbed::InterruptIn(pinname);
+
+    } else {
+        error("Pin is not interrupt-capable!");
     }
-    else if (this->portNumber == 2)
-    {
-        if (this->pin == 0) { return new mbed::PwmOut(P2_0); }
-        if (this->pin == 1) { return new mbed::PwmOut(P2_1); }
-        if (this->pin == 2) { return new mbed::PwmOut(P2_2); }
-        if (this->pin == 3) { return new mbed::PwmOut(P2_3); }
-        if (this->pin == 4) { return new mbed::PwmOut(P2_4); }
-        if (this->pin == 5) { return new mbed::PwmOut(P2_5); }
-    }
-    else if (this->portNumber == 3)
-    {
-        if (this->pin == 25) { return new mbed::PwmOut(P3_25); }
-        if (this->pin == 26) { return new mbed::PwmOut(P3_26); }
-    }
-    return nullptr;
+}
+
+PinName Pin::to_pin_name() {
+    return port_pin((PortName)port_number, pin);
 }

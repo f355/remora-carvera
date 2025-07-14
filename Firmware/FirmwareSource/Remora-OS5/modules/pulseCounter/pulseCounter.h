@@ -12,20 +12,15 @@ class PulseCounter : public Module
 {
     private:
 
-        std::string pin; // physical pin connection. must be interrupt-capable
-
         volatile float *ptrPulseCount;
-
-        int8_t  modifier;
         volatile int32_t count;
-
         void interruptHandler();
 
     public:
 
         mbed::InterruptIn *interrupt;
 
-        PulseCounter(volatile float&, std::string, int);
+        PulseCounter(volatile float&, std::string);
 
         virtual void update(void);
 };

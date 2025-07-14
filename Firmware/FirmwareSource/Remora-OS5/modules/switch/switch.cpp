@@ -24,11 +24,9 @@ Module* createSwitch(JsonObject module, RemoraComms* comms)
 Switch::Switch(float SP, volatile float &ptrPV, std::string portAndPin, bool mode) :
     SP(SP),
     ptrPV(&ptrPV),
-    portAndPin(portAndPin),
     mode(mode)
 {
-    int output = 0x1; // an output
-    this->pin = new Pin(this->portAndPin, output);
+    this->pin = (new Pin(portAndPin))->as_output();
 }
 
 void Switch::update()
@@ -49,9 +47,4 @@ void Switch::update()
         this->pin->set(pinState);
     }
 
-}
-
-void Switch::slowUpdate()
-{
-    return;
 }

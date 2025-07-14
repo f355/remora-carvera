@@ -34,9 +34,6 @@ class Module
         virtual void update();
         virtual void updatePost();
         virtual void slowUpdate();
-        virtual void configure();
-
-        static int parseModifier(const char* modName);
 };
 
 #endif

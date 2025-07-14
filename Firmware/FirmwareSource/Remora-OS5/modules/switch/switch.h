@@ -13,7 +13,6 @@ class Switch : public Module
         float PV;
         float SP;
         bool mode; // 0 switch off, 1 switch on
-        std::string portAndPin;
 
         Pin *pin;
 
@@ -23,7 +22,6 @@ class Switch : public Module
         Switch(float, volatile float&, std::string, bool);
 
         virtual void update(void);
-        virtual void slowUpdate(void);
 };
 
 #endif

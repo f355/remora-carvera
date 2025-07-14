@@ -2,7 +2,6 @@
 #define PWM_H
 
 #include "modules/module.h"
-#include "drivers/softPwm/softPwm.h"
 
 Module* createPWM(JsonObject module, RemoraComms* comms);
 
@@ -10,21 +9,26 @@ class PWM : public Module
 {
     private:
 
-        volatile float* ptrSP; // pointer to the data source
-        int SP;
-        std::string portAndPin;
-        int pwmMax;
+        int pwmMax; // maximum PWM output
+        int pwmSP; // PWM setpoint as a percentage of maxPwm
 
-        SoftPWM* pwm; // pointer to PWM object - output
+        PwmOut *pwmPin; // PWM out object
 
+        volatile float *ptrPwmPeriod; // pointer to the data source
+        volatile float *ptrPwmPulseWidth; // pointer to the data source
+
+        int pwmPeriod; // Period (us)
+        float pwmPulseWidth; // Pulse width (%)
+        int pwmPulseWidth_us; // Pulse width (us)
+
+        bool variablePeriod;
 
     public:
 
-        PWM(volatile float&, std::string);
-        PWM(volatile float&, std::string, int);
+        PWM(volatile float&, int, std::string);
+        PWM(volatile float&, volatile float&, int, std::string);
 
         virtual void update(void);
-        virtual void slowUpdate(void);
 };
 
 #endif

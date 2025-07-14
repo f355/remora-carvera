@@ -14,7 +14,7 @@ Blink::Blink(std::string portAndPin, uint32_t threadFreq, uint32_t freq)
     this->blinkCount = 0;
     this->bState = false;
 
-    this->blinkPin = new Pin(portAndPin, OUTPUT);
+    this->blinkPin = (new Pin(portAndPin))->as_output();
     this->blinkPin->set(bState);
 }
 

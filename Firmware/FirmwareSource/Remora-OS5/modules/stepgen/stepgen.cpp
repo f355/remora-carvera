@@ -5,14 +5,12 @@ Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
     int joint = module["joint"];
     const char* step = module["step_pin"];
     const char* dir = module["direction_pin"];
-    bool invert = module["invert"];
 
     return new Stepgen(
         thread->frequency,
         joint,
         step,
         dir,
-        invert,
         STEP_MASK,
         comms->ptrRxData->jointFreqCmd[joint],
         comms->ptrTxData->jointFeedback[joint],
@@ -25,27 +23,22 @@ Stepgen::Stepgen(
     int jointNumber,
     std::string step,
     std::string direction,
-    bool inv,
     int32_t stepMask,
     volatile int32_t &ptrFrequencyCommand,
     volatile int32_t &ptrFeedback,
     volatile uint8_t &ptrJointEnable
 ) :
-    jointNumber(jointNumber),
-    step(step),
-    direction(direction),
-    inv(inv),
     stepMask(stepMask),
     ptrFrequencyCommand(&ptrFrequencyCommand),
     ptrFeedback(&ptrFeedback),
     ptrJointEnable(&ptrJointEnable)
 {
-    this->stepPin = new Pin(this->step, OUTPUT);
-    this->directionPin = new Pin(this->direction, OUTPUT);
+    this->stepPin = (new Pin(step))->as_output();
+    this->directionPin = (new Pin(direction))->as_output();
     this->DDSaccumulator = 0;
     this->rawCount = 0;
     this->frequencyScale = (float)this->stepMask / (float)threadFreq;
-    this->enableMask = 1 << this->jointNumber;
+    this->enableMask = 1 << jointNumber;
     this->lastDir = true;
 
     this-> hasPost = true;
@@ -84,8 +77,8 @@ void Stepgen::update()
         // Direction has changed, flip dir pin and do not step this iteration to give some setup time.
         // TODO: make hold time configurable.
         this->lastDir = isForward;
-        // Set direction pin, possibly inverted
-        this->directionPin->set(isForward != this->inv);
+        // Set direction pin
+        this->directionPin->set(isForward);
         return;
     }
 

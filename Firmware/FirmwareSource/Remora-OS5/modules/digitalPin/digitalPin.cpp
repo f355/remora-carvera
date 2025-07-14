@@ -3,53 +3,42 @@
 Module* createDigitalPin(JsonObject module, RemoraComms* comms)
 {
     const char* pin = module["pin"];
-    const char* mode = module["mode"];
-    bool invert = module["invert"];
-    const char* modifier = module["modifier"];
+    const char* modeStr = module["mode"];
     int dataBit = module["data_bit"];
 
-    int mod = Module::parseModifier(modifier);
-
-    if (!strcmp(mode,"out"))
+    int mode;
+    if (!strcmp(modeStr, "out"))
     {
-        return new DigitalPin(comms->ptrRxData->outputs, 1, pin, dataBit, invert, mod);
+        mode = PIN_MODE_INPUT;
     }
-    else if (!strcmp(mode,"in"))
+    else if (!strcmp(modeStr, "in"))
     {
-        return new DigitalPin(comms->ptrTxData->inputs, 0, pin, dataBit, invert, mod);
+        mode = PIN_MODE_OUTPUT;
     }
     else
     {
         error("Error - unknown Digital Pin mode [%s]\n", mode);
     }
+
+    return new DigitalPin(comms->ptrRxData->outputs, mode, pin, dataBit);
 }
 
-DigitalPin::DigitalPin(volatile uint16_t &ptrData, int mode, std::string portAndPin, int bitNumber, bool invert, int modifier) :
+DigitalPin::DigitalPin(volatile uint16_t &ptrData, int mode, std::string portAndPin, int bitNumber) :
     ptrData(&ptrData),
-    mode(mode),
-    portAndPin(portAndPin),
-    bitNumber(bitNumber),
-    invert(invert),
-    modifier(modifier)
+    mode(mode)
 {
-    this->pin = new Pin(this->portAndPin, this->mode, this->modifier); // Input 0x0, Output 0x1
-    this->mask = 1 << this->bitNumber;
+    this->pin = (new Pin(portAndPin))->set_mode(mode);
+    this->mask = 1 << bitNumber;
 }
 
 
 void DigitalPin::update()
 {
-    bool pinState;
-
-    if (this->mode == 0) // the pin is configured as an input
+    if (this->mode == PIN_MODE_INPUT) // the pin is configured as an input
     {
-        pinState = this->pin->get();
-        if(this->invert)
-        {
-            pinState = !pinState;
-        }
+        bool pinState = this->pin->get();
 
-        if (pinState == 1) // input is high
+        if (pinState) // input is high
         {
             *(this->ptrData) |= this->mask;
         }
@@ -60,16 +49,7 @@ void DigitalPin::update()
     }
     else // the pin is configured as an output
     {
-        pinState = *(this->ptrData) & this->mask;
-        if(this->invert)
-        {
-            pinState = !pinState;
-        }
-        this->pin->set(pinState);
+        this->pin->set(*(this->ptrData) & this->mask);
     }
 }
 
-void DigitalPin::slowUpdate()
-{
-    return;
-}

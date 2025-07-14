@@ -13,10 +13,9 @@ Module* createRCServo(JsonObject module, PRUThread* thread, RemoraComms* comms)
 RCServo::RCServo(volatile float &ptrPositionCmd, std::string pin, int32_t threadFreq, int32_t slowUpdateFreq) :
     Module(threadFreq, slowUpdateFreq),
     ptrPositionCmd(&ptrPositionCmd),
-    pin(pin),
     threadFreq(threadFreq)
 {
-    this->servoPin = new Pin(this->pin, OUTPUT);
+    this->servoPin = (new Pin(pin))->as_output();
 
     this->T_ms = 20; 	// 50hz
     this->T_compare = this->T_ms * this->threadFreq / 1000;
