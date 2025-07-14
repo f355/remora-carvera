@@ -28,7 +28,7 @@ void RemoraComms::init()
         ->transferType  ( MODDMA::m2p )
         ->srcConn       ( 0 )
         ->dstConn       ( MODDMA::SSP1_Tx )
-        ->attach_tc     ( this, &RemoraComms::tc0_callback )
+        ->attach_tc     ( this, &RemoraComms::tx1_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
     ;
 
@@ -40,7 +40,7 @@ void RemoraComms::init()
         ->transferType  ( MODDMA::m2p )
         ->srcConn       ( 0 )
         ->dstConn       ( MODDMA::SSP1_Tx )
-        ->attach_tc     ( this, &RemoraComms::tc1_callback )
+        ->attach_tc     ( this, &RemoraComms::tx2_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
     ;
 
@@ -52,7 +52,7 @@ void RemoraComms::init()
         ->transferType  ( MODDMA::p2m )
         ->srcConn       ( MODDMA::SSP1_Rx )
         ->dstConn       ( 0 )
-        ->attach_tc     ( this, &RemoraComms::tc2_callback )
+        ->attach_tc     ( this, &RemoraComms::rx1_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
     ;
 
@@ -64,7 +64,7 @@ void RemoraComms::init()
         ->transferType  ( MODDMA::p2m )
         ->srcConn       ( MODDMA::SSP1_Rx )
         ->dstConn       ( 0 )
-        ->attach_tc     ( this, &RemoraComms::tc3_callback )
+        ->attach_tc     ( this, &RemoraComms::rx2_callback )
         ->attach_err    ( this, &RemoraComms::err_callback )
     ;
 
@@ -102,7 +102,7 @@ void RemoraComms::start()
 }
 
 
-void RemoraComms::tc0_callback()
+void RemoraComms::tx1_callback()
 {
     // SPI Tx
     MODDMA_Config *config = dma.getConfig();
@@ -115,7 +115,7 @@ void RemoraComms::tc0_callback()
     dma.Prepare( spiDMAtx2 );
 }
 
-void RemoraComms::tc1_callback()
+void RemoraComms::tx2_callback()
 {
     // SPI Tx
     MODDMA_Config *config = dma.getConfig();
@@ -128,7 +128,7 @@ void RemoraComms::tc1_callback()
     dma.Prepare( spiDMAtx1 );
 }
 
-void RemoraComms::tc2_callback()
+void RemoraComms::rx1_callback()
 {
     // SPI Rx
     MODDMA_Config *config = dma.getConfig();
@@ -169,7 +169,7 @@ void RemoraComms::tc2_callback()
     dma.Prepare( spiDMArx2 );
 }
 
-void RemoraComms::tc3_callback()
+void RemoraComms::rx2_callback()
 {
     // SPI Rx
     MODDMA_Config *config = dma.getConfig();

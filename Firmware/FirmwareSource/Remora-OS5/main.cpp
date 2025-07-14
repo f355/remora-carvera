@@ -85,7 +85,7 @@ string readJsonConfig()
     // Try to mount the filesystem
     printf("Mounting the filesystem... ");
     fflush(stdout);
- 
+
     SDBlockDevice blockDevice(
         MBED_CONF_SD_SPI_MOSI,
         MBED_CONF_SD_SPI_MISO,
@@ -94,7 +94,7 @@ string readJsonConfig()
     );
     FATFileSystem fileSystem("fs");
     int err = fileSystem.mount(&blockDevice);
-    
+
     printf("%s\n", (err ? "Fail :(" : "OK"));
     if (err) {
         error("No filesystem found... ");
@@ -304,6 +304,8 @@ int main()
 
             string strJson = readJsonConfig();
             DynamicJsonDocument doc = deserialiseJSON(strJson.c_str());
+
+            createTimers();
 
             threads = createThreads(doc, comms);
 

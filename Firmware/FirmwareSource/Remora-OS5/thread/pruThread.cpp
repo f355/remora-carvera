@@ -8,7 +8,6 @@ using namespace std;
 PRUThread::PRUThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority) :
     frequency(frequency)
 {
-    printf("Creating thread %d\n", this->frequency);
     this->timer = lpcTimers[timerNumber];
     this->timer->configure(this, this->frequency, priority);
 }

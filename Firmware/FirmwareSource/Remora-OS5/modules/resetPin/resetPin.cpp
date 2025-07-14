@@ -10,7 +10,7 @@ Module* createResetPin(JsonObject module, RemoraComms* comms)
 ResetPin::ResetPin(volatile bool &ptrReset, std::string portAndPin) :
     ptrReset(&ptrReset)
 {
-    this->pin = (new Pin(portAndPin))->as_input(); // Input 0x0, Output 0x1
+    this->pin = (new Pin(portAndPin))->as_input();
 }
 
 

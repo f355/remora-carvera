@@ -40,7 +40,7 @@ void LPCTimer::handleInterrupt() {
 
 void LPCTimer::stop() {
     NVIC_DisableIRQ(this->irq);
-    this->timer->TCR  = (0<<SBIT_CNTEN);
+    this->timer->TCR = (0<<SBIT_CNTEN);
 }
 
 // need these to pass to NVIC_SetVector

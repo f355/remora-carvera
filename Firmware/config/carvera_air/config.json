@@ -2,7 +2,7 @@
     "board": "Carvera Air CA1",
     "threads": {
         "base": {
-            "timer": 1,
+            "timer_number": 1,
             "frequency": 40000,
             "priority": 2,
             "modules": [
@@ -37,7 +37,7 @@
             ]
         },
         "servo": {
-            "timer": 2,
+            "timer_number": 2,
             "frequency": 1000,
             "priority": 3,
             "modules": [
@@ -65,7 +65,8 @@
                 {
                     "comment": "Spindle feedback",
                     "type": "pulse_counter",
-                    "process_variable": 0
+                    "process_variable": 0,
+                    "pin": "2.7"
                 },
 
                 {
