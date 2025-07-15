@@ -3,7 +3,7 @@
     "threads": {
         "base": {
             "timer_number": 1,
-            "frequency": 100000,
+            "frequency": 60000,
             "priority": 2,
             "modules": [
                 {
