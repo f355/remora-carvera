@@ -3,7 +3,7 @@
     "threads": {
         "base": {
             "timer_number": 1,
-            "frequency": 40000,
+            "frequency": 100000,
             "priority": 2,
             "modules": [
                 {
@@ -128,7 +128,7 @@
                     "mode": "out",
                     "data_bit": 6,
                     "type": "digital_pin",
-                    "pin": "1.30"
+                    "pin": "1.30!"
                 },
 
 

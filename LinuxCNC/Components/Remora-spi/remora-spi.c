@@ -226,8 +226,7 @@ int rtapi_app_main(void)
     data = hal_malloc(sizeof(data_t));
     if (data == 0)
     {
-        rtapi_print_msg(RTAPI_MSG_ERR,
-                        "%s: ERROR: hal_malloc() failed\n", modname);
+        rtapi_print_msg(RTAPI_MSG, "%s: ERROR: hal_malloc() failed\n", modname);
         hal_exit(comp_id);
         return -1;
     }
@@ -489,18 +488,18 @@ int rt_peripheral_init(void)
 
         if (base_address == BCM2835_RPI2_PERI_BASE)
         {
-            // rtapi_print_msg(RTAPI_MSG_ERR, "Raspberry Pi 3, using BCM2835 driver\n\n");
+            rtapi_print_msg(RTAPI_MSG_INFO, "Raspberry Pi 3, using BCM2835 driver\n\n");
             bcm = true;
         }
         else if (base_address == BCM2835_RPI4_PERI_BASE)
         {
-            // rtapi_print_msg(RTAPI_MSG_ERR, "Raspberry Pi 4, using BCM2835 driver\n\n");
+            rtapi_print_msg(RTAPI_MSG_INFO, "Raspberry Pi 4, using BCM2835 driver\n\n");
             bcm = true;
         }
         else if (peri_size == RPI5_RP1_PERI_BASE)
         {
             // on the RPi 5, the base address is in the location of the peripheral size
-            // rtapi_print_msg(RTAPI_MSG_ERR, "Raspberry Pi 5, using RP1 driver\n\n");
+            rtapi_print_msg(RTAPI_MSG_INFO, "Raspberry Pi 5, using RP1 driver\n\n");
             rp1 = true;
         }
         else
@@ -1030,7 +1029,6 @@ void spi_read()
 
                     *(data->count[i]) = count[i];
                     *(data->pos_fb[i]) = (float)(count[i]) / data->pos_scale[i];
-					rtapi_print("joint:[%d] OldCount:[%d] Count:[%d] pos_fb:[%f] \n", i, old_count[i], count[i], data->pos_fb[i]);
                 }
 
                 // PV Feedback

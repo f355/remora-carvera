@@ -40,13 +40,17 @@ Stepgen::Stepgen(
     this->frequencyScale = (float)this->stepMask / (float)threadFreq;
     this->enableMask = 1 << jointNumber;
     this->lastDir = true;
-
-    this-> hasPost = true;
 }
 
 
 void Stepgen::update()
 {
+    if (this->isStepping) {
+        // bring down the step pin that was set high on the previous thread tick
+        this->stepPin->set(false);
+        this->isStepping = false;
+    }
+
     if ((*(this->ptrJointEnable) & this->enableMask) == 0)
     {
         return; // joint is disabled, nothing to do
@@ -57,8 +61,10 @@ void Stepgen::update()
     // goes over a certain bit at the commanded frequency.
     //
     // frequencyScale is set to the increment that needs to be added to the accumulator on each thread tick
-    // for the accumulator to reach stepMask in one second.
-    // by multiplying it with the commanded frequency, we get the increment that's needed to reach stepMask at that frequency.
+    // for the accumulator to reach that bit in one second at the thread tick frequency.
+    //
+    // by multiplying frequencyScale with the commanded frequency, we get the increment
+    // that's needed to reach stepMask at that frequency.
     int32_t increment = (*(this->ptrFrequencyCommand)) * this->frequencyScale;
 
     // save the old accumulator value and increment the accumulator
@@ -86,6 +92,7 @@ void Stepgen::update()
     {
         // make a step
         this->stepPin->set(true);
+        this->isStepping = true;
         if (isForward)
         {
             this->rawCount++;
@@ -96,10 +103,4 @@ void Stepgen::update()
         }
         *(this->ptrFeedback) = this->rawCount;
     }
-}
-
-void Stepgen::updatePost()
-{
-    // TODO: the step pin is reset at the end of the same thread tick in updatePost - is that always enough time?
-    this->stepPin->set(false);
 }

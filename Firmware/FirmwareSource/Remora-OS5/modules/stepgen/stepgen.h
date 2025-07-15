@@ -11,14 +11,15 @@ class Stepgen : public Module
 
         int enableMask;
 
-        bool lastDir; // direction on last iteration, used for dir setup
-
         volatile int32_t *ptrFrequencyCommand; // pointer to the data source where to get the frequency command
-        int32_t rawCount; // current position raw count - not currently used - mirrors original stepgen.c
         volatile int32_t *ptrFeedback; // pointer where to put the feedback
         volatile uint8_t *ptrJointEnable;
+
+        bool lastDir; // direction on last iteration, used for dir setup
+        bool isStepping; // true if the step pin is held high
+        int32_t rawCount; // current position raw count
         int32_t DDSaccumulator; // Direct Digital Synthesis (DDS) accumulator
-        float   frequencyScale;	// frequency scale
+        float frequencyScale; // frequency scale
         int32_t stepMask; // value of the DDS accumulator that triggers a step pulse
 
     public:
@@ -28,7 +29,6 @@ class Stepgen : public Module
         Pin *stepPin, *directionPin;
 
         virtual void update(void);
-        virtual void updatePost(void);
 };
 
 
