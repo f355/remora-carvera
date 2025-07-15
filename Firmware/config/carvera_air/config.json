@@ -25,7 +25,7 @@
                     "type": "stepgen",
                     "joint": 2,
                     "step_pin": "1.24",
-                    "direction_pin": "1.25"
+                    "direction_pin": "1.25!"
                 },
                 {
                     "comment": "A - Joint 3 step generator",
