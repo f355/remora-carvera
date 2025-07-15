@@ -226,7 +226,7 @@ int rtapi_app_main(void)
     data = hal_malloc(sizeof(data_t));
     if (data == 0)
     {
-        rtapi_print_msg(RTAPI_MSG, "%s: ERROR: hal_malloc() failed\n", modname);
+        rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: hal_malloc() failed\n", modname);
         hal_exit(comp_id);
         return -1;
     }
