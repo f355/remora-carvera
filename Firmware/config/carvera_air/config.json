@@ -11,14 +11,14 @@
                     "type": "stepgen",
                     "joint": 0,
                     "step_pin": "1.28",
-                    "direction_pin": "1.29"
+                    "direction_pin": "1.29!"
                 },
                 {
                     "comment": "Y - Joint 1 step generator",
                     "type": "stepgen",
                     "joint": 1,
                     "step_pin": "1.26",
-                    "direction_pin": "1.27!"
+                    "direction_pin": "1.27"
                 },
                 {
                     "comment": "Z - Joint 2 step generator",
@@ -53,13 +53,10 @@
                 },
 
                 {
-                    "comment": "Spindle",
+                    "comment": "Spindle (PWM period is shared!)",
                     "type": "pwm",
                     "set_point": 0,
-                    "period_set_point": 1,
                     "pwm_pin": "2.5",
-                    "pwm_max": 256,
-                    "use_hardware": true,
                     "period_us": 10000
                 },
                 {
@@ -70,24 +67,18 @@
                 },
 
                 {
-                    "comment": "Power fan (PWM) - TODO",
+                    "comment": "Power fan (PWM period is shared!)",
                     "type": "pwm",
-                    "set_point": 2,
-                    "period_set_point": 3,
+                    "set_point": 1,
                     "pwm_pin": "2.3",
-                    "pwm_max": 256,
-                    "use_hardware": true,
-                    "period_us": 200
+                    "period_us": 10000
                 },
                 {
-                    "comment": "Spindle fan (PWM) - TODO",
+                    "comment": "Spindle fan (PWM period is shared!)",
                     "type": "pwm",
-                    "set_point": 4,
-                    "period_set_point": 5,
+                    "set_point": 2,
                     "pwm_pin": "2.1",
-                    "pwm_max": 256,
-                    "use_hardware": true,
-                    "period_us": 200
+                    "period_us": 10000
                 },
 
                 {
@@ -131,6 +122,13 @@
                     "data_bit": 5,
                     "type": "digital_pin",
                     "pin": "0.10"
+                },
+                {
+                    "comment": "A axis enable",
+                    "mode": "out",
+                    "data_bit": 6,
+                    "type": "digital_pin",
+                    "pin": "1.30"
                 },
 
 

@@ -1,7 +1,5 @@
 #include "pwm.h"
 
-#define PID_PWM_MAX 256	// 8 bit resolution
-
 Module* createPWM(JsonObject module, RemoraComms* comms)
 {
     int sp = module["set_point"];
@@ -36,7 +34,7 @@ PWM::PWM(volatile float &ptrPwmPulseWidth, int pwmPeriod, std::string pin) :
         this->pwmPeriod = PWMPERIOD;
     }
 
-    this->pwmPin = (new Pin(pin))->hardware_pwm();
+    this->pwmPin = (new Pin(pin))->as_output()->hardware_pwm();
     this->pwmPin->period_us(this->pwmPeriod);
 }
 
