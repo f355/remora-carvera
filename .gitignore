@@ -2,3 +2,5 @@
 .vscode
 *~
 .#*
+/BUILD
+/mbed_settings.py

@@ -11,7 +11,7 @@ so this is more of a hard-fork, the changes are not intended to be upstreamed.
 Due to historical reasons, the project is using Mbed OS 5.x which is pretty tricky to get working with any sensible build tooling -
 the Mbed CLI drops into a dependency hell on modern systems.
 
-Don't bother, just download the Mbed Studio, open `Firmware/FirmwareSource/Remora-OS5`, choose the `mbed LPC1768` target and the `Release` profile, then build.
+Don't bother, just download the Mbed Studio, open this directory, choose the `mbed LPC1768` target and the `Release` profile, then build.
 
 
 # Remora - the original README
