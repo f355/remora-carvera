@@ -13,41 +13,27 @@
 
 #pragma pack(push, 1)
 
-typedef union
+typedef struct
 {
-    // this allows structured access to the incoming SPI data without having to move it
-    struct
-    {
-        uint8_t rxBuffer[SPI_BUFF_SIZE];
-    };
-    struct
-    {
-        int32_t header;
-        volatile int32_t jointFreqCmd[JOINTS];
-        float setPoint[VARIABLES];
-        uint8_t jointEnable;
-        uint16_t outputs;
-        uint8_t spare0;
-    };
+    int32_t header;
+    volatile int32_t jointFreqCmd[JOINTS];
+    float setPoint[VARIABLES];
+    uint8_t jointEnable;
+    uint16_t outputs;
 } rxData_t;
 
-typedef union
+typedef struct
 {
-    // this allows structured access to the outgoing SPI data without having to move it
-    struct
-    {
-        uint8_t txBuffer[SPI_BUFF_SIZE];
-    };
-    struct
-    {
-        int32_t header;
-        int32_t jointFeedback[JOINTS];
-        float processVariable[VARIABLES];
-        uint16_t inputs;
-    };
+    int32_t header;
+    int32_t jointFeedback[JOINTS];
+    float processVariable[VARIABLES];
+    uint8_t padding;
+    uint16_t inputs;
 } txData_t;
 
 #pragma pack(pop)
+
+#define SPI_BUFF_SIZE sizeof(rxData_t)
 
 class RemoraComms
 {

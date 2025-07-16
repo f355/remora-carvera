@@ -91,46 +91,30 @@ static data_t *data;
 
 #pragma pack(push, 1)
 
-typedef union
+// SPI transfers are bit-by-bit, so keep the buffers the same size
+typedef struct
 {
-    // this allow structured access to the outgoing SPI data without having to move it
-    // this is the same structure as the PRU rxData structure
-    struct
-    {
-        uint8_t txBuffer[SPIBUFSIZE];
-    };
-    struct
-    {
-        int32_t header;
-        int32_t jointFreqCmd[JOINTS];
-        float setPoint[VARIABLES];
-        uint8_t jointEnable;
-        uint16_t outputs;
-        uint8_t spare0;
-    };
+    int32_t header;
+    volatile int32_t jointFreqCmd[JOINTS];
+    float setPoint[VARIABLES];
+    uint16_t outputs;
+    uint8_t jointEnable;
 } txData_t;
 
-typedef union
-{
-    // this allow structured access to the incoming SPI data without having to move it
-    // this is the same structure as the PRU txData structure
-    struct
-    {
-        uint8_t rxBuffer[SPIBUFSIZE];
-    };
-    struct
-    {
-        int32_t header;
-        int32_t jointFeedback[JOINTS];
-        float processVariable[VARIABLES];
-        uint16_t inputs;
-    };
+typedef struct {
+	    int32_t header;
+	    int32_t jointFeedback[JOINTS];
+	    float processVariable[VARIABLES];
+	    uint16_t inputs;
+		uint8_t padding;
 } rxData_t;
 
 #pragma pack(pop)
 
 static txData_t txData;
+static uint8_t* txBuffer = (uint8_t*)&txData;
 static rxData_t rxData;
+static uint8_t* rxBuffer = (uint8_t*)&rxData;
 
 /* other globals */
 static int comp_id; // component ID
@@ -1131,15 +1115,15 @@ void spi_transfer()
 
     if (bcm == true)
     {
-        // bcm2835_spi_transfernb(txData.txBuffer, rxData.rxBuffer, SPIBUFSIZE);
-        for (int i = 0; i < SPIBUFSIZE; i++)
+        // bcm2835_spi_transfernb(txBuffer, rxBuffer, sizeof(txData_t));
+        for (int i = 0; i < sizeof(txData_t); i++)
         {
-            rxData.rxBuffer[i] = bcm2835_spi_transfer(txData.txBuffer[i]);
+            rxBuffer[i] = bcm2835_spi_transfer(txBuffer[i]);
         }
     }
     else if (rp1 == true)
     {
-        rp1spi_transfer(0, txData.txBuffer, rxData.rxBuffer, SPIBUFSIZE);
+        rp1spi_transfer(0, &txData, &rxData, sizeof(txData_t));
     }
 }
 

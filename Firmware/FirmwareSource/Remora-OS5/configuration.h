@@ -17,7 +17,4 @@
 #define LOOP_TIME 0.1
 #define SPI_ERR_MAX 5
 
-// SPI configuration
-#define SPI_BUFF_SIZE 64 // Size of SPI recieve buffer - same as HAL component, 64
-
 #endif

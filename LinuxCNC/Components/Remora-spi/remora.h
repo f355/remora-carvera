@@ -7,8 +7,6 @@
 #define DIGITAL_OUTPUTS 16
 #define DIGITAL_INPUTS 32
 
-#define SPIBUFSIZE 64 //(4+4*JOINTS+4*COMMANDS+1) //(MAX_MSG*4) //20 SPI buffer size ......FIFO buffer size is 64 bytes?
-
 #define PRU_DATA 0x64617461 // "data" SPI payload
 #define PRU_READ 0x72656164 // "read" SPI payload
 #define PRU_WRITE 0x77726974 // "writ" SPI payload
