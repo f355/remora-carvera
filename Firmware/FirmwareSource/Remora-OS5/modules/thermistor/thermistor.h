@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createThermistor(JsonObject module, PRUThread* thread, RemoraComms* comms);
-
 class Thermistor : public Module
 {
     private:
@@ -23,7 +21,7 @@ class Thermistor : public Module
 
     public:
 
-        Thermistor(volatile float&, int32_t, int32_t, std::string, float, int, int);
+        Thermistor(int processVariable, Pin* pin, float beta, int r0, int t0, int32_t threadFreq, volatile txData_t* txData);
 
         virtual void slowUpdate(void);
 };

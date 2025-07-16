@@ -4,44 +4,24 @@
 #define STEP_MASK (1L<<STEPBIT)
 #define FRACTIONAL_BITS 16
 
-Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
-{
-    int joint = module["joint"];
-    const char* step = module["step_pin"];
-    const char* dir = module["direction_pin"];
-
-    return new Stepgen(
-        thread->frequency,
-        joint,
-        step,
-        dir,
-        comms->ptrRxData->jointFreqCmd[joint],
-        comms->ptrTxData->jointFeedback[joint],
-        comms->ptrRxData->jointEnable
-    );
-}
-
 Stepgen::Stepgen(
-    int32_t threadFreq,
-    int jointNumber,
-    std::string step,
-    std::string direction,
-    volatile int32_t &ptrFrequencyCommand,
-    volatile int32_t &ptrFeedback,
-    volatile uint8_t &ptrJointEnable
+    int joint,
+    Pin* stepPin,
+    Pin* dirPin,
+    int32_t threadFrequency,
+    volatile rxData_t* rxData,
+    volatile txData_t* txData
 ) :
-    ptrFrequencyCommand(&ptrFrequencyCommand),
-    ptrFeedback(&ptrFeedback),
-    ptrJointEnable(&ptrJointEnable)
-{
-    this->stepPin = (new Pin(step))->as_output();
-    this->directionPin = (new Pin(direction))->as_output();
-    this->DDSaccumulator = 0;
-    this->rawCount = 0;
-    this->frequencyScale = (((uint64_t)STEP_MASK) << FRACTIONAL_BITS) / threadFreq;
-    this->enableMask = 1 << jointNumber;
-    this->lastDir = true;
-}
+    stepPin(stepPin->as_output()),
+    directionPin(dirPin->as_output()),
+    ptrFrequencyCommand(&rxData->jointFreqCmd[joint]),
+    ptrFeedback(&txData->jointFeedback[joint]),
+    ptrJointEnable(&rxData->jointEnable),
+    DDSaccumulator(0),
+    rawCount(0),
+    frequencyScale((((uint64_t)STEP_MASK) << FRACTIONAL_BITS) / threadFrequency),
+    enableMask(1 << joint),
+    lastDir(true) {}
 
 
 void Stepgen::update()

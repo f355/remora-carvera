@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createEStop(JsonObject module, RemoraComms* comms);
-
 class eStop : public Module
 {
     private:
@@ -14,7 +12,7 @@ class eStop : public Module
 
     public:
 
-        eStop(volatile int32_t&, std::string);
+        eStop(volatile int32_t&, Pin* pin);
 
         virtual void update(void);
 };

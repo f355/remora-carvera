@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms);
-
 class Stepgen : public Module
 {
     private:
@@ -23,7 +21,7 @@ class Stepgen : public Module
 
     public:
 
-        Stepgen(int32_t, int, std::string, std::string, volatile int32_t&, volatile int32_t&, volatile uint8_t&);
+        Stepgen(int jointNumber, Pin* stepPin, Pin* dirPin, int32_t threadFrequency, volatile rxData_t* rxData, volatile txData_t* txData);
 
         Pin *stepPin, *directionPin;
 

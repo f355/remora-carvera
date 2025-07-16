@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createBlink(JsonObject module, PRUThread* thread);
-
 class Blink : public Module
 {
     private:
@@ -17,10 +15,9 @@ class Blink : public Module
 
     public:
 
-        Blink(std::string, uint32_t, uint32_t);
+        Blink(Pin* pin, uint32_t freq, uint32_t threadFreq);
 
         virtual void update(void);
-        virtual void slowUpdate(void);
 };
 
 #endif

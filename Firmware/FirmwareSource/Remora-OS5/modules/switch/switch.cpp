@@ -1,26 +1,6 @@
 #include "switch.h"
 
-Module* createSwitch(JsonObject module, RemoraComms* comms)
-{
-    const char* pin = module["pin"];
-    const char* mode = module["mode"];
-    int pv = module["process_variable"];
-    float sp = module["set_point"];
-
-    if (!strcmp(mode,"on"))
-    {
-        return new Switch(sp, comms->ptrTxData->processVariable[pv], pin, 1);
-    }
-    else if (!strcmp(mode,"off"))
-    {
-        return new Switch(sp, comms->ptrTxData->processVariable[pv], pin, 0);
-    }
-    else
-    {
-        error("Error - incorrectly defined Switch\n");
-    }
-}
-
+// TODO refactor this to be in line with the rest of the modules
 Switch::Switch(float SP, volatile float &ptrPV, std::string portAndPin, bool mode) :
     SP(SP),
     ptrPV(&ptrPV),

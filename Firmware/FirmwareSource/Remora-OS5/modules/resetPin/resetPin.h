@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createResetPin(JsonObject module, RemoraComms* comms);
-
 class ResetPin : public Module
 {
     private:
@@ -15,7 +13,7 @@ class ResetPin : public Module
 
     public:
 
-        ResetPin(volatile bool&, std::string);
+        ResetPin(volatile bool& pruReset, Pin* pin);
         virtual void update(void);
 };
 

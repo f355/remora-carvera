@@ -23,13 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <cerrno>
 #include <string>
 
-#include "FATFileSystem.h"
-#include "SDBlockDevice.h"
-
 #include "configuration.h"
-
-// libraries
-#include "ArduinoJson.h"
+#include "machine_config.h"
 
 // drivers
 #include "RemoraComms.h"
@@ -37,20 +32,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // threads
 #include "pruThread.h"
-
-// modules
-#include "module.h"
-#include "blink.h"
-#include "digitalPin.h"
-#include "eStop.h"
-#include "motorPower.h"
-#include "pulseCounter.h"
-#include "pwm.h"
-#include "rcservo.h"
-#include "resetPin.h"
-#include "stepgen.h"
-#include "switch.h"
-#include "thermistor.h"
 
 /***********************************************************************
 *                STRUCTURES AND GLOBAL VARIABLES                       *
@@ -78,186 +59,6 @@ Watchdog& watchdog = Watchdog::get_instance();
         ROUTINES
 ************************************************************************/
 
-string readJsonConfig()
-{
-    printf("1. Reading json configuration file\n");
-
-    // Try to mount the filesystem
-    printf("Mounting the filesystem... ");
-    fflush(stdout);
-
-    SDBlockDevice blockDevice(
-        MBED_CONF_SD_SPI_MOSI,
-        MBED_CONF_SD_SPI_MISO,
-        MBED_CONF_SD_SPI_CLK,
-        MBED_CONF_SD_SPI_CS
-    );
-    FATFileSystem fileSystem("fs");
-    int err = fileSystem.mount(&blockDevice);
-
-    printf("%s\n", (err ? "Fail :(" : "OK"));
-    if (err) {
-        error("No filesystem found... ");
-     }
-
-    // Open the config file
-    printf("Opening \"/fs/config.json\"... ");
-    fflush(stdout);
-    FILE *jsonFile = fopen("/fs/config.json", "r+");
-    if (!jsonFile) {
-        error("Error opening config");
-    }
-
-    fseek (jsonFile, 0, SEEK_END);
-    int32_t length = ftell (jsonFile);
-    fseek (jsonFile, 0, SEEK_SET);
-
-    printf("Json config file length = %2d\n", length);
-
-    string strJson;
-
-    strJson.reserve(length + 1);
-
-    while (!feof(jsonFile)) {
-        int c = fgetc(jsonFile);
-        strJson.push_back(c);
-    }
-
-    // Remove comments from next line to print out the JSON config file
-    //printf("%s\n", strJson.c_str());
-
-    printf("\rClosing \"/fs/config.json\"... ");
-    fflush(stdout);
-    fclose(jsonFile);
-
-    return strJson;
-}
-
-
-DynamicJsonDocument deserialiseJSON(const char *json)
-{
-    printf("\nParsing json configuration file\n");
-
-    DynamicJsonDocument doc(JSON_BUFF_SIZE);
-    DeserializationError err = deserializeJson(doc, json);
-
-    printf("Config deserialisation - ");
-
-    switch (err.code())
-    {
-        case DeserializationError::Ok:
-            printf("Deserialization succeeded\n");
-            return doc;
-        case DeserializationError::InvalidInput:
-            error("Invalid input!\n");
-            break;
-        case DeserializationError::NoMemory:
-            error("Not enough memory\n");
-            break;
-        default:
-            error("Deserialization failed\n");
-    }
-}
-
-
-void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
-{
-    // create objects from json data
-    for (JsonArray::iterator it = modules.begin(); it != modules.end(); ++it)
-    {
-        JsonObject moduleDef = *it;
-        
-        const char* type = moduleDef["type"];
-        const char* comment = moduleDef["comment"];
-
-        printf("creating %s module: [%s]\n", type, comment);
-
-        Module* module = NULL;
-
-        if (!strcmp(type, "stepgen"))
-        {
-            module = createStepgen(moduleDef, thread, comms);
-        }
-        else if (!strcmp(type, "rc_servo"))
-        {
-            module = createRCServo(moduleDef, thread, comms);
-        }
-        else if (!strcmp(type, "e_stop"))
-        {
-            module = createEStop(moduleDef, comms);
-        }
-        else if (!strcmp(type, "reset_pin"))
-        {
-            module = createResetPin(moduleDef, comms);
-        }
-        else if (!strcmp(type, "blink"))
-        {
-            module = createBlink(moduleDef, thread);
-        }
-        else if (!strcmp(type, "digital_pin"))
-        {
-            module = createDigitalPin(moduleDef, comms);
-        }
-        else if (!strcmp(type, "pulse_counter"))
-        {
-            module = createPulseCounter(moduleDef, comms);
-        }
-        else if (!strcmp(type, "pwm"))
-        {
-            module = createPWM(moduleDef, comms);
-        }
-        else if (!strcmp(type, "thermistor"))
-        { 
-            module = createThermistor(moduleDef, thread, comms);
-        }
-        else if (!strcmp(type, "switch"))
-        {
-            module = createSwitch(moduleDef, comms);
-        }
-        else if (!strcmp(type, "motor_power"))
-        {
-            createMotorPower(moduleDef);
-        }
-        else {
-            error("module [%s]: unknown type [%s]\n", comment, type);
-        }
-
-        if (module) {
-            thread->registerModule(module);
-        }
-    }
-}
-
-vector<PRUThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
-{
-    printf("\ncreating threads\n");
-
-    vector<PRUThread*> threads;
-    JsonObject threadDefs = doc["threads"];
-
-    for (JsonObject::iterator it = threadDefs.begin(); it != threadDefs.end(); ++it)
-    {
-        const char* threadName = (*it).key().c_str();
-        JsonObject threadDef = (*it).value();
-
-        printf("creating thread %s\n", threadName);
-        
-        uint32_t frequency = threadDef["frequency"];
-        uint32_t priority = threadDef["priority"];
-        uint32_t timerNum = threadDef["timer_number"];
-
-        PRUThread* thread = new PRUThread(timerNum, frequency, priority);
-
-        loadModules(thread, threadDef["modules"], comms);
-
-        threads.push_back(thread);
-    }
-
-    JsonArray runOnLoad = doc["run_on_load"];
-    loadModules(NULL, runOnLoad, comms);
-
-    return threads;
-}
 
 int main()
 {
@@ -302,12 +103,9 @@ int main()
             comms->init();
             comms->start();
 
-            string strJson = readJsonConfig();
-            DynamicJsonDocument doc = deserialiseJSON(strJson.c_str());
-
             createTimers();
 
-            threads = createThreads(doc, comms);
+            threads = configureThreads(comms);
 
             currentState = ST_START;
             break; 
@@ -323,9 +121,9 @@ int main()
             if (!threadsRunning)
             {
                 // Start the threads
-                for (std::vector<PRUThread*>::const_iterator it = threads.begin(); it != threads.end(); ++it)
+                for (auto thread: threads)
                 {
-                    (*it)->startThread();
+                    thread->start();
                 }
 
                 threadsRunning = true;

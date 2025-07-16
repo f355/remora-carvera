@@ -1,49 +1,27 @@
 #include "pwm.h"
 
-Module* createPWM(JsonObject module, RemoraComms* comms)
-{
-    int sp = module["set_point"];
-    const char* pin = module["pwm_pin"];
-
-    bool variable = module["variable_frequency"];
-    int period_sp = module["period_set_point"];
-    int period = module["period_us"];
-
-    if (variable)
-    {
-        // Variable frequency hardware PWM
-        return new PWM(comms->ptrRxData->setPoint[period_sp], comms->ptrRxData->setPoint[sp], period, pin);
-    }
-    else
-    {
-        // Fixed frequency hardware PWM
-        return new PWM(comms->ptrRxData->setPoint[sp], period, pin);
-    }
-}
-
 #define PWMPERIOD 200
 
-PWM::PWM(volatile float &ptrPwmPulseWidth, int pwmPeriod, std::string pin) :
-    ptrPwmPulseWidth(&ptrPwmPulseWidth),
-    pwmPeriod(pwmPeriod)
+PWM::PWM(int setPoint, Pin* pin, int period, volatile rxData_t* rxData) :
+    ptrPwmPulseWidth(&rxData->setPoint[setPoint]),
+    pwmPeriod(period),
+    variablePeriod(false)
 {
-    this->variablePeriod = false;
-
     if (pwmPeriod == 0)
     {
         this->pwmPeriod = PWMPERIOD;
     }
 
-    this->pwmPin = (new Pin(pin))->as_output()->hardware_pwm();
+    this->pwmPin = pin->as_output()->hardware_pwm();
     this->pwmPin->period_us(this->pwmPeriod);
 }
 
 
-PWM::PWM(volatile float &ptrPwmPeriod, volatile float &ptrPwmPulseWidth, int pwmPeriod, std::string pin) :
-    PWM(ptrPwmPulseWidth, pwmPeriod, pin)
+PWM::PWM(int setPoint, int setPointPeriod, Pin* pin, int period, volatile rxData_t* rxData) :
+    PWM(setPoint, pin, period, rxData)
 {
-    variablePeriod = true;
-    this->ptrPwmPeriod = &ptrPwmPeriod;
+    this->variablePeriod = true;
+    this->ptrPwmPeriod = &rxData->setPoint[setPointPeriod];
 }
 
 

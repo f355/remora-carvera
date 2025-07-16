@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createDigitalPin(JsonObject module, RemoraComms* comms);
-
 class DigitalPin : public Module
 {
     private:
@@ -16,8 +14,20 @@ class DigitalPin : public Module
 
     public:
 
-        DigitalPin(volatile uint16_t&, int, std::string, int);
+        DigitalPin(volatile uint16_t&, int, Pin* pin, int);
         virtual void update(void);
+};
+
+class InputPin : public DigitalPin
+{
+    public:
+        InputPin(int bitNumber, Pin* pin, volatile txData_t* txData);
+};
+
+class OutputPin : public DigitalPin
+{
+    public:
+        OutputPin(int bitNumber, Pin* pin, volatile rxData_t* rxData);
 };
 
 #endif

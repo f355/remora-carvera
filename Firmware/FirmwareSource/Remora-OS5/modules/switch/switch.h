@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createSwitch(JsonObject module, RemoraComms* comms);
-
 class Switch : public Module
 {
     private:

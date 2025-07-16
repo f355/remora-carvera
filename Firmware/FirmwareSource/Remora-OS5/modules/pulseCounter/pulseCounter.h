@@ -3,11 +3,6 @@
 
 #include "modules/module.h"
 
-#include "mbed.h"
-
-
-Module* createPulseCounter(JsonObject module, RemoraComms* comms);
-
 class PulseCounter : public Module
 {
     private:
@@ -20,7 +15,7 @@ class PulseCounter : public Module
 
         mbed::InterruptIn *interrupt;
 
-        PulseCounter(volatile float&, std::string);
+        PulseCounter(int processVariable, Pin* pin, volatile txData_t* txData);
 
         virtual void update(void);
 };

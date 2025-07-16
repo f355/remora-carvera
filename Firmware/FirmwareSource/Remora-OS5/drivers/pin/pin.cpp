@@ -22,6 +22,11 @@ Pin::Pin(std::string portAndPin): Pin()
     this->from_string(portAndPin);
 }
 
+Pin::Pin(char port_number, unsigned char pin): Pin() {
+    this->port = port;
+    this->pin = pin;
+}
+
 // Make a new pin object from a string
 Pin* Pin::from_string(std::string value)
 {
@@ -150,6 +155,11 @@ Pin* Pin::pull_down(){
     if( this->port_number == 2 && this->pin < 16  ){ LPC_PINCON->PINMODE4 |= (3<<( this->pin    *2)); }
     if( this->port_number == 3 && this->pin >= 16 ){ LPC_PINCON->PINMODE7 |= (3<<((this->pin-16)*2)); }
     if( this->port_number == 4 && this->pin >= 16 ){ LPC_PINCON->PINMODE9 |= (3<<((this->pin-16)*2)); }
+    return this;
+}
+
+Pin* Pin::invert() {
+    this->inverting = true;
     return this;
 }
 

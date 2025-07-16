@@ -1,15 +1,6 @@
 #include "rcservo.h"
 
-Module* createRCServo(JsonObject module, PRUThread* thread, RemoraComms* comms)
-{
-    int sp = module["set_point"];
-    const char* pin = module["pin"];
-
-    // slow module with 10 hz update
-    int updateHz = 10;
-    return new RCServo(comms->ptrRxData->setPoint[sp], pin, thread->frequency, updateHz);
-}
-
+// TODO refactor this to be in line with the rest of the modules
 RCServo::RCServo(volatile float &ptrPositionCmd, std::string pin, int32_t threadFreq, int32_t slowUpdateFreq) :
     Module(threadFreq, slowUpdateFreq),
     ptrPositionCmd(&ptrPositionCmd),

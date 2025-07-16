@@ -3,8 +3,6 @@
 
 #include "modules/module.h"
 
-Module* createPWM(JsonObject module, RemoraComms* comms);
-
 class PWM : public Module
 {
     private:
@@ -25,8 +23,8 @@ class PWM : public Module
 
     public:
 
-        PWM(volatile float&, int, std::string);
-        PWM(volatile float&, volatile float&, int, std::string);
+        PWM(int setPoint, Pin* pin, int period, volatile rxData_t* rxData);
+        PWM(int setPoint, int setPointPeriod, Pin* pin, int period, volatile rxData_t* rxData);
 
         virtual void update(void);
 };

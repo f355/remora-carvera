@@ -29,8 +29,7 @@ class PRUThread: public InterruptHandler
 
         void registerModule(Module *module);
         void unregisterModule(Module *module);
-        void startThread(void);
-        void stopThread(void);
+        void start(void);
         void handleInterrupt(void);
 };
 

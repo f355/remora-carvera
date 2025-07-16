@@ -1,31 +1,15 @@
 #include "thermistor.h"
 
-Module* createThermistor(JsonObject module, PRUThread* thread, RemoraComms* comms)
+Thermistor::Thermistor(int processVariable, Pin* pin, float beta, int r0, int t0, int32_t threadFreq, volatile txData_t* txData) :
+    Module(threadFreq, 1), // slow module with 1Hz update
+    ptrFeedback(&txData->processVariable[processVariable]),
+    adc(new AnalogIn(pin->as_input()->to_pin_name())),
+    r0(r0),
+    r1(0),
+    r2(4700),
+    j(1.0F / beta),
+    k(1.0F / (t0 + 273.15F))
 {
-    int pv = module["process_variable"];
-    const char* pinSensor = module["pin"];
-    float beta =  module["beta"];
-    int r0 = module["r0"];
-    int t0 = module["t0"];
-
-    // slow module with 1 hz update
-    int updateHz = 1;
-    return new Thermistor(comms->ptrTxData->processVariable[pv], thread->frequency, updateHz, pinSensor, beta, r0, t0);
-}
-
-Thermistor::Thermistor(volatile float &ptrFeedback, int32_t threadFreq, int32_t slowUpdateFreq, std::string pinSensor, float beta, int r0, int t0) :
-    Module(threadFreq, slowUpdateFreq),
-    ptrFeedback(&ptrFeedback),
-    r0(r0)
-{
-    // Thermistor math
-    this->j = (1.0F / beta);
-    this->k = (1.0F / (t0 + 273.15F));
-
-    this->adc = new AnalogIn((new Pin(pinSensor))->as_input()->to_pin_name());
-    this->r1 = 0;
-    this->r2 = 4700;
-
     // Take some readings to get the ADC up and running before moving on
     this->slowUpdate();
     this->slowUpdate();

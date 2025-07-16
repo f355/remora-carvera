@@ -17,6 +17,7 @@ class Pin {
     public:
         Pin();
         Pin(std::string portAndPin);
+        Pin(char port_number, unsigned char pin);
 
         Pin* from_string(std::string value);
 
@@ -53,13 +54,13 @@ class Pin {
 
         Pin* as_open_drain(void);
 
-        Pin* as_repeater(void);
-
         Pin* pull_up(void);
 
         Pin* pull_down(void);
 
         Pin* pull_none(void);
+
+        Pin* invert(void);
 
         inline bool get() const{
             if (!this->valid) return false;

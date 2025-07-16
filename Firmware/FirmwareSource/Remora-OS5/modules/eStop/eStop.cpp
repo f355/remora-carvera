@@ -1,18 +1,8 @@
 #include "eStop.h"
 
-Module* createEStop(JsonObject module, RemoraComms* comms)
-{
-    const char* pin = module["pin"];
-
-    return new eStop(comms->ptrTxData->header, pin);
-}
-
-
-eStop::eStop(volatile int32_t &ptrTxHeader, std::string portAndPin) :
-    ptrTxHeader(&ptrTxHeader)
-{
-    this->pin = (new Pin(portAndPin))->as_input(); // Input 0x0, Output 0x1
-}
+eStop::eStop(volatile int32_t &ptrTxHeader, Pin* pin) :
+    ptrTxHeader(&ptrTxHeader),
+    pin(pin->as_input()) {}
 
 
 void eStop::update()

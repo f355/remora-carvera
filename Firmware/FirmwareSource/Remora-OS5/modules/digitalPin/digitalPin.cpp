@@ -1,37 +1,16 @@
 #include "digitalPin.h"
 
-Module* createDigitalPin(JsonObject module, RemoraComms* comms)
-{
-    const char* pin = module["pin"];
-    const char* modeStr = module["mode"];
-    int dataBit = module["data_bit"];
+InputPin::InputPin(int bitNumber, Pin* pin, volatile txData_t* txData) :
+    DigitalPin(txData->inputs, PIN_MODE_INPUT, pin, bitNumber) {}
 
-    int mode;
-    volatile uint16_t* ptrData;
+OutputPin::OutputPin(int bitNumber, Pin* pin, volatile rxData_t* rxData) :
+    DigitalPin(rxData->outputs, PIN_MODE_OUTPUT, pin, bitNumber) {}
 
-    if (!strcmp(modeStr, "in"))
-    {
-        mode = PIN_MODE_INPUT;
-        ptrData = &comms->ptrTxData->inputs;
-    }
-    else if (!strcmp(modeStr, "out"))
-    {
-        mode = PIN_MODE_OUTPUT;
-        ptrData = &comms->ptrRxData->outputs;
-    }
-    else
-    {
-        error("Error - unknown Digital Pin mode [%s]\n", mode);
-    }
-
-    return new DigitalPin(*ptrData, mode, pin, dataBit);
-}
-
-DigitalPin::DigitalPin(volatile uint16_t &ptrData, int mode, std::string portAndPin, int bitNumber) :
+DigitalPin::DigitalPin(volatile uint16_t &ptrData, int mode, Pin* pin, int bitNumber) :
     ptrData(&ptrData),
     mode(mode)
 {
-    this->pin = (new Pin(portAndPin))->set_mode(mode);
+    this->pin = pin->set_mode(mode);
     this->mask = 1 << bitNumber;
 }
 

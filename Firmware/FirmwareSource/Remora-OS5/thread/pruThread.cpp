@@ -12,14 +12,9 @@ PRUThread::PRUThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority
     this->timer->configure(this, this->frequency, priority);
 }
 
-void PRUThread::startThread(void)
+void PRUThread::start(void)
 {
     this->timer->start();
-}
-
-void PRUThread::stopThread(void)
-{
-    this->timer->stop();
 }
 
 void PRUThread::registerModule(Module* module)

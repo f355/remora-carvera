@@ -12,13 +12,7 @@
     "target_overrides": {
         "LPC1768": {
             "target.mbed_app_start": "0x4000",
-            "platform.stdio-baud-rate": 115200,
-            "target.features_add": ["STORAGE"],
-            "target.components_add" : ["SD"],
-            "sd.SPI_MOSI": "P0_18",
-            "sd.SPI_MISO": "P0_17",
-            "sd.SPI_CLK": "P0_15",
-            "sd.SPI_CS": "P0_16"
+            "platform.stdio-baud-rate": 115200
         }
     }
 }
