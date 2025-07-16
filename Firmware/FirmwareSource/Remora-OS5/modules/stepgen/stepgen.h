@@ -19,12 +19,11 @@ class Stepgen : public Module
         bool isStepping; // true if the step pin is held high
         int32_t rawCount; // current position raw count
         int32_t DDSaccumulator; // Direct Digital Synthesis (DDS) accumulator
-        float frequencyScale; // frequency scale
-        int32_t stepMask; // value of the DDS accumulator that triggers a step pulse
+        uint32_t frequencyScale; // frequency scale, 16.16 fixed-point
 
     public:
 
-        Stepgen(int32_t, int, std::string, std::string, int32_t, volatile int32_t&, volatile int32_t&, volatile uint8_t&);  // constructor
+        Stepgen(int32_t, int, std::string, std::string, volatile int32_t&, volatile int32_t&, volatile uint8_t&);
 
         Pin *stepPin, *directionPin;
 

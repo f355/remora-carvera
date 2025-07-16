@@ -1,9 +1,6 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#define STEPBIT 22 // bit location in DDS accum
-#define STEP_MASK (1L<<STEPBIT)
-
 // JSON dynamic buffer size
 #define JSON_BUFF_SIZE 10000
 

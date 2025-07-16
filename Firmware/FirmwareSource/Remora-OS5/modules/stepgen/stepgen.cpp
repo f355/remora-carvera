@@ -1,5 +1,9 @@
 #include "stepgen.h"
 
+#define STEPBIT 22 // bit location in DDS accum
+#define STEP_MASK (1L<<STEPBIT)
+#define FRACTIONAL_BITS 16
+
 Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
 {
     int joint = module["joint"];
@@ -11,7 +15,6 @@ Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
         joint,
         step,
         dir,
-        STEP_MASK,
         comms->ptrRxData->jointFreqCmd[joint],
         comms->ptrTxData->jointFeedback[joint],
         comms->ptrRxData->jointEnable
@@ -23,12 +26,10 @@ Stepgen::Stepgen(
     int jointNumber,
     std::string step,
     std::string direction,
-    int32_t stepMask,
     volatile int32_t &ptrFrequencyCommand,
     volatile int32_t &ptrFeedback,
     volatile uint8_t &ptrJointEnable
 ) :
-    stepMask(stepMask),
     ptrFrequencyCommand(&ptrFrequencyCommand),
     ptrFeedback(&ptrFeedback),
     ptrJointEnable(&ptrJointEnable)
@@ -37,7 +38,7 @@ Stepgen::Stepgen(
     this->directionPin = (new Pin(direction))->as_output();
     this->DDSaccumulator = 0;
     this->rawCount = 0;
-    this->frequencyScale = (float)this->stepMask / (float)threadFreq;
+    this->frequencyScale = (((uint64_t)STEP_MASK) << FRACTIONAL_BITS) / threadFreq;
     this->enableMask = 1 << jointNumber;
     this->lastDir = true;
 }
@@ -65,7 +66,8 @@ void Stepgen::update()
     //
     // by multiplying frequencyScale with the commanded frequency, we get the increment
     // that's needed to reach stepMask at that frequency.
-    int32_t increment = (*(this->ptrFrequencyCommand)) * this->frequencyScale;
+
+    int32_t increment = (((int64_t)*(this->ptrFrequencyCommand)) * this->frequencyScale) >> FRACTIONAL_BITS;
 
     // save the old accumulator value and increment the accumulator
     int32_t stepNow = this->DDSaccumulator;
@@ -73,7 +75,7 @@ void Stepgen::update()
     // XOR the old and the new accumulator values to find the flipped bits
     stepNow ^= this->DDSaccumulator;
     // if the step bit has flipped, we need to drive the step pin
-    stepNow &= this->stepMask;
+    stepNow &= STEP_MASK;
 
     // The sign of the increment indicates the desired direction
     bool isForward = (increment > 0);
