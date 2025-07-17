@@ -169,6 +169,10 @@ static CONTROL parse_ctrl_type(const char *ctrl);
 
 int rtapi_app_main(void)
 {
+    if (sizeof(rxData) != sizeof(txData)) {
+        error("SPI buffer size mismatch, rx: %d , tx: %d", sizeof(rxData), sizeof(txData));
+    }
+
     char name[HAL_NAME_LEN + 1];
     int n, retval;
 
@@ -1116,14 +1120,14 @@ void spi_transfer()
     if (bcm == true)
     {
         // bcm2835_spi_transfernb(txBuffer, rxBuffer, sizeof(txData_t));
-        for (int i = 0; i < sizeof(txData_t); i++)
+        for (int i = 0; i < sizeof(txData); i++)
         {
             rxBuffer[i] = bcm2835_spi_transfer(txBuffer[i]);
         }
     }
     else if (rp1 == true)
     {
-        rp1spi_transfer(0, &txData, &rxData, sizeof(txData_t));
+        rp1spi_transfer(0, &txData, &rxData, sizeof(txData));
     }
 }
 

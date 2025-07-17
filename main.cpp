@@ -240,7 +240,7 @@ int main()
             // rxData.rxBuffer is volatile so need to do this the long way. memset cannot be used for volatile
             printf("   Resetting rxBuffer\n");
             {
-                int n = sizeof(comms->ptrRxData);
+                int n = sizeof(*comms->ptrRxData);
                 volatile void* b = comms->ptrRxData;
                 while(--n >= 0)
                 {

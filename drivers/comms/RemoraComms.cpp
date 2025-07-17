@@ -1,11 +1,11 @@
 #include "RemoraComms.h"
 
 
-RemoraComms::RemoraComms() :
-    spiSlave(MOSI1, MISO1, SCK1, SSEL1)
+RemoraComms::RemoraComms() : spiSlave(MOSI1, MISO1, SCK1, SSEL1)
 {
-    this->ptrRxData = new rxData_t();
-    this->ptrTxData = new txData_t();
+    if (sizeof(rxData) != sizeof(txData)) {
+        error("SPI buffer size mismatch, rx: %d , tx: %d", sizeof(rxData), sizeof(txData));
+    }
     this->spiSlave.frequency(48000000);
 }
 
@@ -24,7 +24,7 @@ void RemoraComms::init()
         ->channelNum    ( MODDMA::Channel_0 )
         ->srcMemAddr    ( (uint32_t) ptrTxData )
         ->dstMemAddr    ( 0 )
-        ->transferSize  ( SPI_BUFF_SIZE )
+        ->transferSize  ( sizeof(txData) )
         ->transferType  ( MODDMA::m2p )
         ->srcConn       ( 0 )
         ->dstConn       ( MODDMA::SSP1_Tx )
@@ -36,7 +36,7 @@ void RemoraComms::init()
         ->channelNum    ( MODDMA::Channel_1 )
         ->srcMemAddr    ( (uint32_t) ptrTxData )
         ->dstMemAddr    ( 0 )
-        ->transferSize  ( SPI_BUFF_SIZE )
+        ->transferSize  ( sizeof(txData) )
         ->transferType  ( MODDMA::m2p )
         ->srcConn       ( 0 )
         ->dstConn       ( MODDMA::SSP1_Tx )
@@ -48,7 +48,7 @@ void RemoraComms::init()
         ->channelNum    ( MODDMA::Channel_2 )
         ->srcMemAddr    ( 0 )
         ->dstMemAddr    ( (uint32_t) &spiRxBuffer1 )
-        ->transferSize  ( SPI_BUFF_SIZE )
+        ->transferSize  ( sizeof(spiRxBuffer1) )
         ->transferType  ( MODDMA::p2m )
         ->srcConn       ( MODDMA::SSP1_Rx )
         ->dstConn       ( 0 )
@@ -60,7 +60,7 @@ void RemoraComms::init()
         ->channelNum    ( MODDMA::Channel_3 )
         ->srcMemAddr    ( 0 )
         ->dstMemAddr    ( (uint32_t) &spiRxBuffer2 )
-        ->transferSize  ( SPI_BUFF_SIZE )
+        ->transferSize  ( sizeof(spiRxBuffer2) )
         ->transferType  ( MODDMA::p2m )
         ->srcConn       ( MODDMA::SSP1_Rx )
         ->dstConn       ( 0 )
@@ -72,7 +72,7 @@ void RemoraComms::init()
         ->channelNum    ( MODDMA::Channel_4 )
         ->srcMemAddr    ( (uint32_t) &spiRxBuffer1 )
         ->dstMemAddr    ( (uint32_t) ptrRxData )
-        ->transferSize  ( SPI_BUFF_SIZE )
+        ->transferSize  ( sizeof(spiRxBuffer1) )
         ->transferType  ( MODDMA::m2m )
     ;
 
@@ -80,7 +80,7 @@ void RemoraComms::init()
         ->channelNum    ( MODDMA::Channel_5 )
         ->srcMemAddr    ( (uint32_t) &spiRxBuffer2 )
         ->dstMemAddr    ( (uint32_t) ptrRxData )
-        ->transferSize  ( SPI_BUFF_SIZE )
+        ->transferSize  ( sizeof(spiRxBuffer2) )
         ->transferType  ( MODDMA::m2m )
     ;
 }
@@ -105,8 +105,7 @@ void RemoraComms::start()
 void RemoraComms::tx1_callback()
 {
     // SPI Tx
-    MODDMA_Config *config = dma.getConfig();
-    dma.Disable( (MODDMA::CHANNELS)config->channelNum() );
+    dma.Disable(dma.irqProcessingChannel());
 
     // Clear DMA IRQ flags.
     if (dma.irqType() == MODDMA::TcIrq) dma.clearTcIrq();
@@ -118,8 +117,7 @@ void RemoraComms::tx1_callback()
 void RemoraComms::tx2_callback()
 {
     // SPI Tx
-    MODDMA_Config *config = dma.getConfig();
-    dma.Disable( (MODDMA::CHANNELS)config->channelNum() );
+    dma.Disable(dma.irqProcessingChannel());
 
     // Clear DMA IRQ flags.
     if (dma.irqType() == MODDMA::TcIrq) dma.clearTcIrq();
@@ -131,8 +129,7 @@ void RemoraComms::tx2_callback()
 void RemoraComms::rx1_callback()
 {
     // SPI Rx
-    MODDMA_Config *config = dma.getConfig();
-    dma.Disable( (MODDMA::CHANNELS)config->channelNum() );
+    dma.Disable(dma.irqProcessingChannel());
 
     SPIdata = false;
     SPIdataError = false;
@@ -172,8 +169,7 @@ void RemoraComms::rx1_callback()
 void RemoraComms::rx2_callback()
 {
     // SPI Rx
-    MODDMA_Config *config = dma.getConfig();
-    dma.Disable( (MODDMA::CHANNELS)config->channelNum() );
+    dma.Disable(dma.irqProcessingChannel());
 
     SPIdata = false;
     SPIdataError = false;

@@ -1,9 +1,6 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-// JSON dynamic buffer size
-#define JSON_BUFF_SIZE 10000
-
 #define JOINTS 4 // Number of joints - set this the same as LinuxCNC HAL compenent. Max 8 joints
 #define VARIABLES 3 // Number of command values - set this the same as the LinuxCNC HAL compenent
 

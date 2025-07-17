@@ -33,36 +33,36 @@ typedef struct
 
 #pragma pack(pop)
 
-#define SPI_BUFF_SIZE sizeof(rxData_t)
-
 class RemoraComms
 {
     private:
 
-        SPISlave            spiSlave;
+        SPISlave spiSlave;
 
-        MODDMA              dma;
+        MODDMA dma;
 
-        MODDMA_Config*      spiDMArx1;
-        MODDMA_Config*      spiDMArx2;
-        MODDMA_Config*      spiDMAtx1;
-        MODDMA_Config*      spiDMAtx2;
-        MODDMA_Config*      spiDMAmemcpy1;
-        MODDMA_Config*      spiDMAmemcpy2;
+        MODDMA_Config* spiDMArx1;
+        MODDMA_Config* spiDMArx2;
+        MODDMA_Config* spiDMAtx1;
+        MODDMA_Config* spiDMAtx2;
+        MODDMA_Config* spiDMAmemcpy1;
+        MODDMA_Config* spiDMAmemcpy2;
 
-        rxData_t            spiRxBuffer1;
-        rxData_t            spiRxBuffer2;
-        uint8_t             rejectCnt;
-        bool                SPIdata;
-        bool                SPIdataError;
+        rxData_t rxData;
+        txData_t txData;
+        rxData_t spiRxBuffer1;
+        rxData_t spiRxBuffer2;
+        uint8_t rejectCnt;
+        bool SPIdata;
+        bool SPIdataError;
         
     public:
 
         RemoraComms();
 
         volatile bool pruReset;
-        rxData_t volatile * ptrRxData;
-        txData_t volatile * ptrTxData;
+        volatile rxData_t* ptrRxData = &rxData;
+        volatile txData_t* ptrTxData = &txData;
 
         void tx1_callback(void);
         void tx2_callback(void);
