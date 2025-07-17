@@ -170,7 +170,8 @@ static CONTROL parse_ctrl_type(const char *ctrl);
 int rtapi_app_main(void)
 {
     if (sizeof(rxData) != sizeof(txData)) {
-        error("SPI buffer size mismatch, rx: %d , tx: %d", sizeof(rxData), sizeof(txData));
+        rtapi_print_msg(RTAPI_MSG_ERR, "SPI buffer size mismatch, rx: %d , tx: %d", sizeof(rxData), sizeof(txData));
+        return -1;
     }
 
     char name[HAL_NAME_LEN + 1];
