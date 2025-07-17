@@ -18,8 +18,8 @@ typedef struct
     int32_t header;
     volatile int32_t jointFreqCmd[JOINTS];
     float setPoint[VARIABLES];
-    uint8_t jointEnable;
     uint16_t outputs;
+    uint8_t jointEnable;
 } rxData_t;
 
 typedef struct
@@ -27,8 +27,8 @@ typedef struct
     int32_t header;
     int32_t jointFeedback[JOINTS];
     float processVariable[VARIABLES];
-    uint8_t padding;
     uint16_t inputs;
+    uint8_t padding;
 } txData_t;
 
 #pragma pack(pop)
