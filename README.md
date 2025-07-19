@@ -73,7 +73,6 @@ You'll need the following:
 
 ### Making the cables
 
-* The Carvera board pins below are numbered either RIGHT-TO-LEFT or top-to-bottom.
 * The Raspberry Pi pins are numbered according to
   the [official pinout](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio).
 * Keep the wires reasonably short - 10-15 cm is a good length.
