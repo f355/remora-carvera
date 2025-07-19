@@ -3,28 +3,22 @@
 
 #include "modules/module.h"
 
-class Thermistor : public Module
-{
-    private:
-        volatile float* ptrFeedback; // pointer where to put the feedback
-        
-        float temperaturePV;
+class Thermistor final : public Module {
+  volatile int32_t* output_var;  // pointer where to put the feedback
 
-        AnalogIn *adc;
-        float r0;
-        int r1;
-        int r2;
-        float j;
-        float k;
+  AnalogIn* adc;
+  int r0;
+  int r1;
+  int r2;
+  float j;
+  float k;
 
-        float getTemperature();
+  float getTemperature() const;
 
-    public:
+ public:
+  Thermistor(int var_number, Pin* pin, float beta, int r0, int t0, uint32_t thread_freq, volatile txData_t* tx_data);
 
-        Thermistor(int processVariable, Pin* pin, float beta, int r0, int t0, int32_t threadFreq, volatile txData_t* txData);
-
-        virtual void slowUpdate(void);
+  void slow_update() override;
 };
-
 
 #endif

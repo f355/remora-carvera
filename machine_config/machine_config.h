@@ -1,9 +1,11 @@
 #ifndef MACHINECONFIG_H
 #define MACHINECONFIG_H
 
-#include "RemoraComms.h"
-#include "pruThread.h"
+#include <vector>
 
-vector<PRUThread*> configureThreads(RemoraComms* comms);
+#include "cncThread.h"
+#include "comms.h"
+
+vector<CNCThread*> configure_threads(Comms* comms);
 
 #endif

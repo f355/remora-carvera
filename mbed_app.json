@@ -1,10 +1,7 @@
 {
     "requires": [
         "bare-metal",
-        "rtos-api", 
-        "sd",
-        "filesystem",
-        "fat_chan"
+        "rtos-api"
     ],
     
     "artifact_name": "firmware",

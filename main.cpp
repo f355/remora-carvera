@@ -18,249 +18,184 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 // MBED includes
-#include "mbed.h"
 #include <cstdio>
-#include <cerrno>
-#include <string>
 
-#include "configuration.h"
 #include "machine_config.h"
+#include "mbed.h"
 
 // drivers
-#include "RemoraComms.h"
+#include "comms.h"
 #include "pin.h"
 
 // threads
-#include "pruThread.h"
-
-/***********************************************************************
-*                STRUCTURES AND GLOBAL VARIABLES                       *
-************************************************************************/
+#include "ThisThread.h"
+#include "cncThread.h"
 
 // state machine
-enum State {
-    ST_SETUP = 0,
-    ST_START,
-    ST_IDLE,
-    ST_RUNNING,
-    ST_STOP,
-    ST_RESET,
-    ST_WDRESET
-};
+enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET };
 
-uint8_t resetCnt;
+int main() {
+  NVIC_SetPriority(EINT3_IRQn, 4);
 
-bool threadsRunning = false;
+  vector<CNCThread*> threads;
+  bool threads_running = false;
 
-// Watchdog
-Watchdog& watchdog = Watchdog::get_instance();
+  // Watchdog
+  Watchdog& watchdog = Watchdog::get_instance();
+  const auto comms = new Comms();
 
-/***********************************************************************
-        ROUTINES
-************************************************************************/
+  uint8_t reset_count = 0;
+  State current_state = ST_SETUP;
+  State prev_state = ST_RESET;
 
+  comms->not_ready();
+  comms->clear_error();
 
-int main()
-{
-    vector<PRUThread*> threads;
+  printf("\nRemora PRU - Programmable Realtime Unit\n");
 
-    enum State currentState;
-    enum State prevState;
+  watchdog.start(2000);
 
-    RemoraComms* comms = new RemoraComms();
-
-    comms->setStatus(false);
-    comms->setError(false);
-    currentState = ST_SETUP;
-    prevState = ST_RESET;
-
-    printf("\nRemora PRU - Programmable Realtime Unit\n");
-
-    watchdog.start(2000);
-
-    while(1)
-    {
-      // the main loop does very little, keeping the Watchdog serviced and
-      // resetting the rxData buffer if there is a loss of SPI commmunication
-      // with LinuxCNC. Everything else is done via DMA and within the
-      // two threads- Base and Servo threads that run the Modules.
+  while (true) {
+    // the main loop does very little, keeping the Watchdog serviced and
+    // resetting the rxData buffer if there is a loss of SPI commmunication
+    // with LinuxCNC. Everything else is done via DMA and within the
+    // two threads - Base and Servo threads that run the Modules.
 
     watchdog.kick();
 
-    switch(currentState){
-        case ST_SETUP:
-        {
-            // do setup tasks
-            if (currentState != prevState)
-            {
-                printf("\n## Entering SETUP state\n");
-            }
-            prevState = currentState;
-
-            printf("\nSetting up DMA and threads\n");
-
-            // initialise the Remora comms 
-            comms->init();
-            comms->start();
-
-            createTimers();
-
-            threads = configureThreads(comms);
-
-            currentState = ST_START;
-            break; 
+    switch (current_state) {
+      case ST_SETUP: {
+        // do setup tasks
+        if (current_state != prev_state) {
+          printf("\n## Entering SETUP state\n");
         }
-        case ST_START:
-            // do start tasks
-            if (currentState != prevState)
-            {
-                printf("\n## Entering START state\n");
-            }
-            prevState = currentState;
+        prev_state = current_state;
 
-            if (!threadsRunning)
-            {
-                // Start the threads
-                for (auto thread: threads)
-                {
-                    thread->start();
-                }
+        printf("\nSetting up DMA and threads\n");
 
-                threadsRunning = true;
+        comms->start();
+        create_timers();
+        threads = configure_threads(comms);
 
-                // wait for threads to read IO before testing for PRUreset
-                wait(1);
-            }
-
-            if (comms->pruReset)
-            {
-                // RPi outputs default is high until configured when LinuxCNC Remora component is started, PRUreset pin will be high
-                // stay in start state until LinuxCNC is started
-                currentState = ST_START;
-            }
-            else
-            {
-                currentState = ST_IDLE;
-            }
-            
-            break;
-
-
-        case ST_IDLE:
-            // do something when idle
-            if (currentState != prevState)
-            {
-                printf("\n## Entering IDLE state\n");
-            }
-            prevState = currentState;
-
-            // check to see if there there has been SPI errors
-            if (comms->getError())
-            {
-                printf("Communication data error\n");
-                comms->setError(false);
-            }
-
-            //wait for SPI data before changing to running state
-            if (comms->getStatus())
-            {
-                currentState = ST_RUNNING;
-            }
-
-            if (comms->pruReset)
-            {
-                currentState = ST_WDRESET;
-            }
-
-            break;
-
-        case ST_RUNNING:
-            // do running tasks
-            if (currentState != prevState)
-            {
-                printf("\n## Entering RUNNING state\n");
-            }
-            prevState = currentState;
-
-            // check to see if there there has been SPI errors 
-            if (comms->getError())
-            {
-                printf("Communication data error\n");
-                comms->setError(false);
-            }
-            
-            if (comms->getStatus())
-            {
-                // SPI data received by DMA
-                resetCnt = 0;
-                comms->setStatus(false);
-            }
-            else
-            {
-                // no data received by DMA
-                resetCnt++;
-            }
-
-            if (resetCnt > SPI_ERR_MAX)
-            {
-                // reset threshold reached, reset the PRU
-                printf("   Communication data error limit reached, resetting\n");
-                resetCnt = 0;
-                currentState = ST_RESET;
-            }
-
-            if (comms->pruReset)
-            {
-                currentState = ST_WDRESET;
-            }
-
-            break;
-
-        case ST_STOP:
-            // do stop tasks
-            if (currentState != prevState)
-            {
-                printf("\n## Entering STOP state\n");
-            }
-            prevState = currentState;
-
-
-            currentState = ST_STOP;
-            break;
-
-        case ST_RESET:
-            // do reset tasks
-            if (currentState != prevState)
-            {
-                printf("\n## Entering RESET state\n");
-            }
-            prevState = currentState;
-
-            // set all of the rxData buffer to 0
-            // rxData.rxBuffer is volatile so need to do this the long way. memset cannot be used for volatile
-            printf("   Resetting rxBuffer\n");
-            {
-                int n = sizeof(*comms->ptrRxData);
-                volatile void* b = comms->ptrRxData;
-                while(--n >= 0)
-                {
-                    *((uint8_t*)b + n) = 0;
-                }
-            }
-
-            currentState = ST_IDLE;
-            break;
-
-        case ST_WDRESET:
-            // do a watch dog reset
-            printf("\n## Entering WDRESET state\n");
-
-            // force a watchdog reset by looping here
-            while(1){}
-
-            break;
+        current_state = ST_START;
+        break;
       }
+      case ST_START:
+        // do start tasks
+        if (current_state != prev_state) {
+          printf("\n## Entering START state\n");
+        }
+        prev_state = current_state;
 
-    wait(LOOP_TIME);
+        if (!threads_running) {
+          // Start the threads
+          for (const auto thread : threads) {
+            thread->start();
+          }
+
+          threads_running = true;
+
+          // wait 1 second for threads to read IO before testing for PRUreset
+          rtos::ThisThread::sleep_for(1000);
+        }
+
+        if (comms->pru_reset) {
+          // RPi outputs default is high until configured when LinuxCNC Remora component is started, PRUreset pin will
+          // be high stay in start state until LinuxCNC is started
+          current_state = ST_START;
+        } else {
+          current_state = ST_IDLE;
+        }
+
+        break;
+
+      case ST_IDLE:
+        // do something when idle
+        if (current_state != prev_state) {
+          printf("\n## Entering IDLE state\n");
+        }
+        prev_state = current_state;
+
+        if (comms->get_error()) {
+          printf("Communication data error\n");
+          comms->clear_error();
+        }
+
+        // wait for SPI data before changing to running state
+        if (comms->is_ready()) {
+          current_state = ST_RUNNING;
+        }
+
+        if (comms->pru_reset) {
+          current_state = ST_WDRESET;
+        }
+
+        break;
+
+      case ST_RUNNING:
+        // do running tasks
+        if (current_state != prev_state) {
+          printf("\n## Entering RUNNING state\n");
+        }
+        prev_state = current_state;
+
+        // check to see if there has been SPI errors
+        if (comms->get_error()) {
+          printf("Communication data error\n");
+          comms->clear_error();
+        }
+
+        if (comms->is_ready()) {
+          // SPI data received by DMA
+          reset_count = 0;
+          comms->not_ready();
+        } else {
+          // no good data received by DMA
+          reset_count++;
+        }
+
+        if (reset_count > 5) {
+          // reset threshold reached, reset the PRU
+          printf("   Communication data error limit reached, resetting\n");
+          reset_count = 0;
+          current_state = ST_RESET;
+        }
+
+        if (comms->pru_reset) {
+          current_state = ST_WDRESET;
+        }
+
+        break;
+
+      case ST_RESET:
+        // do reset tasks
+        if (current_state != prev_state) {
+          printf("\n## Entering RESET state\n");
+        }
+        prev_state = current_state;
+
+        // zero out the rxData buffer
+        // it is volatile, so memset cannot be used, and we need to do it the long way
+        printf("   Resetting rxBuffer\n");
+        {
+          int n = sizeof(*comms->ptr_rx_data);
+          volatile void* b = comms->ptr_rx_data;
+          while (--n >= 0) {
+            *((uint8_t*)b + n) = 0;
+          }
+        }
+
+        current_state = ST_IDLE;
+        break;
+
+      case ST_WDRESET:
+        printf("\n## Entering WDRESET state\n");
+
+        // force a watchdog reset by looping here
+        while (true) {
+        }
     }
+
+    rtos::ThisThread::sleep_for(100);  // wait for 0.1 seconds
+  }
 }

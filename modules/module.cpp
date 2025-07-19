@@ -1,41 +1,30 @@
 #include "module.h"
 
-#include <cstdio>
-#include <string>
-
-#include "drivers/pin/pin.h"
-
-Module::Module()
-{
-    this->counter = 0;
-    this->updateCount = 1;
+Module::Module() : thread_freq(0), slow_update_freq(0) {
+  this->counter = 0;
+  this->update_count = 1;
 }
 
-
-Module::Module(int32_t threadFreq, int32_t slowUpdateFreq) :
-    threadFreq(threadFreq),
-    slowUpdateFreq(slowUpdateFreq)
-{
-    this->counter = 0;
-    this->updateCount = this->threadFreq / this->slowUpdateFreq;
-    printf("\nCreating a slower module, updating every %d thread cycles\n",this->updateCount);
+Module::Module(const uint32_t thread_freq, const uint32_t slow_update_freq)
+    : thread_freq(thread_freq),
+      slow_update_freq(slow_update_freq),
+      update_count(thread_freq / slow_update_freq),
+      counter(0) {
+  this->counter = 0;
+  this->update_count = this->thread_freq / this->slow_update_freq;
 }
 
-Module::~Module(){}
+void Module::run() {
+  ++this->counter;
 
+  if (this->counter >= this->update_count) {
+    this->slow_update();
+    this->counter = 0;
+  }
 
-void Module::runModule()
-{
-    ++this->counter;
-
-    if (this->counter >= this->updateCount)
-    {
-        this->slowUpdate();
-        this->counter = 0;
-    }
-
-    this->update();
+  this->update();
 }
 
 void Module::update() {}
-void Module::slowUpdate() {}
+
+void Module::slow_update() {}

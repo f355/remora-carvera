@@ -5,36 +5,32 @@
 
 #define NUM_TIMERS 4
 
-class InterruptHandler
-{
-    public:
-        virtual void handleInterrupt() = 0;
+class InterruptHandler {
+ public:
+  virtual ~InterruptHandler() = default;
+
+  virtual void handle_interrupt() = 0;
 };
 
-class LPCTimer
-{
-    protected:
-        LPC_TIM_TypeDef* timer;
-        IRQn_Type irq;
-        int8_t sbit;
-        int32_t frequency;
-        uint32_t priority;
-        InterruptHandler* handler;
+class LPCTimer final {
+  LPC_TIM_TypeDef* timer;
+  IRQn_Type irq;
+  int8_t sbit;
+  uint32_t frequency;
+  uint32_t priority;
+  InterruptHandler* handler;
 
-        void (*wrapper)();
+ public:
+  LPCTimer(LPC_TIM_TypeDef* timer, IRQn_Type irq, int8_t sbit);
 
-    public:
-        LPCTimer(LPC_TIM_TypeDef* timer, IRQn_Type irq, int8_t sbit, void (*wrapper)());
+  void configure(InterruptHandler* handler, uint32_t frequency, uint32_t priority);
 
-        void configure(InterruptHandler* handler, int32_t frequency, uint32_t priority);
-
-        void start(void);
-        void handleInterrupt(void);
-        void stop(void);
+  void start();
+  void handle_interrupt() const;
 };
 
-extern LPCTimer* lpcTimers[NUM_TIMERS];
+extern LPCTimer* lpc_timers[NUM_TIMERS];
 
-void createTimers(void);
+void create_timers();
 
 #endif

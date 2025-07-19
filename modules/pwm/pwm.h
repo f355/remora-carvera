@@ -3,30 +3,19 @@
 
 #include "modules/module.h"
 
-class PWM : public Module
-{
-    private:
+class PWM final : public Module {
+  PwmOut* pwm_pin;  // PWM out object
 
-        int pwmMax; // maximum PWM output
-        int pwmSP; // PWM setpoint as a percentage of maxPwm
+  volatile int32_t* set_duty_cycle;
 
-        PwmOut *pwmPin; // PWM out object
+  int period_us;           // Period (us)
+  int32_t duty_cycle;      // Pulse width (%)
+  int32_t pulse_width_us;  // Pulse width (us)
 
-        volatile float *ptrPwmPeriod; // pointer to the data source
-        volatile float *ptrPwmPulseWidth; // pointer to the data source
+ public:
+  PWM(int var_number, Pin* pin, int period_us, volatile rxData_t* rx_data);
 
-        int pwmPeriod; // Period (us)
-        float pwmPulseWidth; // Pulse width (%)
-        int pwmPulseWidth_us; // Pulse width (us)
-
-        bool variablePeriod;
-
-    public:
-
-        PWM(int setPoint, Pin* pin, int period, volatile rxData_t* rxData);
-        PWM(int setPoint, int setPointPeriod, Pin* pin, int period, volatile rxData_t* rxData);
-
-        virtual void update(void);
+  void update() override;
 };
 
 #endif
