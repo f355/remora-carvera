@@ -1,9 +1,10 @@
 # electrophorus
 
-**WARNING: This project is currently still is heavily work in progress (almost nothing works!) and would work only on
-Carvera Air. Your warranty might no longer be valid since the project requires physically modifying the machine's
-mainboard. DO NOT TRY THIS AT HOME unless you understand what you're doing and are willing to deal with the issues and
-fix the bugs yourself (I might help with that, though).**
+**WARNING: The author(s) assume absolutely no responsibility for any damage
+that might occur as a result of following the instructions below. This project is currently still is heavily work in
+progress (almost nothing works!) and would work only on Carvera Air. Your warranty might no longer be valid since the
+project requires physically modifying the machine's mainboard. DO NOT TRY THIS AT HOME unless you understand what you're
+doing and are willing to deal with the issues and fix the bugs yourself (I might help with that, though).**
 
 Electrophorus is a project that allows you to convert a Carvera-family desktop CNC milling machine
 by [Makera Inc.](https://www.makera.com/)
@@ -45,7 +46,10 @@ You'll need the following:
 
 1. READ THESE INSTRUCTIONS TO THE END before attempting anything.
 2. Remove the 0402 10k Ohm pull-up resistor from the ESP8266's `CHIP_EN` pin. It is marked in red on the
-   picture: ![Resistor location](images/resistor_location.jpg)
+   picture:
+
+![Resistor location](images/resistor_location.jpg)
+
 3. Prepare the `CHIP_EN` wire: solder the through-hole 10k resistor in-line and heat-shrink it, tin one end, attach the
    single-pin 2mm-pitch female connector to the other.
 4. Solder the wire you've just made to the LEFT (closer to the USB ports) pad of the resistor location as on the
@@ -54,7 +58,10 @@ You'll need the following:
    antenna portion of the WiFi module, optionally - especially if your wires have silicone insulation like mine - put a
    small rectangle of cloth or shop towel on top of it, hold the wire down and wick some CA glue between the wire and
    the PCB and in the cloth - it should look like the picture. Don't overdo it with the
-   glue. ![Resistor wire](images/resistor_wire.jpg)
+   glue.
+
+![Resistor wire](images/resistor_wire.jpg)
+
 5. Solder the 7-pin 2mm-pitch pin header in the holes on top of the Wi-Fi module. You won't have access to the back of
    the PCB, the holes are blind, so it helps to move the plastic part of the header up the pins, solder them in and push
    the plastic bit back down.
@@ -94,11 +101,17 @@ You'll need the following:
 
 All connected together, it should look something like this. The extra ground is temporarily disconnected, as I used it
 for the oscilloscope ground. Don't mind the dangling Pi and please excuse the crudity of the model, I didn't have time
-to build it to scale or to paint it. ![Cables connected](images/cables_connected.jpg)
+to build it to scale or to paint it.
 
-The Carvera side: ![Cabling, Carvera side](images/cabling_carvera_side.jpg)
+![Cables connected](images/cables_connected.jpg)
 
-The Pi side: ![Cabling, RPi side](images/cabling_pi_side.jpg)
+The Carvera side:
+
+![Cabling, Carvera side](images/cabling_carvera_side.jpg)
+
+The Pi side:
+
+![Cabling, RPi side](images/cabling_pi_side.jpg)
 
 Coming up with a way to permanently mount the Raspberry Pi while providing adequate cooling is left as an exercise to
 the reader.
