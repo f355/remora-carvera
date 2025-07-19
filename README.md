@@ -34,7 +34,8 @@ You'll need the following:
    soldering accoutrements.
 5. Cabling components:
     * Female Dupont pin header connectors compatible with the Raspberry Pi. A single 40-pin connector for the Pi is
-      highly recommended, and you'll also need one single-pin connector for the ground.
+      highly recommended. You'll also need a pair of single-pin connectors for the optional ground, if you choose to
+      connect it.
     * 2mm pitch by 0.5mm pin size pin header, male for the Wi-Fi PCB (7 pins) and female for the cables (5 pins + 1 pin)
     * 4-pin female JST XH connector for the UART port. You should have one left over from wiring up
       the [3D probe](https://www.instructables.com/Carvera-Touch-Probe-Modifications/) :)
@@ -95,8 +96,9 @@ You'll need the following:
 | RPi pin      | 6     | NC   | 8 (TX) | 10 (RX) |
 | Color I used | Black | None | Green  | Green   |
 
-* (Optional) **Extra ground.** Connect one of the Raspberry Pi ground pins (e.g. 25 or 14) to pin 4 of the connector
-  J10 on the Carvera board, numbered according to the silkscreen (second from the left).
+* (Optional) **Extra ground.** The above wiring connects the RPi and the Carvera grounds through the UART port. to add
+  extra redundancy, connect one of the Raspberry Pi ground pins (e.g. 25 or 14) to the pin 4 of the connector J10 on the
+  Carvera board, numbered according to the silkscreen (i.e. second from the left/USB ports).
 
 All connected together, it should look something like this. The extra ground is temporarily disconnected, as I used it
 for the oscilloscope ground. Don't mind the dangling Pi and please excuse the crudity of the model, I didn't have time
