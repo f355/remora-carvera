@@ -10,12 +10,12 @@ using namespace std;
 
 class Module;
 
-class CNCThread final : public InterruptHandler {
+class MachineThread final : public InterruptHandler {
   LPCTimer *timer;
   vector<Module *> modules;
 
  public:
-  CNCThread(uint8_t timer_number, int32_t frequency, uint32_t priority);
+  MachineThread(uint8_t timer_number, int32_t frequency, uint32_t priority);
 
   int32_t frequency;
 

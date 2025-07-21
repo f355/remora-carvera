@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "cncThread.h"
+#include "MachineThread.h"
 #include "comms.h"
 
-vector<CNCThread*> configure_threads(Comms* comms);
+vector<MachineThread*> configure_threads(Comms* comms);
 
 #endif

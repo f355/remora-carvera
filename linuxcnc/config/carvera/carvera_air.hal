@@ -1,0 +1,59 @@
+# load the realtime components
+
+loadrt [KINS]KINEMATICS
+loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS
+
+loadrt carvera
+
+# estop loopback, SPI comms enable and feedback
+net user-enable-out iocontrol.0.user-enable-out => carvera.spi-enable => carvera.output.power-12v => carvera.output.power-24v
+net user-request-enable iocontrol.0.user-request-enable => carvera.spi-reset
+net machine-status carvera.spi-status => iocontrol.0.emc-enable-in
+
+addf motion-command-handler servo-thread
+addf motion-controller servo-thread
+addf carvera.calculate-stepper-commands servo-thread
+addf carvera.transceive servo-thread
+
+# turn on the light
+setp carvera.output.work-light true
+
+# joints
+# 0/X
+setp carvera.joint.0.scale [JOINT_0]SCALE
+setp carvera.joint.0.maxaccel [JOINT_0]STEPGEN_MAX_ACC
+
+net xpos-cmd joint.0.motor-pos-cmd => carvera.joint.0.pos-cmd
+net j0pos-fb carvera.joint.0.pos-fb => joint.0.motor-pos-fb
+net j0enable joint.0.amp-enable-out => carvera.joint.0.enable
+net x-home carvera.input.endstop-x => joint.0.home-sw-in => joint.0.neg-lim-sw-in => joint.0.pos-lim-sw-in
+#net j0alarm carvera.input.stall-alarm-x => joint.0.amp-fault-in
+
+# 1/Y
+setp carvera.joint.1.scale [JOINT_1]SCALE
+setp carvera.joint.1.maxaccel [JOINT_1]STEPGEN_MAX_ACC
+
+net ypos-cmd joint.1.motor-pos-cmd => carvera.joint.1.pos-cmd
+net j1pos-fb carvera.joint.1.pos-fb => joint.1.motor-pos-fb
+net j1enable joint.1.amp-enable-out => carvera.joint.1.enable
+net y-home carvera.input.endstop-y => joint.1.home-sw-in => joint.1.neg-lim-sw-in => joint.1.pos-lim-sw-in
+#net j1alarm carvera.input.stall-alarm-y => joint.1.amp-fault-in
+
+# 2/Z
+setp carvera.joint.2.scale [JOINT_2]SCALE
+setp carvera.joint.2.maxaccel [JOINT_2]STEPGEN_MAX_ACC
+
+net zpos-cmd joint.2.motor-pos-cmd => carvera.joint.2.pos-cmd
+net j2pos-fb carvera.joint.2.pos-fb => joint.2.motor-pos-fb
+net j2enable joint.2.amp-enable-out => carvera.joint.2.enable
+net z-home carvera.input.endstop-z => joint.2.home-sw-in => joint.2.neg-lim-sw-in => joint.2.pos-lim-sw-in
+#net j2alarm carvera.input.stall-alarm-z => joint.2.amp-fault-in
+
+# 3/A
+setp carvera.joint.3.scale [JOINT_3]SCALE
+setp carvera.joint.3.maxaccel [JOINT_3]STEPGEN_MAX_ACC
+
+net apos-cmd joint.3.motor-pos-cmd => carvera.joint.3.pos-cmd
+net j3pos-fb carvera.joint.3.pos-fb => joint.3.motor-pos-fb
+net j3enable joint.3.amp-enable-out => carvera.joint.3.enable => carvera.output.axis-enable-a
+net a-home carvera.input.endstop-a => joint.3.home-sw-in

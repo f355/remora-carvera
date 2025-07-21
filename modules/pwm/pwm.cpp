@@ -13,7 +13,7 @@ void PWM::update() {
   if (*(this->set_duty_cycle) != this->duty_cycle) {
     // PWM duty has changed
     this->duty_cycle = *this->set_duty_cycle;
-    this->pulse_width_us = this->period_us * this->duty_cycle / 100;
+    this->pulse_width_us = this->period_us * this->duty_cycle / 1000;
     this->pwm_pin->pulsewidth_us(this->pulse_width_us);
   }
 }

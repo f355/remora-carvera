@@ -28,8 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "pin.h"
 
 // threads
+#include "MachineThread.h"
 #include "ThisThread.h"
-#include "cncThread.h"
 
 // state machine
 enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET };
@@ -37,7 +37,7 @@ enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET }
 int main() {
   NVIC_SetPriority(EINT3_IRQn, 4);
 
-  vector<CNCThread*> threads;
+  vector<MachineThread*> threads;
   bool threads_running = false;
 
   // Watchdog

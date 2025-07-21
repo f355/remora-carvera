@@ -32,6 +32,8 @@ Comms::Comms() : spi_slave(MOSI1, MISO1, SCK1, SSEL1) {
 void Comms::start() {
   NVIC_SetPriority(DMA_IRQn, 1);
 
+  tx_data.header = SPI_DATA_HEADER;
+  tx_data.footer = SPI_DATA_FOOTER;
   memcpy(&tx_temp_buffer, &tx_data, sizeof(tx_data));
 
   dma.Prepare(rx_dma);

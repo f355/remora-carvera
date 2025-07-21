@@ -11,13 +11,13 @@
 
 // Carvera Air CA1 configuration
 
-vector<CNCThread*> configure_threads(Comms* comms) {
+vector<MachineThread*> configure_threads(Comms* comms) {
   printf("\ncreating threads for CA1\n");
 
   // Args: frequency, IRQ priority, timer number
-  auto base_thread = new CNCThread(1, 100000, 2);
+  auto base_thread = new MachineThread(1, BASE_THREAD_FREQUENCY, 2);
   printf("created base thread\n");
-  auto servo_thread = new CNCThread(2, 1000, 3);
+  auto servo_thread = new MachineThread(2, 1000, 3);
   printf("created servo thread\n");
 
   const std::vector<Module*> base_modules = {

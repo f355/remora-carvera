@@ -6,7 +6,7 @@
 
 #include "drivers/comms/comms.h"
 #include "drivers/pin/pin.h"
-#include "thread/cncThread.h"
+#include "thread/MachineThread.h"
 
 // Module base class
 // All modules are derived from this base class
