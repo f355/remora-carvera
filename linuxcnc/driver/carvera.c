@@ -200,12 +200,15 @@ int rtapi_app_main(void) {
     &joint.maxvel = 0;
   }
 
+  const char *output_var_names[OUTPUT_VARS] = OUTPUT_VAR_NAMES;
   for (n = 0; n < OUTPUT_VARS; n++) {
     if (pin_err(hal_pin_float_newf(HAL_IN, &state->output_vars[n], comp_id, "%s.output_vars.%s", prefix,
                                    output_var_names[n])))
       return -1;
     *state->output_vars[n] = 0;
   }
+
+  const char *input_var_names[INPUT_VARS] = INPUT_VAR_NAMES;
   for (n = 0; n < INPUT_VARS; n++) {
     if (pin_err(hal_pin_float_newf(HAL_OUT, &state->input_vars[n], comp_id, "%s.input_vars.%d", prefix,
                                    input_var_names[n])))
@@ -213,12 +216,14 @@ int rtapi_app_main(void) {
     *state->input_vars[n] = 0;
   }
 
+  const char *output_pin_names[OUTPUT_PINS] = OUTPUT_PIN_NAMES;
   for (n = 0; n < OUTPUT_PINS; n++) {
     if (pin_err(hal_pin_bit_newf(HAL_IN, &state->output_pins[n], comp_id, "%s.output.%s", prefix, output_pin_names[n])))
       return -1;
     *state->output_pins[n] = 0;
   }
 
+  const char *input_pin_names[INPUT_PINS] = INPUT_PIN_NAMES;
   for (n = 0; n < INPUT_PINS; n++) {
     if (pin_err(hal_pin_bit_newf(HAL_OUT, &state->input_pins[n], comp_id, "%s.input.%s", prefix, input_pin_names[n])))
       return -1;

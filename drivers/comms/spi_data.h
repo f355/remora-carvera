@@ -1,8 +1,6 @@
 #ifndef SPI_DATA_H
 #define SPI_DATA_H
 
-#include <cstdint>
-
 #include "machine_definitions.h"
 
 #define SPI_DATA_HEADER 0xDABE  // DAta BEgin
