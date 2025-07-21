@@ -179,7 +179,7 @@ int rtapi_app_main(void) {
 
     if (pin_err(hal_pin_bit_newf(HAL_IN, &joint.enable, comp_id, "%s.joint.%01d.enable", prefix, n))) return -1;
     if (pin_err(hal_pin_float_newf(HAL_IN, &joint.pos_cmd, comp_id, "%s.joint.%01d.pos-cmd", prefix, n))) return -1;
-    joint.pos_cmd = 0.0;
+    joint.pos_cmd = 0;
     if (pin_err(hal_pin_s32_newf(HAL_OUT, &joint.freq_cmd, comp_id, "%s.joint.%01d.freq-cmd", prefix, n))) return -1;
     joint.freq_cmd = 0;
     if (pin_err(hal_pin_float_newf(HAL_OUT, &joint.pos_fb, comp_id, "%s.joint.%01d.pos-fb", prefix, n))) return -1;
@@ -197,7 +197,7 @@ int rtapi_app_main(void) {
     if (pin_err(hal_param_float_newf(HAL_RW, &joint.maxaccel, comp_id, "%s.joint.%01d.maxaccel", prefix, n))) return -1;
     joint.maxaccel = 1.0;
     if (pin_err(hal_param_float_newf(HAL_RW, &joint.maxvel, comp_id, "%s.joint.%01d.maxvel", prefix, n))) return -1;
-    &joint.maxvel = 0;
+    joint.maxvel = 0;
   }
 
   const char *output_var_names[OUTPUT_VARS] = OUTPUT_VAR_NAMES;
