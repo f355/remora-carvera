@@ -471,9 +471,9 @@ void handle_rx() {
     const int n = 2;
     if (abs(diff) > M && joint->filter_count < n) {
       // recent big change: hold previous value
-      ++joint.filter_count;
+      ++joint->filter_count;
       steps = prev_steps;
-      rtapi_print("Spike filter active[%d][%d]: %d\n", i, joint.filter_count, diff);
+      rtapi_print("Spike filter active[%d][%d]: %d\n", i, joint->filter_count, diff);
     } else {
       // normal operation, or else the big change must be real after all
       joint->filter_count = 0;
