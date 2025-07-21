@@ -13,7 +13,7 @@ net machine-status carvera.spi-status => iocontrol.0.emc-enable-in
 addf motion-command-handler servo-thread
 addf motion-controller servo-thread
 addf carvera.calc-stepper-commands servo-thread
-addf carvera.transceive servo-thread
+addf carvera.spi-transceive servo-thread
 
 # turn on the light
 setp carvera.output.work-light true
