@@ -445,7 +445,11 @@ void handle_rx() {
   if (rxData.header != SPI_DATA_HEADER || rxData.footer != SPI_DATA_FOOTER) {
     // we have received a BAD payload from the PRU
     *state->spi_status = 0;
-    rtapi_print("Bad SPI payload = %x\n", rxData.header);
+    rtapi_print("Bad SPI payload: ");
+    for (int i = 0; i < sizeof(rxBuffer); i++) {
+      rtapi_print("%02X ", uint8_t(rxbuffer[i]));
+    }
+    rtapi_print("\n");
     return;
   }
 

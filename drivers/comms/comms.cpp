@@ -10,9 +10,9 @@ Comms::Comms() : spi_slave(MOSI1, MISO1, SCK1, SSEL1) {
   rx_dma = new MODDMA_Config;
 
   tx_dma->channelNum(MODDMA::Channel_0)
-      ->srcMemAddr(reinterpret_cast<uint32_t>(ptr_tx_data))
+      ->srcMemAddr(reinterpret_cast<uint32_t>(&tx_temp_buffer))
       ->dstMemAddr(0)
-      ->transferSize(sizeof(tx_data))
+      ->transferSize(sizeof(tx_temp_buffer))
       ->transferType(MODDMA::m2p)
       ->srcConn(0)
       ->dstConn(MODDMA::SSP1_Tx)
@@ -68,6 +68,17 @@ void Comms::rx_callback() {
     reject_cnt = 0;
   } else {
     // if we've received garbage:
+    printf("bad SPI payload: ");
+    auto buf = reinterpret_cast<uint8_t*>(&rx_temp_buffer);
+    for (int i = 0; i < sizeof(rx_temp_buffer); i++) {
+      printf("%02X ", buf[i]);
+    }
+    printf("\ntransmitted: ");
+    buf = reinterpret_cast<uint8_t*>(&tx_temp_buffer);
+    for (int i = 0; i < sizeof(tx_temp_buffer); i++) {
+      printf("%02X ", buf[i]);
+    }
+    printf("\n");
     // bump garbage counter
     reject_cnt++;
     if (reject_cnt > 5) {

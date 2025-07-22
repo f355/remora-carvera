@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // state machine
 enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET };
 
+[[noreturn]]
 int main() {
   NVIC_SetPriority(EINT3_IRQn, 4);
 
