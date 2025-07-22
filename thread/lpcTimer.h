@@ -19,9 +19,10 @@ class LPCTimer final {
   uint32_t frequency;
   uint32_t priority;
   InterruptHandler* handler;
+  void (*wrapper)();
 
  public:
-  LPCTimer(LPC_TIM_TypeDef* timer, IRQn_Type irq, int8_t sbit);
+  LPCTimer(LPC_TIM_TypeDef* timer, IRQn_Type irq, int8_t sbit, void (*wrapper)());
 
   void configure(InterruptHandler* handler, uint32_t frequency, uint32_t priority);
 

@@ -8,8 +8,8 @@
 
 LPCTimer* lpc_timers[NUM_TIMERS];
 
-LPCTimer::LPCTimer(LPC_TIM_TypeDef* timer, const IRQn_Type irq, const int8_t sbit)
-    : timer(timer), irq(irq), sbit(sbit), frequency(0), priority(0), handler(nullptr) {}
+LPCTimer::LPCTimer(LPC_TIM_TypeDef* timer, const IRQn_Type irq, const int8_t sbit, void (*wrapper)())
+    : timer(timer), irq(irq), sbit(sbit), frequency(0), priority(0), handler(nullptr), wrapper(wrapper) {}
 
 void LPCTimer::configure(InterruptHandler* handler, const uint32_t frequency, const uint32_t priority) {
   this->handler = handler;
@@ -24,7 +24,7 @@ void LPCTimer::start() {
   this->timer->MR0 = SystemCoreClock / 4 / this->frequency;
   this->timer->TCR = (1 << SBIT_CNTEN);  // Start timer by setting the Counter Enable
 
-  NVIC_SetVector(this->irq, callback(this, &LPCTimer::handle_interrupt));
+  NVIC_SetVector(this->irq, reinterpret_cast<uint32_t>(this->wrapper));
   NVIC_SetPriority(this->irq, this->priority);
   NVIC_EnableIRQ(this->irq);
 }
@@ -37,7 +37,11 @@ void LPCTimer::handle_interrupt() const {
   this->handler->handle_interrupt();
 }
 
+// need these to pass to NVIC_SetVector
+void timer_1_irq_wrapper() { lpc_timers[1]->handle_interrupt(); }
+void timer_2_irq_wrapper() { lpc_timers[2]->handle_interrupt(); }
+
 void create_timers() {
-  lpc_timers[1] = new LPCTimer(LPC_TIM1, TIMER1_IRQn, 2);
-  lpc_timers[2] = new LPCTimer(LPC_TIM2, TIMER2_IRQn, 22);
+  lpc_timers[1] = new LPCTimer(LPC_TIM1, TIMER1_IRQn, 2, timer_1_irq_wrapper);
+  lpc_timers[2] = new LPCTimer(LPC_TIM2, TIMER2_IRQn, 22, timer_2_irq_wrapper);
 }

@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // threads
 #include "MachineThread.h"
-#include "ThisThread.h"
 
 // state machine
 enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET };
@@ -96,7 +95,7 @@ int main() {
           threads_running = true;
 
           // wait 1 second for threads to read IO before testing for PRUreset
-          rtos::ThisThread::sleep_for(1000);
+          wait_us(1000000);
         }
 
         if (comms->pru_reset) {
@@ -196,6 +195,6 @@ int main() {
         }
     }
 
-    rtos::ThisThread::sleep_for(100);  // wait for 0.1 seconds
+    wait_us(100000);  // wait for 0.1 seconds
   }
 }
