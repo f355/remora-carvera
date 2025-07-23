@@ -1,7 +1,7 @@
 #ifndef ESTOP_H
 #define ESTOP_H
 
-#include "modules/module.h"
+#include "module.h"
 
 class eStop final : public Module {
   volatile txData_t *ptr_tx_data;

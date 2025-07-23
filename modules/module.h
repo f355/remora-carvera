@@ -4,9 +4,9 @@
 #include <cstdint>
 #include <string>
 
-#include "drivers/comms/comms.h"
-#include "drivers/pin/pin.h"
-#include "thread/MachineThread.h"
+#include "comms.h"
+#include "pin.h"
+#include "MachineThread.h"
 
 // Module base class
 // All modules are derived from this base class

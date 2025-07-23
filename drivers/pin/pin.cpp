@@ -1,7 +1,5 @@
 #include "pin.h"
 
-#include <cerrno>
-
 #include "port_api.h"
 
 Pin::Pin(const unsigned char port, const unsigned char pin) : inverting(false), pin(pin), port_number(port) {
@@ -186,4 +184,4 @@ InterruptIn* Pin::interrupt_pin() {
   }
 }
 
-PinName Pin::to_pin_name() { return port_pin(static_cast<PortName>(port_number), pin); }
+PinName Pin::to_pin_name() const { return port_pin(static_cast<PortName>(port_number), pin); }

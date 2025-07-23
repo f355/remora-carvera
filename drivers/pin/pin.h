@@ -38,7 +38,7 @@ class Pin {
   Pin* pull_none();
   Pin* invert();
 
-  bool get() const { return this->inverting ^ this->port->FIOPIN >> this->pin & 1; }
+  bool get() const { return this->inverting ^ ((this->port->FIOPIN >> this->pin) & 1); }
 
   void set(const bool value) const {
     if (this->inverting ^ value)
@@ -51,7 +51,7 @@ class Pin {
 
   InterruptIn* interrupt_pin();
 
-  PinName to_pin_name();
+  PinName to_pin_name() const;
 
  private:
   bool inverting;

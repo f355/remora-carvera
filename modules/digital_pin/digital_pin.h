@@ -1,7 +1,7 @@
 #ifndef DIGITALPIN_H
 #define DIGITALPIN_H
 
-#include "modules/module.h"
+#include "module.h"
 
 class InputPin final : public Module {
   volatile uint16_t* inputs;

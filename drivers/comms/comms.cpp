@@ -2,9 +2,8 @@
 
 Comms::Comms() : spi_slave(MOSI1, MISO1, SCK1, SSEL1) {
   if (sizeof(rx_data) != sizeof(tx_data)) {
-    error("SPI buffer size mismatch, rx: %lu, tx: %lu", sizeof(rx_data), sizeof(tx_data));
+    error("SPI buffer size mismatch, rx: %u, tx: %u", sizeof(rx_data), sizeof(tx_data));
   }
-  this->spi_slave.frequency(48000000);
 
   tx_dma = new MODDMA_Config;
   rx_dma = new MODDMA_Config;
@@ -70,12 +69,12 @@ void Comms::rx_callback() {
     // if we've received garbage:
     printf("bad SPI payload: ");
     auto buf = reinterpret_cast<uint8_t*>(&rx_temp_buffer);
-    for (int i = 0; i < sizeof(rx_temp_buffer); i++) {
+    for (unsigned int i = 0; i < sizeof(rx_temp_buffer); i++) {
       printf("%02X ", buf[i]);
     }
     printf("\ntransmitted: ");
     buf = reinterpret_cast<uint8_t*>(&tx_temp_buffer);
-    for (int i = 0; i < sizeof(tx_temp_buffer); i++) {
+    for (unsigned int i = 0; i < sizeof(tx_temp_buffer); i++) {
       printf("%02X ", buf[i]);
     }
     printf("\n");

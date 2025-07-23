@@ -1,7 +1,7 @@
 #ifndef THERMISTOR_H
 #define THERMISTOR_H
 
-#include "modules/module.h"
+#include "module.h"
 
 class Thermistor final : public Module {
   volatile int32_t* output_var;  // pointer where to put the feedback

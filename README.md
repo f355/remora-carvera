@@ -119,20 +119,13 @@ the reader.
 
 ### Building the firmware
 
-Due to historical reasons, the project is using Mbed OS 5.x which is pretty tricky to get working with any sensible
-build tooling - the Mbed CLI drops into a dependency hell on modern systems.
+Follow the [official Mbed CE instructions](https://mbed-ce.dev/getting-started/toolchain-install/). Use this repo
+instead of the `mbed-ce-hello-world`, `Release` build type and `LPC1768` target.
 
-Don't bother, just download the Mbed Studio, open this directory, choose the `mbed LPC1768` target and the `Release`
-profile, then build. If all goes well, you should get the `firmware.bin` under `BUILD/LPC1768/ARMC6`.
-
-That said, the entire Mbed project is deprecated and Mbed Studio builds stuff in the cloud, so we should expect the
-servers to get turned off soon and break Mbed Studio. The plan is to either migrate
-to [mbed-ce](https://github.com/mbed-ce), clang and CMake, or to pick out just the needed bits of Mbed like the
-stock/community firmware does.
-
-After building the firmware, you'll need to put it in the root folder of the SD card as usual. The firmware is not using
-the SD card at all, so you can leave the rest of the files on it. We're also not touching the bootloader, so to go back
-to the stock firmware you just need to download it, rename it to `firmware.bin` and put it on the SD card.
+Instead of flashing the firmware through UART/JTAG/USB, you'll need to put it in the root folder of the SD card as
+usual. The firmware is not using the SD card at all, so you can leave the rest of the files on it. We're also not
+touching the bootloader, so to go back to the stock firmware you just need to download it, rename it to `firmware.bin`
+and put it on the SD card.
 
 ### Configuring LinuxCNC
 

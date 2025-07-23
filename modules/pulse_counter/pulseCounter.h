@@ -1,7 +1,7 @@
 #ifndef PULSECOUNTER_H
 #define PULSECOUNTER_H
 
-#include "modules/module.h"
+#include "module.h"
 
 class PulseCounter final : public Module {
   volatile int32_t* output_var;

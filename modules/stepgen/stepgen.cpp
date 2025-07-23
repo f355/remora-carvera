@@ -5,10 +5,10 @@
 
 Stepgen::Stepgen(const int joint_number, Pin* step_pin, Pin* dir_pin, const int32_t thread_frequency,
                  volatile rxData_t* rx_data, volatile txData_t* tx_data)
-    : joint_enable_mask(1 << joint_number),
-      ptr_commanded_frequency(&rx_data->joint_freq_command[joint_number]),
+    : ptr_commanded_frequency(&rx_data->joint_freq_command[joint_number]),
       ptr_feedback(&tx_data->joint_feedback[joint_number]),
       ptr_joint_enable(&rx_data->joint_enable),
+      joint_enable_mask(1 << joint_number),
       last_dir(true),
       step_count(0),
       accumulator(0),

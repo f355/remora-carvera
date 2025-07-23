@@ -1,7 +1,7 @@
 #ifndef STEPGEN_H
 #define STEPGEN_H
 
-#include "modules/module.h"
+#include "module.h"
 
 class Stepgen : public Module {
   volatile int32_t* ptr_commanded_frequency;  // pointer to the data source where to get the frequency command

@@ -1,6 +1,6 @@
 #include "MachineThread.h"
 
-#include "modules/module.h"
+#include "module.h"
 
 using namespace std;
 

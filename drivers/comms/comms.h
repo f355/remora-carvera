@@ -1,5 +1,5 @@
-#ifndef REMORASPI_H
-#define REMORASPI_H
+#ifndef COMMS_H
+#define COMMS_H
 
 #include "MODDMA.h"
 #include "mbed.h"

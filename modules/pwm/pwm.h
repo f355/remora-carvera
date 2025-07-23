@@ -1,7 +1,7 @@
 #ifndef PWM_H
 #define PWM_H
 
-#include "modules/module.h"
+#include "module.h"
 
 class PWM final : public Module {
   PwmOut* pwm_pin;  // PWM out object
