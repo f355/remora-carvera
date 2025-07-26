@@ -28,7 +28,6 @@ class Comms {
   rxData_t rx_temp_buffer{};
   rxData_t tx_temp_buffer{};
   uint8_t reject_cnt = 0;
-  bool comms_ready = false;
   bool comms_error = false;
 
  public:
@@ -39,13 +38,10 @@ class Comms {
   volatile txData_t* ptr_tx_data = &tx_data;
 
   void rx_callback();
-  static void err_callback();
+  void err_callback();
 
   void start();
-  bool is_ready() const;
-  void not_ready();
   bool get_error() const;
-  void clear_error();
 };
 
 #endif

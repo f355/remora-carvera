@@ -27,7 +27,7 @@ and an extra MCU pin to use for the board reset/out-of-band communication.
 
 You'll need the following:
 
-1. Carvera Air machine, obviously
+1. Carvera Air itself, obviously
 2. Raspberry Pi 4B (5 might work too, but it is untested) with a suitable power supply and a MicroSD card
 3. MicroSD card reader
 4. Good soldering iron/station and decent soldering skills, microscope or loupe is recommended, as well as other

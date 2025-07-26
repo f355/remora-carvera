@@ -447,7 +447,7 @@ void handle_rx() {
     *state->spi_status = 0;
     rtapi_print("Bad SPI payload: ");
     for (int i = 0; i < sizeof(rxBuffer); i++) {
-      rtapi_print("%02X ", uint8_t(rxbuffer[i]));
+      rtapi_print("%02X ", (uint8_t)rxbuffer[i]);
     }
     rtapi_print("\n");
     return;

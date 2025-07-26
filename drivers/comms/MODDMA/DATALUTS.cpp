@@ -26,10 +26,6 @@
 #include "mbed.h"
 #endif
 
-#ifndef MODDMA_CONFIG_H
-#include "CONFIG.h"
-#endif
-
 namespace AjK {
 
 uint32_t MODDMA::LUTPerAddr(int n) {
