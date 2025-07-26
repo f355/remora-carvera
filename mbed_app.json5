@@ -8,7 +8,7 @@
           "size": 0x7c000,
         }
       },
-      "platform.stdio-baud-rate": 115200,
+      "platform.stdio-baud-rate": 57600,
     }
   }
 }
