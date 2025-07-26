@@ -116,6 +116,8 @@ static int rt_bcm2835_init(void);
 static int rt_rp1lib_init(void);
 
 static void calc_stepper_commands(void *arg, long period);
+static void prepare_tx();
+static void handle_rx();
 static void spi_transceive();
 
 bool pin_err(int retval) {
