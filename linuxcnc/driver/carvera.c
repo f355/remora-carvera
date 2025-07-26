@@ -460,6 +460,11 @@ void set_hard_reset_pin() {
 }
 
 void handle_rx() {
+  if (!*state->spi_enable) {
+    *state->spi_status = 0;
+    return;
+  }
+
   if (rxData.header != SPI_DATA_HEADER || rxData.footer != SPI_DATA_FOOTER) {
     // we have received a BAD payload from the PRU
     rtapi_print("bad SPI payload!\n");
@@ -521,14 +526,6 @@ void spi_transceive() {
     rtapi_print("out of reset\n");
   }
   state->spi_reset_old = *state->spi_reset;
-
-  if (!*state->spi_enable) {
-    if (*state->spi_status) {
-      rtapi_print("SPI disabled!\n");
-    }
-    *state->spi_status = 0;
-    return;
-  }
 
   if (!out_of_reset && !*state->spi_status) return;
 
