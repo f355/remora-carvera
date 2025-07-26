@@ -461,6 +461,9 @@ void set_hard_reset_pin() {
 
 void handle_rx() {
   if (!*state->spi_enable) {
+    if (*state->spi_status) {
+      rtapi_print("SPI disabled\n");
+    }
     *state->spi_status = 0;
     return;
   }
@@ -477,10 +480,13 @@ void handle_rx() {
   if (rxData.e_stop_triggered) {
     // we have an eStop notification from the PRU
     *state->spi_status = 0;
-    rtapi_print_msg(RTAPI_MSG_ERR, "An E-stop is active");
+    rtapi_print_msg(RTAPI_MSG_ERR, "An E-stop is active\n");
     return;
   }
 
+  if(!*state->spi_status) {
+    rtapi_print("SPI enabled\n");
+  }
   *state->spi_status = 1;
 
   int i;
