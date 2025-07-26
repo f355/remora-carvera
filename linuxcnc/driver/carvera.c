@@ -255,6 +255,22 @@ int rtapi_app_main(void) {
     return -1;
   }
 
+  rtapi_snprintf(name, sizeof(name), "%s.prepare-tx", prefix);
+  retval = hal_export_funct(name, prepare_tx, state, 1, 0, comp_id);
+  if (retval < 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: prepare-tx function export failed\n", modname);
+    hal_exit(comp_id);
+    return -1;
+  }
+
+  rtapi_snprintf(name, sizeof(name), "%s.handle-rx", prefix);
+  retval = hal_export_funct(name, handle_rx, state, 1, 0, comp_id);
+  if (retval < 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: handle-rx function export failed\n", modname);
+    hal_exit(comp_id);
+    return -1;
+  }
+
   rtapi_snprintf(name, sizeof(name), "%s.spi-transceive", prefix);
   retval = hal_export_funct(name, spi_transceive, state, 1, 0, comp_id);
   if (retval < 0) {
@@ -496,7 +512,6 @@ void handle_rx() {
 }
 
 void spi_transceive() {
-  prepare_tx();
   set_hard_reset_pin();
 
   bool out_of_reset = *state->spi_reset && !state->spi_reset_old;
@@ -534,8 +549,6 @@ void spi_transceive() {
     rtapi_print("%02X ", (uint8_t)rxBuffer[i]);
   }
   rtapi_print("\n");
-
-  handle_rx();
 }
 
 int rt_peripheral_init(void) {
