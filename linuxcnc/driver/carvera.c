@@ -518,12 +518,12 @@ void spi_transceive() {
   }
 
   rtapi_print("transmitted %d bytes: ", sizeof(txData));
-  for (int i = 0; i < sizeof(txBuffer); i++) {
+  for (int i = 0; i < sizeof(txData); i++) {
     rtapi_print("%02X ", (uint8_t)txBuffer[i]);
   }
   rtapi_print("\n");
   rtapi_print("received %d bytes: ", sizeof(rxData));
-  for (int i = 0; i < sizeof(rxBuffer); i++) {
+  for (int i = 0; i < sizeof(rxData); i++) {
     rtapi_print("%02X ", (uint8_t)rxBuffer[i]);
   }
   rtapi_print("\n");
