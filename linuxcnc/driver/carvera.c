@@ -501,7 +501,7 @@ void spi_transceive() {
   bool out_of_reset = *state->spi_reset && !state->spi_reset_old;
   state->spi_reset_old = *state->spi_reset;
 
-  if (!state->spi_enable) {
+  if (!*state->spi_enable) {
     *state->spi_status = 0;
     return;
   }
