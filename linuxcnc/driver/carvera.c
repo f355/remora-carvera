@@ -445,11 +445,6 @@ void handle_rx() {
   if (rxData.header != SPI_DATA_HEADER || rxData.footer != SPI_DATA_FOOTER) {
     // we have received a BAD payload from the PRU
     *state->spi_status = 0;
-    rtapi_print("Bad SPI payload: ");
-    for (int i = 0; i < sizeof(rxBuffer); i++) {
-      rtapi_print("%02X ", (uint8_t)rxBuffer[i]);
-    }
-    rtapi_print("\n");
     return;
   }
 
@@ -521,6 +516,17 @@ void spi_transceive() {
   } else if (rp1 == true) {
     rp1spi_transfer(0, &txData, &rxData, sizeof(txData));
   }
+
+  rtapi_print("transmitted %d bytes: ", sizeof(txData));
+  for (int i = 0; i < sizeof(txBuffer); i++) {
+    rtapi_print("%02X ", (uint8_t)txBuffer[i]);
+  }
+  rtapi_print("\n");
+  rtapi_print("received %d bytes: ", sizeof(rxData));
+  for (int i = 0; i < sizeof(rxBuffer); i++) {
+    rtapi_print("%02X ", (uint8_t)rxBuffer[i]);
+  }
+  rtapi_print("\n");
 
   handle_rx();
 }
