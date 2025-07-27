@@ -5,19 +5,15 @@
 
 Module* createDigitalPin(JsonObject module, Comms* comms);
 
-class DigitalPin : public Module
-{
-    private:
+class DigitalPin final : public Module {
+  volatile uint16_t* ptrData;
+  int mask;
+  int mode;
+  Pin* pin;
 
-        volatile uint16_t *ptrData;
-        int mask;
-        int mode;
-        Pin *pin;
-
-    public:
-
-        DigitalPin(volatile uint16_t&, int, std::string, int);
-        virtual void update(void);
+ public:
+  DigitalPin(volatile uint16_t&, int, std::string, int);
+  void update() override;
 };
 
 #endif

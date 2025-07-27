@@ -3,32 +3,28 @@
 
 #include "module.h"
 
-Module* createPWM(JsonObject module, Comms* comms);
+Module *createPWM(JsonObject module, Comms *comms);
 
-class PWM : public Module
-{
-    private:
+class PWM final : public Module {
+  int pwmMax;  // maximum PWM output
+  int pwmSP;   // PWM setpoint as a percentage of maxPwm
 
-        int pwmMax; // maximum PWM output
-        int pwmSP; // PWM setpoint as a percentage of maxPwm
+  PwmOut *pwm_pin;  // PWM out object
 
-        PwmOut *pwmPin; // PWM out object
+  volatile float *set_duty_cycle;    // pointer to the data source
+  volatile float *ptrPwmPulseWidth;  // pointer to the data source
 
-        volatile float *ptrPwmPeriod; // pointer to the data source
-        volatile float *ptrPwmPulseWidth; // pointer to the data source
+  int period_us;       // Period (us)
+  float duty_cycle;    // Pulse width (%)
+  int pulse_width_us;  // Pulse width (us)
 
-        int pwmPeriod; // Period (us)
-        float pwmPulseWidth; // Pulse width (%)
-        int pwmPulseWidth_us; // Pulse width (us)
+  bool variablePeriod;
 
-        bool variablePeriod;
+ public:
+  PWM(volatile float &, int, std::string);
+  PWM(volatile float &, volatile float &, int, std::string);
 
-    public:
-
-        PWM(volatile float&, int, std::string);
-        PWM(volatile float&, volatile float&, int, std::string);
-
-        virtual void update(void);
+  void update() override;
 };
 
 #endif

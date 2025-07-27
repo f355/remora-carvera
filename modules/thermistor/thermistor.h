@@ -5,28 +5,22 @@
 
 Module* createThermistor(JsonObject module, PRUThread* thread, Comms* comms);
 
-class Thermistor : public Module
-{
-    private:
-        volatile float* ptrFeedback; // pointer where to put the feedback
-        
-        float temperaturePV;
+class Thermistor final : public Module {
+  volatile float* ptr_feedback;  // pointer where to put the feedback
 
-        AnalogIn *adc;
-        float r0;
-        int r1;
-        int r2;
-        float j;
-        float k;
+  AnalogIn* adc;
+  float r0;
+  int r1;
+  int r2;
+  float j;
+  float k;
 
-        float getTemperature();
+  float get_temperature() const;
 
-    public:
+ public:
+  Thermistor(volatile float&, int32_t, int32_t, std::string, float, int, int);
 
-        Thermistor(volatile float&, int32_t, int32_t, std::string, float, int, int);
-
-        virtual void slowUpdate(void);
+  void slow_update() override;
 };
-
 
 #endif

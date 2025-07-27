@@ -5,18 +5,14 @@
 
 Module* createResetPin(JsonObject module, Comms* comms);
 
-class ResetPin : public Module
-{
-    private:
+class ResetPin final : public Module {
+  volatile bool* ptr_reset;  // pointer to the data source
 
-        volatile bool *ptrReset; // pointer to the data source
+  Pin* pin;
 
-        Pin *pin;
-
-    public:
-
-        ResetPin(volatile bool&, std::string);
-        virtual void update(void);
+ public:
+  ResetPin(volatile bool&, std::string);
+  void update() override;
 };
 
 #endif

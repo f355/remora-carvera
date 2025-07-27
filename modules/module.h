@@ -1,9 +1,6 @@
 #ifndef MODULE_H
 #define MODULE_H
 
-#include <cstdint>
-#include <string>
-
 #include "ArduinoJson.h"
 #include "Comms.h"
 #include "pin.h"
@@ -12,25 +9,19 @@
 // Module base class
 // All modules are derived from this base class
 
-class Module
-{
-    protected:
+class Module {
+ protected:
+  int32_t update_period;
+  int32_t counter;
 
-        int32_t threadFreq;
-        int32_t slowUpdateFreq;
-        int32_t updateCount;
-        int32_t counter;
+ public:
+  Module();
+  Module(int32_t thread_freq, int32_t slow_update_freq);
 
-    public:
-
-        Module(); // constructor to run the module at the thread frequency
-        Module(int32_t, int32_t); // constructor to run the module at a "slow update frequency" < thread frequency
-
-        virtual ~Module();
-        void runModule();
-        virtual void update();
-        virtual void slowUpdate();
+  virtual ~Module();
+  void run();
+  virtual void update();
+  virtual void slow_update();
 };
 
 #endif
-

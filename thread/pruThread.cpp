@@ -1,40 +1,20 @@
 #include "PRUThread.h"
-#include "module.h"
 
+#include "module.h"
 
 using namespace std;
 
 // Thread constructor
-PRUThread::PRUThread(uint32_t timerNumber, uint32_t frequency, uint32_t priority) :
-    frequency(frequency)
-{
-    this->timer = lpcTimers[timerNumber];
-    this->timer->configure(this, this->frequency, priority);
+PRUThread::PRUThread(const uint32_t timer_number, const uint32_t frequency, const uint32_t priority)
+    : frequency(frequency) {
+  this->timer = lpc_timers[timer_number];
+  this->timer->configure(this, this->frequency, priority);
 }
 
-void PRUThread::startThread(void)
-{
-    this->timer->start();
-}
+void PRUThread::start() const { this->timer->start(); }
 
-void PRUThread::stopThread(void)
-{
-    this->timer->stop();
-}
+void PRUThread::register_module(Module* module) { this->modules.push_back(module); }
 
-void PRUThread::registerModule(Module* module)
-{
-    this->vThread.push_back(module);
-}
-
-void PRUThread::unregisterModule(Module* module)
-{
-    iter = std::remove(vThread.begin(),vThread.end(), module);
-    vThread.erase(iter, vThread.end());
-}
-
-void PRUThread::handleInterrupt()
-{
-    // iterate over the Thread pointer vector to run all instances of Module::runModule()
-    for (iter = vThread.begin(); iter != vThread.end(); ++iter) (*iter)->runModule();
+void PRUThread::handle_interrupt() {
+  for (const auto module : modules) module->run();
 }
