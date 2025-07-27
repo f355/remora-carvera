@@ -1,3 +1,0 @@
-[submodule "Firmware/FirmwareSource/Remora-OS5/mbed-os"]
-	path = Firmware/FirmwareSource/Remora-OS5/mbed-os
-	url = https://github.com/ARMmbed/mbed-os.git
