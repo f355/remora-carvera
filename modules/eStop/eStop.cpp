@@ -1,6 +1,6 @@
 #include "eStop.h"
 
-Module* createEStop(JsonObject module, RemoraComms* comms)
+Module* createEStop(JsonObject module, Comms* comms)
 {
     const char* pin = module["pin"];
 

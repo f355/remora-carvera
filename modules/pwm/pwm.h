@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-Module* createPWM(JsonObject module, RemoraComms* comms);
+Module* createPWM(JsonObject module, Comms* comms);
 
 class PWM : public Module
 {

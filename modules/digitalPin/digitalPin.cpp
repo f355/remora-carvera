@@ -1,6 +1,6 @@
 #include "digitalPin.h"
 
-Module* createDigitalPin(JsonObject module, RemoraComms* comms)
+Module* createDigitalPin(JsonObject module, Comms* comms)
 {
     const char* pin = module["pin"];
     const char* modeStr = module["mode"];

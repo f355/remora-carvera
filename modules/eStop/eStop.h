@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-Module* createEStop(JsonObject module, RemoraComms* comms);
+Module* createEStop(JsonObject module, Comms* comms);
 
 class eStop : public Module
 {

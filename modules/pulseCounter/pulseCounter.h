@@ -6,7 +6,7 @@
 #include "mbed.h"
 
 
-Module* createPulseCounter(JsonObject module, RemoraComms* comms);
+Module* createPulseCounter(JsonObject module, Comms* comms);
 
 class PulseCounter : public Module
 {

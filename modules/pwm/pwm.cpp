@@ -1,6 +1,6 @@
 #include "pwm.h"
 
-Module* createPWM(JsonObject module, RemoraComms* comms)
+Module* createPWM(JsonObject module, Comms* comms)
 {
     int sp = module["set_point"];
     const char* pin = module["pwm_pin"];

@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms);
+Module* createStepgen(JsonObject module, PRUThread* thread, Comms* comms);
 
 class Stepgen : public Module
 {

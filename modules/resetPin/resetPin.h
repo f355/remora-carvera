@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-Module* createResetPin(JsonObject module, RemoraComms* comms);
+Module* createResetPin(JsonObject module, Comms* comms);
 
 class ResetPin : public Module
 {

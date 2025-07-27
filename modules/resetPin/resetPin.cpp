@@ -1,6 +1,6 @@
 #include "resetPin.h"
 
-Module* createResetPin(JsonObject module, RemoraComms* comms)
+Module* createResetPin(JsonObject module, Comms* comms)
 {
     const char* pin = module["pin"];
 

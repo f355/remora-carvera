@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-Module* createDigitalPin(JsonObject module, RemoraComms* comms);
+Module* createDigitalPin(JsonObject module, Comms* comms);
 
 class DigitalPin : public Module
 {

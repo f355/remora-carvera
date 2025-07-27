@@ -3,7 +3,7 @@
 #include "port_api.h"
 #include "LPC17xx.h"
 
-Module* createPulseCounter(JsonObject module, RemoraComms* comms)
+Module* createPulseCounter(JsonObject module, Comms* comms)
 {
     int pv = module["process_variable"];
     const char* pin = module["pin"];

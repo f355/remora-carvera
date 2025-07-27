@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "ArduinoJson.h"
 
 // drivers
-#include "RemoraComms.h"
+#include "Comms.h"
 #include "pin.h"
 
 // threads
@@ -103,7 +103,7 @@ DynamicJsonDocument deserialiseJSON(const char *json)
 }
 
 
-void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
+void loadModules(PRUThread* thread, JsonArray modules, Comms* comms)
 {
     // create objects from json data
     for (JsonArray::iterator it = modules.begin(); it != modules.end(); ++it)
@@ -155,7 +155,7 @@ void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
     }
 }
 
-vector<PRUThread*> createThreads(DynamicJsonDocument doc, RemoraComms* comms)
+vector<PRUThread*> createThreads(DynamicJsonDocument doc, Comms* comms)
 {
     printf("\ncreating threads\n");
 
@@ -193,7 +193,7 @@ int main()
     enum State currentState;
     enum State prevState;
 
-    RemoraComms* comms = new RemoraComms();
+    Comms* comms = new Comms();
 
     comms->setStatus(false);
     comms->setError(false);

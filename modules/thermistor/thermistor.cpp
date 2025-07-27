@@ -1,6 +1,6 @@
 #include "thermistor.h"
 
-Module* createThermistor(JsonObject module, PRUThread* thread, RemoraComms* comms)
+Module* createThermistor(JsonObject module, PRUThread* thread, Comms* comms)
 {
     int pv = module["process_variable"];
     const char* pinSensor = module["pin"];

@@ -49,7 +49,7 @@ typedef union
 
 #pragma pack(pop)
 
-class RemoraComms
+class Comms
 {
     private:
 
@@ -72,7 +72,7 @@ class RemoraComms
         
     public:
 
-        RemoraComms();
+        Comms();
 
         volatile bool pruReset;
         rxData_t volatile * ptrRxData;

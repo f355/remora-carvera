@@ -1,6 +1,6 @@
 #include "stepgen.h"
 
-Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms)
+Module* createStepgen(JsonObject module, PRUThread* thread, Comms* comms)
 {
     int joint = module["joint"];
     const char* step = module["step_pin"];

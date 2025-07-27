@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-Module* createThermistor(JsonObject module, PRUThread* thread, RemoraComms* comms);
+Module* createThermistor(JsonObject module, PRUThread* thread, Comms* comms);
 
 class Thermistor : public Module
 {
