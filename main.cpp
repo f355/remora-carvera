@@ -23,9 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <cerrno>
 #include <string>
 
-#include "FATFileSystem.h"
-#include "SDBlockDevice.h"
-
 #include "configuration.h"
 
 // libraries
@@ -80,57 +77,7 @@ Watchdog& watchdog = Watchdog::get_instance();
 
 string readJsonConfig()
 {
-    printf("1. Reading json configuration file\n");
-
-    // Try to mount the filesystem
-    printf("Mounting the filesystem... ");
-    fflush(stdout);
-
-    SDBlockDevice blockDevice(
-        MBED_CONF_SD_SPI_MOSI,
-        MBED_CONF_SD_SPI_MISO,
-        MBED_CONF_SD_SPI_CLK,
-        MBED_CONF_SD_SPI_CS
-    );
-    FATFileSystem fileSystem("fs");
-    int err = fileSystem.mount(&blockDevice);
-
-    printf("%s\n", (err ? "Fail :(" : "OK"));
-    if (err) {
-        error("No filesystem found... ");
-     }
-
-    // Open the config file
-    printf("Opening \"/fs/config.json\"... ");
-    fflush(stdout);
-    FILE *jsonFile = fopen("/fs/config.json", "r+");
-    if (!jsonFile) {
-        error("Error opening config");
-    }
-
-    fseek (jsonFile, 0, SEEK_END);
-    int32_t length = ftell (jsonFile);
-    fseek (jsonFile, 0, SEEK_SET);
-
-    printf("Json config file length = %2d\n", length);
-
-    string strJson;
-
-    strJson.reserve(length + 1);
-
-    while (!feof(jsonFile)) {
-        int c = fgetc(jsonFile);
-        strJson.push_back(c);
-    }
-
-    // Remove comments from next line to print out the JSON config file
-    //printf("%s\n", strJson.c_str());
-
-    printf("\rClosing \"/fs/config.json\"... ");
-    fflush(stdout);
-    fclose(jsonFile);
-
-    return strJson;
+    return " {\"board\":\"Carvera Air CA1\",\"threads\":{\"base\":{\"timer_number\":1,\"frequency\":60000,\"priority\":2,\"modules\":[{\"comment\":\"X - Joint 0 step generator\",\"type\":\"stepgen\",\"joint\":0,\"step_pin\":\"1.28\",\"direction_pin\":\"1.29!\"},{\"comment\":\"Y - Joint 1 step generator\",\"type\":\"stepgen\",\"joint\":1,\"step_pin\":\"1.26\",\"direction_pin\":\"1.27\"},{\"comment\":\"Z - Joint 2 step generator\",\"type\":\"stepgen\",\"joint\":2,\"step_pin\":\"1.24\",\"direction_pin\":\"1.25!\"},{\"comment\":\"A - Joint 3 step generator\",\"type\":\"stepgen\",\"joint\":3,\"step_pin\":\"1.21\",\"direction_pin\":\"1.23!\"} ]},\"servo\":{\"timer_number\":2,\"frequency\":1000,\"priority\":3,\"modules\":[{\"comment\":\"Reset pin\",\"type\":\"reset_pin\",\"pin\":\"2.10\"},{\"comment\":\"e-stop pin\",\"type\":\"e_stop\",\"pin\":\"0.20\"},{\"comment\":\"Spindle (PWM period is shared!)\",\"type\":\"pwm\",\"set_point\":0,\"pwm_pin\":\"2.5\",\"period_us\":10000},{\"comment\":\"Spindle feedback\",\"type\":\"pulse_counter\",\"process_variable\":0,\"pin\":\"2.7\"},{\"comment\":\"Power fan (PWM period is shared!)\",\"type\":\"pwm\",\"set_point\":1,\"pwm_pin\":\"2.3\",\"period_us\":10000},{\"comment\":\"Spindle fan (PWM period is shared!)\",\"type\":\"pwm\",\"set_point\":2,\"pwm_pin\":\"2.1\",\"period_us\":10000},{\"comment\":\"Light switch\",\"type\":\"digital_pin\",\"mode\":\"out\",\"data_bit\":0,\"pin\":\"2.0\"},{\"comment\":\"Tool sensor switch\",\"type\":\"digital_pin\",\"mode\":\"out\",\"data_bit\":1,\"pin\":\"0.11\"},{\"comment\":\"Beep switch\",\"type\":\"digital_pin\",\"mode\":\"out\",\"data_bit\":2,\"pin\":\"1.14v\"},{\"comment\":\"EXT out\",\"type\":\"digital_pin\",\"mode\":\"out\",\"data_bit\":3,\"pin\":\"0.21\"},{\"comment\":\"12V power switch\",\"mode\":\"out\",\"data_bit\":4,\"type\":\"digital_pin\",\"pin\":\"0.22\"},{\"comment\":\"24V power switch\",\"mode\":\"out\",\"data_bit\":5,\"type\":\"digital_pin\",\"pin\":\"0.10\"},{\"comment\":\"A axis enable\",\"mode\":\"out\",\"data_bit\":6,\"type\":\"digital_pin\",\"pin\":\"1.30!\"},{\"comment\":\"Spindle alarm\",\"mode\":\"in\",\"data_bit\":0,\"type\":\"digital_pin\",\"pin\":\"0.19^\"},{\"comment\":\"X axis stall alarm\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":1,\"pin\":\"0.1^\"},{\"comment\":\"Y axis stall alarm\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":2,\"pin\":\"0.0^\"},{\"comment\":\"Z axis stall alarm\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":3,\"pin\":\"3.25^\"},{\"comment\":\"Lid sensor\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":4,\"pin\":\"1.8!^\"},{\"comment\":\"Main button\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":5,\"pin\":\"2.13!^\"},{\"comment\":\"EXT in\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":6,\"pin\":\"2.2v\"},{\"comment\":\"X endstop\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":7,\"pin\":\"0.24^\"},{\"comment\":\"Y endstop\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":8,\"pin\":\"0.25^\"},{\"comment\":\"Z endstop\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":9,\"pin\":\"1.1^\"},{\"comment\":\"A endstop\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":10,\"pin\":\"1.9^\"},{\"comment\":\"Probe\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":11,\"pin\":\"2.6v\"},{\"comment\":\"Probe calibrate\",\"type\":\"digital_pin\",\"mode\":\"in\",\"data_bit\":12,\"pin\":\"0.5^\"},{\"comment\":\"Spindle temperature\",\"type\":\"thermistor\",\"process_variable\":1,\"pin\":\"1.31\",\"beta\":3950,\"r0\":100000,\"t0\":25},{\"comment\":\"Power supply temperature\",\"type\":\"thermistor\",\"process_variable\":2,\"pin\":\"0.26\",\"beta\":3950,\"r0\":100000,\"t0\":25} ]}},\"run_on_load\":[]}";
 }
 
 
