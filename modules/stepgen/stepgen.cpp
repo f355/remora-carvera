@@ -62,7 +62,7 @@ void Stepgen::update() {
   stepNow &= STEP_MASK;
 
   // The sign of the increment indicates the desired direction
-  bool isForward = (increment > 0);
+  const bool isForward = (increment > 0);
 
   if (this->last_dir != isForward) {
     // Direction has changed, flip dir pin and do not step this iteration to give some setup time.

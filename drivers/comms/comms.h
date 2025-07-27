@@ -23,12 +23,16 @@ class Comms {
   MODDMA_Config* rx_dma;
   MODDMA_Config* tx_dma;
 
-  rxData_t rx_data{};
-  txData_t tx_data{};
-  rxData_t rx_temp_buffer{};
-  rxData_t tx_temp_buffer{};
+  volatile rxData_t rx_data{};
+  volatile txData_t tx_data{};
+  volatile rxData_t rx_temp_buffer{};
+
   uint8_t reject_cnt = 0;
   bool comms_error = false;
+
+  void rx_callback();
+  void tx_callback();
+  void err_callback();
 
  public:
   Comms();
@@ -36,9 +40,6 @@ class Comms {
   volatile bool pru_reset{};
   volatile rxData_t* ptr_rx_data = &rx_data;
   volatile txData_t* ptr_tx_data = &tx_data;
-
-  void rx_callback();
-  void err_callback();
 
   void start();
   bool get_error() const;
