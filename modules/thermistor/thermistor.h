@@ -1,7 +1,7 @@
 #ifndef THERMISTOR_H
 #define THERMISTOR_H
 
-#include "modules/module.h"
+#include "module.h"
 
 Module* createThermistor(JsonObject module, PRUThread* thread, RemoraComms* comms);
 

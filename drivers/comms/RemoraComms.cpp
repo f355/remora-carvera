@@ -6,7 +6,6 @@ RemoraComms::RemoraComms() :
 {
     this->ptrRxData = new rxData_t();
     this->ptrTxData = new txData_t();
-    this->spiSlave.frequency(48000000);
 }
 
 void RemoraComms::init()

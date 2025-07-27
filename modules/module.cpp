@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <string>
 
-#include "drivers/pin/pin.h"
+#include "pin.h"
 
 Module::Module()
 {

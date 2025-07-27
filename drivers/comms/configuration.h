@@ -17,7 +17,7 @@
 
 
 // PRU reset will occur in SPI_ERR_MAX * LOOP_TIME = 0.5sec
-#define LOOP_TIME 1000
+#define LOOP_TIME 0.1
 #define SPI_ERR_MAX 5
 
 // SPI configuration

@@ -28,10 +28,10 @@ Stepgen::Stepgen(
     volatile int32_t &ptrFeedback,
     volatile uint8_t &ptrJointEnable
 ) :
-    stepMask(stepMask),
     ptrFrequencyCommand(&ptrFrequencyCommand),
     ptrFeedback(&ptrFeedback),
-    ptrJointEnable(&ptrJointEnable)
+    ptrJointEnable(&ptrJointEnable),
+    stepMask(stepMask)
 {
     this->stepPin = (new Pin(step))->as_output();
     this->directionPin = (new Pin(direction))->as_output();

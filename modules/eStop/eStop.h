@@ -1,7 +1,7 @@
 #ifndef ESTOP_H
 #define ESTOP_H
 
-#include "modules/module.h"
+#include "module.h"
 
 Module* createEStop(JsonObject module, RemoraComms* comms);
 

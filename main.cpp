@@ -37,17 +37,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // modules
 #include "module.h"
-#include "blink.h"
-#include "digitalPin.h"
-#include "eStop.h"
-#include "motorPower.h"
-#include "pulseCounter.h"
-#include "pwm.h"
-#include "rcservo.h"
-#include "resetPin.h"
-#include "stepgen.h"
-#include "switch.h"
-#include "thermistor.h"
+#include "digitalPin/digitalPin.h"
+#include "eStop/eStop.h"
+#include "pulseCounter/pulseCounter.h"
+#include "pwm/pwm.h"
+#include "resetPin/resetPin.h"
+#include "stepgen/stepgen.h"
+#include "thermistor/thermistor.h"
 
 /***********************************************************************
 *                STRUCTURES AND GLOBAL VARIABLES                       *
@@ -125,10 +121,6 @@ void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
         {
             module = createStepgen(moduleDef, thread, comms);
         }
-        else if (!strcmp(type, "rc_servo"))
-        {
-            module = createRCServo(moduleDef, thread, comms);
-        }
         else if (!strcmp(type, "e_stop"))
         {
             module = createEStop(moduleDef, comms);
@@ -136,10 +128,6 @@ void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
         else if (!strcmp(type, "reset_pin"))
         {
             module = createResetPin(moduleDef, comms);
-        }
-        else if (!strcmp(type, "blink"))
-        {
-            module = createBlink(moduleDef, thread);
         }
         else if (!strcmp(type, "digital_pin"))
         {
@@ -156,14 +144,6 @@ void loadModules(PRUThread* thread, JsonArray modules, RemoraComms* comms)
         else if (!strcmp(type, "thermistor"))
         { 
             module = createThermistor(moduleDef, thread, comms);
-        }
-        else if (!strcmp(type, "switch"))
-        {
-            module = createSwitch(moduleDef, comms);
-        }
-        else if (!strcmp(type, "motor_power"))
-        {
-            createMotorPower(moduleDef);
         }
         else {
             error("module [%s]: unknown type [%s]\n", comment, type);
@@ -278,7 +258,7 @@ int main()
                 threadsRunning = true;
 
                 // wait for threads to read IO before testing for PRUreset
-                wait(1);
+                wait_us(1000000);
             }
 
             if (comms->pruReset)
@@ -409,6 +389,6 @@ int main()
             break;
       }
 
-    wait(LOOP_TIME);
+    wait_us(LOOP_TIME);
     }
 }

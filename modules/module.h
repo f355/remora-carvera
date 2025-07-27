@@ -5,9 +5,9 @@
 #include <string>
 
 #include "ArduinoJson.h"
-#include "thread/pruThread.h"
-#include "drivers/pin/pin.h"
-#include "drivers/comms/RemoraComms.h"
+#include "pruThread.h"
+#include "pin.h"
+#include "RemoraComms.h"
 
 // Module base class
 // All modules are derived from this base class

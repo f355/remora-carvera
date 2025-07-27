@@ -1,7 +1,7 @@
 #ifndef RESETPIN_H
 #define RESETPIN_H
 
-#include "modules/module.h"
+#include "module.h"
 
 Module* createResetPin(JsonObject module, RemoraComms* comms);
 

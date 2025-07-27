@@ -1,7 +1,7 @@
 #ifndef STEPGEN_H
 #define STEPGEN_H
 
-#include "modules/module.h"
+#include "module.h"
 
 Module* createStepgen(JsonObject module, PRUThread* thread, RemoraComms* comms);
 

@@ -13,7 +13,7 @@ namespace ARDUINOJSON_NAMESPACE {
 
 class VariantData {
   VariantContent _content;  // must be first to allow cast from array to variant
-  uint8_t _flags;
+  uint8_t _flags = 0;
 
  public:
   // Must be a POD!

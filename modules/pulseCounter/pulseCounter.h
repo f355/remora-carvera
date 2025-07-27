@@ -1,7 +1,7 @@
 #ifndef PULSECOUNTER_H
 #define PULSECOUNTER_H
 
-#include "modules/module.h"
+#include "module.h"
 
 #include "mbed.h"
 

@@ -1,7 +1,7 @@
 #ifndef PWM_H
 #define PWM_H
 
-#include "modules/module.h"
+#include "module.h"
 
 Module* createPWM(JsonObject module, RemoraComms* comms);
 

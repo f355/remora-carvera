@@ -1,0 +1,15 @@
+{
+  "target_overrides": {
+    "LPC1768": {
+      "target.application-profile": "bare-metal",
+      "target.memory_bank_config": {
+        "IROM1": {
+          "start": 0x4000,
+          "size": 0x7c000,
+        }
+      },
+      "target.c_lib": "small",
+      "platform.stdio-baud-rate": 115200,
+    }
+  }
+}

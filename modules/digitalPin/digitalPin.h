@@ -1,7 +1,7 @@
 #ifndef DIGITALPIN_H
 #define DIGITALPIN_H
 
-#include "modules/module.h"
+#include "module.h"
 
 Module* createDigitalPin(JsonObject module, RemoraComms* comms);
 

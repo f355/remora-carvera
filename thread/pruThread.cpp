@@ -1,5 +1,5 @@
 #include "PRUThread.h"
-#include "modules/module.h"
+#include "module.h"
 
 
 using namespace std;
