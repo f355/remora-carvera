@@ -2,8 +2,7 @@
 #define RESETPIN_H
 
 #include "module.h"
-
-Module* createResetPin(JsonObject module, Comms* comms);
+#include "pin.h"
 
 class ResetPin final : public Module {
   volatile bool* ptr_reset;  // pointer to the data source
@@ -11,7 +10,7 @@ class ResetPin final : public Module {
   Pin* pin;
 
  public:
-  ResetPin(volatile bool&, std::string);
+  ResetPin(volatile bool& ptr_reset, Pin* pin);
   void update() override;
 };
 

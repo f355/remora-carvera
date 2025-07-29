@@ -2,23 +2,22 @@
 #define THERMISTOR_H
 
 #include "module.h"
-
-Module* createThermistor(JsonObject module, PRUThread* thread, Comms* comms);
+#include "pin.h"
 
 class Thermistor final : public Module {
-  volatile float* ptr_feedback;  // pointer where to put the feedback
+  volatile float* output_var;  // pointer where to put the feedback
 
   AnalogIn* adc;
-  float r0;
+  int r0;
   int r1;
   int r2;
   float j;
   float k;
 
-  float get_temperature() const;
+  float getTemperature() const;
 
  public:
-  Thermistor(volatile float&, int32_t, int32_t, std::string, float, int, int);
+  Thermistor(int var_number, Pin* pin, float beta, int r0, int t0, uint32_t thread_freq, volatile txData_t* tx_data);
 
   void slow_update() override;
 };

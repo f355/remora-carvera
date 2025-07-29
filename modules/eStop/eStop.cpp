@@ -1,19 +1,11 @@
 #include "eStop.h"
 
-Module *createEStop(JsonObject module, Comms *comms) {
-  const char *pin = module["pin"];
-
-  return new eStop(comms->ptr_tx_data->header, pin);
-}
-
-eStop::eStop(volatile int32_t &ptrTxHeader, std::string portAndPin) : ptrTxHeader(&ptrTxHeader) {
-  this->pin = (new Pin(portAndPin))->as_input();  // Input 0x0, Output 0x1
-}
+eStop::eStop(volatile txData_t *ptr_tx_data, Pin *pin) : ptr_tx_data(ptr_tx_data), pin(pin->as_input()) {}
 
 void eStop::update() {
-  if (this->pin->get() == 1) {
-    *ptrTxHeader = PRU_ESTOP;
+  if (this->pin->get()) {
+    ptr_tx_data->header = PRU_ESTOP;
   } else {
-    *ptrTxHeader = PRU_DATA;
+    ptr_tx_data->header = PRU_DATA;
   }
 }

@@ -2,32 +2,16 @@
 
 Comms::Comms()
     : spi_slave(MOSI1, MISO1, SCK1, SSEL1),
-      rx_dma1(nullptr),
-      rx_dma2(nullptr),
-      tx_dma1(nullptr),
-      tx_dma2(nullptr),
-      rx_memcpy_dma1(nullptr),
-      rx_memcpy_dma2(nullptr),
-      temp_rx_buffer1(),
-      temp_rx_buffer2(),
-      reject_count(0),
-      data_ready(false),
-      spi_error(false),
-      pru_reset(false) {
-  this->ptr_rx_data = new rxData_t();
-  this->ptr_tx_data = new txData_t();
-}
+      rx_dma1(new MODDMA_Config()),
+      rx_dma2(new MODDMA_Config()),
+      tx_dma1(new MODDMA_Config()),
+      tx_dma2(new MODDMA_Config()),
+      rx_memcpy_dma1(new MODDMA_Config()),
+      rx_memcpy_dma2(new MODDMA_Config()),
+      ptr_rx_data(new rxData_t()),
+      ptr_tx_data(new txData_t()) {}
 
 void Comms::init() {
-  // Create MODDMA configuration objects for the SPI transfer and memory copy
-  rx_memcpy_dma1 = new MODDMA_Config;
-  rx_memcpy_dma2 = new MODDMA_Config;
-  tx_dma1 = new MODDMA_Config;
-  tx_dma2 = new MODDMA_Config;
-  rx_dma1 = new MODDMA_Config;
-  rx_dma2 = new MODDMA_Config;
-
-  // Setup DMA configurations
   tx_dma1->channelNum(MODDMA::Channel_0)
       ->srcMemAddr(reinterpret_cast<uint32_t>(ptr_tx_data))
       ->dstMemAddr(0)

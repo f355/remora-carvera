@@ -1,22 +1,16 @@
 #ifndef PULSECOUNTER_H
 #define PULSECOUNTER_H
 
-#include "mbed.h"
 #include "module.h"
+#include "pin.h"
 
-Module* createPulseCounter(JsonObject module, Comms* comms);
-
-class PulseCounter : public Module {
-  volatile float* ptrPulseCount;
-  volatile int32_t count;
-  void interruptHandler();
+class PulseCounter final : public Module {
+  volatile float* output_var;
+  InterruptIn* interrupt;
+  void interrupt_handler();
 
  public:
-  InterruptIn* interrupt;
-
-  PulseCounter(volatile float&, std::string);
-
-  void update() override;
+  PulseCounter(int var_number, Pin* pin, volatile txData_t* tx_data);
 };
 
 #endif

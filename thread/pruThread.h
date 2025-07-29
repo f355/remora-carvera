@@ -12,7 +12,8 @@ class Module;
 
 class PRUThread final : public InterruptHandler {
   LPCTimer *timer;
-  vector<Module *> modules;
+
+  vector<Module *> modules;  // vector containing pointers to Thread modules
 
  public:
   PRUThread(uint32_t timer_number, uint32_t frequency, uint32_t priority);

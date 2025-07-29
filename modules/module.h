@@ -1,10 +1,7 @@
 #ifndef MODULE_H
 #define MODULE_H
 
-#include "ArduinoJson.h"
 #include "Comms.h"
-#include "pin.h"
-#include "pruThread.h"
 
 // Module base class
 // All modules are derived from this base class

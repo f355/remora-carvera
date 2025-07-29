@@ -2,28 +2,27 @@
 #define STEPGEN_H
 
 #include "module.h"
-
-Module *createStepgen(JsonObject module, PRUThread *thread, Comms *comms);
+#include "pin.h"
 
 class Stepgen : public Module {
-  int enable_mask;
+  int joint_enable_mask;
 
   volatile int32_t *ptr_commanded_frequency;  // pointer to the data source where to get the frequency command
   volatile int32_t *ptr_feedback;             // pointer where to put the feedback
   volatile uint8_t *ptr_joint_enable;
 
-  bool last_dir;          // direction on last iteration, used for dir setup
-  bool is_stepping;       // true if the step pin is held high
-  int32_t step_count;     // current position raw count
-  int32_t accumulator;    // Direct Digital Synthesis (DDS) accumulator
-  float frequency_scale;  // frequency scale
-  int32_t step_mask;      // value of the DDS accumulator that triggers a step pulse
+  bool current_dir = false;  // direction on last iteration, used for dir setup
+  bool is_stepping = false;  // true if the step pin is held high
+  int32_t last_commanded_frequency = 0;
+  int32_t increment = 0;
+  int32_t accumulator = 0;  // Direct Digital Synthesis (DDS) accumulator
+  uint32_t frequency_scale;
 
  public:
-  Stepgen(int32_t, int, std::string, std::string, int32_t, volatile int32_t &, volatile int32_t &,
-          volatile uint8_t &);  // constructor
+  Stepgen(int joint_number, Pin *step_pin, Pin *dir_pin, uint32_t thread_frequency, volatile rxData_t *rx_data,
+          volatile txData_t *tx_data);
 
-  Pin *step_pin, *direction_pin;
+  Pin *step_pin, *dir_pin;
 
   void update() override;
 };

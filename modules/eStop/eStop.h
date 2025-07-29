@@ -2,15 +2,14 @@
 #define ESTOP_H
 
 #include "module.h"
-
-Module* createEStop(JsonObject module, Comms* comms);
+#include "pin.h"
 
 class eStop final : public Module {
-  volatile int32_t* ptrTxHeader;
-  Pin* pin;
+  volatile txData_t *ptr_tx_data;
+  Pin *pin;
 
  public:
-  eStop(volatile int32_t&, std::string);
+  eStop(volatile txData_t *ptr_tx_data, Pin *pin);
 
   void update() override;
 };

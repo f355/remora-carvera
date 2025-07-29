@@ -1,89 +1,50 @@
 #ifndef PIN_H
 #define PIN_H
 
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-
 #include "LPC17xx.h"
 #include "mbed.h"
 
-#define PIN_MODE_INPUT 0
-#define PIN_MODE_OUTPUT 1
-
 class Pin {
  public:
-  Pin();
-  Pin(std::string portAndPin);
+  Pin(unsigned char port, unsigned char pin);
 
-  Pin* from_string(std::string value);
-
-  inline bool connected() { return this->valid; }
-
-  inline bool equals(const Pin& other) const { return (this->pin == other.pin) && (this->port == other.port); }
-
-  inline Pin* as_output() {
-    if (this->valid) this->port->FIODIR |= 1 << this->pin;
+  Pin* as_output() {
+    this->port->FIODIR |= 1 << this->pin;
     return this;
   }
 
-  inline Pin* as_input() {
-    if (this->valid) this->port->FIODIR &= ~(1 << this->pin);
+  Pin* as_input() {
+    this->port->FIODIR &= ~(1 << this->pin);
     return this;
   }
 
-  inline Pin* set_mode(int mode) {
-    if (mode == PIN_MODE_INPUT) {
-      this->as_input();
-    } else if (mode == PIN_MODE_OUTPUT) {
-      this->as_output();
-    } else {
-      error("unknown pin mode %d\n", mode);
-    }
-    return this;
-  }
+  Pin* as_open_drain();
+  Pin* pull_up();
+  Pin* pull_down();
+  Pin* pull_none();
+  Pin* invert();
 
-  Pin* as_open_drain(void);
+  [[nodiscard]] bool get() const { return this->inverting ^ ((this->port->FIOPIN >> this->pin) & 1); }
 
-  Pin* as_repeater(void);
-
-  Pin* pull_up(void);
-
-  Pin* pull_down(void);
-
-  Pin* pull_none(void);
-
-  inline bool get() const {
-    if (!this->valid) return false;
-    return this->inverting ^ ((this->port->FIOPIN >> this->pin) & 1);
-  }
-
-  inline void set(bool value) {
-    if (!this->valid) return;
+  void set(const bool value) const {
     if (this->inverting ^ value)
       this->port->FIOSET = 1 << this->pin;
     else
       this->port->FIOCLR = 1 << this->pin;
   }
 
-  mbed::PwmOut* hardware_pwm();
+  [[nodiscard]] PwmOut* hardware_pwm() const;
 
-  mbed::InterruptIn* interrupt_pin();
+  InterruptIn* interrupt_pin();
 
-  PinName to_pin_name();
+  [[nodiscard]] PinName to_pin_name() const;
 
-  // these should be private, and use getters
+ private:
+  bool inverting;
   LPC_GPIO_TypeDef* port;
 
   unsigned char pin;
-  char port_number;
-
- private:
-  struct {
-    bool inverting : 1;
-    bool valid : 1;
-  };
+  unsigned char port_number;
 };
 
 #endif

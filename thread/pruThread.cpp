@@ -2,8 +2,6 @@
 
 #include "module.h"
 
-using namespace std;
-
 // Thread constructor
 PRUThread::PRUThread(const uint32_t timer_number, const uint32_t frequency, const uint32_t priority)
     : frequency(frequency) {
@@ -16,5 +14,6 @@ void PRUThread::start() const { this->timer->start(); }
 void PRUThread::register_module(Module* module) { this->modules.push_back(module); }
 
 void PRUThread::handle_interrupt() {
-  for (const auto module : modules) module->run();
+  // iterate over the Thread pointer vector to run all instances of Module::runModule()
+  for (const auto m : modules) m->run();
 }

@@ -19,12 +19,10 @@ add_subdirectory(mbed-os)
 add_subdirectory(drivers)
 add_subdirectory(thread)
 add_subdirectory(modules)
-add_subdirectory(lib/ArduinoJson6)
-# add_subdirectory(machine_config)
+add_subdirectory(machine_config)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(${PROJECT_NAME} mbed-baremetal epho-thread arduino-json)
-# target_link_libraries(${PROJECT_NAME} epho-machine-config)
+target_link_libraries(${PROJECT_NAME} mbed-baremetal epho-thread epho-machine-config)
 
 mbed_set_post_build(${PROJECT_NAME})

@@ -11,4 +11,4 @@ add_library(epho-module STATIC
 
 target_include_directories(epho-module PUBLIC .)
 
-target_link_libraries(epho-module PUBLIC epho-thread epho-driver-comms epho-driver-pin arduino-json)
+target_link_libraries(epho-module PUBLIC epho-thread epho-driver-comms epho-driver-pin)

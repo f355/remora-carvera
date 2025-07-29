@@ -13,6 +13,8 @@
 
 #pragma pack(push, 1)
 
+#include "machine_definitions.h"
+
 typedef union {
   // this allows structured access to the incoming SPI data without having to move it
   struct {
@@ -55,16 +57,16 @@ class Comms {
   MODDMA_Config* rx_memcpy_dma1;
   MODDMA_Config* rx_memcpy_dma2;
 
-  rxData_t temp_rx_buffer1;
-  rxData_t temp_rx_buffer2;
-  uint8_t reject_count;
-  bool data_ready;
-  bool spi_error;
+  rxData_t temp_rx_buffer1{};
+  rxData_t temp_rx_buffer2{};
+  uint8_t reject_count = 0;
+  bool data_ready = false;
+  bool spi_error = false;
 
  public:
   Comms();
 
-  volatile bool pru_reset;
+  volatile bool pru_reset = false;
   rxData_t volatile* ptr_rx_data;
   txData_t volatile* ptr_tx_data;
 

@@ -9,7 +9,7 @@ LPCTimer* lpc_timers[NUM_TIMERS];
 LPCTimer::LPCTimer(LPC_TIM_TypeDef* timer, const IRQn_Type irq, const int8_t sbit, void (*wrapper)())
     : timer(timer), irq(irq), sbit(sbit), frequency(0), priority(0), handler(nullptr), wrapper(wrapper) {};
 
-void LPCTimer::configure(InterruptHandler* handler, const int32_t frequency, const uint32_t priority) {
+void LPCTimer::configure(InterruptHandler* handler, const uint32_t frequency, const uint32_t priority) {
   this->handler = handler;
   this->frequency = frequency;
   this->priority = priority;
@@ -28,8 +28,8 @@ void LPCTimer::start() {
 }
 
 void LPCTimer::handle_interrupt() const {
-  unsigned int isrMask = this->timer->IR;
-  this->timer->IR = isrMask; /* Clear the Interrupt Bit */
+  const unsigned int isr_mask = this->timer->IR;
+  this->timer->IR = isr_mask; /* Clear the Interrupt Bit */
 
   this->handler->handle_interrupt();
 }
