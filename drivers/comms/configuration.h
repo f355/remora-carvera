@@ -10,6 +10,6 @@
 #define PRU_ESTOP 0x65737470  // "estp" SPI payload
 
 // SPI configuration
-#define SPI_BUFF_SIZE 35  // Size of SPI recieve buffer - same as HAL component, 64
+#define SPI_BUFF_SIZE 64  // Size of SPI recieve buffer - same as HAL component, 64
 
 #endif

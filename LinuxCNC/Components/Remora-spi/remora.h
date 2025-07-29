@@ -7,7 +7,7 @@
 #define DIGITAL_OUTPUTS 16
 #define DIGITAL_INPUTS 32
 
-#define SPIBUFSIZE 35
+#define SPIBUFSIZE 64
 
 #define PRU_DATA 0x64617461   // "data" SPI payload
 #define PRU_READ 0x72656164   // "read" SPI payload
