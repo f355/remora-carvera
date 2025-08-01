@@ -11,9 +11,10 @@ class Stepgen : public Module {
   volatile int32_t *ptr_feedback;             // pointer where to put the feedback
   volatile uint8_t *ptr_joint_enable;
 
-  bool current_dir = false;  // direction on last iteration, used for dir setup
+  bool current_dir = true;   // direction on last iteration, used for dir setup
   bool is_stepping = false;  // true if the step pin is held high
   int32_t last_commanded_frequency = 0;
+  int32_t step_count = 0;
   int32_t increment = 0;
   int32_t accumulator = 0;  // Direct Digital Synthesis (DDS) accumulator
   uint32_t frequency_scale;

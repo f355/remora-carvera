@@ -12,7 +12,9 @@ Stepgen::Stepgen(const int joint_number, Pin* step_pin, Pin* dir_pin, const uint
       ptr_joint_enable(&rx_data->joint_enable),
       frequency_scale((STEP_MASK << FRACTIONAL_BITS) / thread_frequency),
       step_pin(step_pin->as_output()),
-      dir_pin(dir_pin->as_output()) {}
+      dir_pin(dir_pin->as_output()) {
+  this->dir_pin->set(this->current_dir);
+}
 
 void Stepgen::update() {
   if (this->is_stepping) {
@@ -21,7 +23,7 @@ void Stepgen::update() {
     this->is_stepping = false;
   }
 
-  if (*this->ptr_joint_enable & this->joint_enable_mask) {
+  if ((*this->ptr_joint_enable & this->joint_enable_mask) == 0) {
     return;  // joint is disabled, nothing to do
   }
 
@@ -67,21 +69,21 @@ void Stepgen::update() {
   if (this->increment == 0) return;
 
   // save the old accumulator value and increment the accumulator
-  int32_t stepNow = this->accumulator;
+  int32_t step_now = this->accumulator;
   this->accumulator += increment;
   // XOR the old and the new accumulator values to find the flipped bits
-  stepNow ^= this->accumulator;
+  step_now ^= this->accumulator;
   // if the step bit has flipped, we need to drive the step pin
-  stepNow &= STEP_MASK;
+  step_now &= STEP_MASK;
 
-  if (stepNow) {
+  if (step_now) {
     // make a step
     this->step_pin->set(true);
     this->is_stepping = true;
-    if (this->current_dir) {
-      *this->ptr_feedback++;
-    } else {
-      *this->ptr_feedback--;
-    }
+    if (this->current_dir)
+      this->step_count++;
+    else
+      this->step_count--;
+    *this->ptr_feedback = step_count;
   }
 }
