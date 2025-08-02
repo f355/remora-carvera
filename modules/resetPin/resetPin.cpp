@@ -1,5 +1,5 @@
 #include "resetPin.h"
 
-ResetPin::ResetPin(volatile bool& ptr_reset, Pin* pin) : ptr_reset(&ptr_reset), pin(pin->as_input()) {}
+ResetPin::ResetPin(volatile bool& reset, Pin* pin) : reset(&reset), pin(pin->as_input()) {}
 
-void ResetPin::update() { *this->ptr_reset = this->pin->get(); }
+void ResetPin::run() { *this->reset = this->pin->get(); }

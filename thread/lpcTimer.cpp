@@ -34,11 +34,6 @@ void LPCTimer::handle_interrupt() const {
   this->handler->handle_interrupt();
 }
 
-void LPCTimer::stop() {
-  NVIC_DisableIRQ(this->irq);
-  this->timer->TCR = (0 << SBIT_CNTEN);
-}
-
 // need these to pass to NVIC_SetVector
 void timer0_wrapper() { lpc_timers[0]->handle_interrupt(); }
 void timer1_wrapper() { lpc_timers[1]->handle_interrupt(); }

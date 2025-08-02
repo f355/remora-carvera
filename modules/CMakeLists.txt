@@ -6,7 +6,7 @@ add_library(epho-module STATIC
         pwm/pwm.cpp
         resetPin/resetPin.cpp
         stepgen/stepgen.cpp
-        thermistor/thermistor.cpp
+        adc/adc.cpp
 )
 
 target_include_directories(epho-module PUBLIC .)

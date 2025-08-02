@@ -1,5 +1,6 @@
 #include "machine_config.h"
 
+#include "adc/adc.h"
 #include "digitalPin/digitalPin.h"
 #include "eStop/eStop.h"
 #include "module.h"
@@ -7,7 +8,6 @@
 #include "pwm/pwm.h"
 #include "resetPin/resetPin.h"
 #include "stepgen/stepgen.h"
-#include "thermistor/thermistor.h"
 
 // Carvera Air CA1 configuration
 
@@ -63,8 +63,8 @@ vector<PRUThread*> configure_threads(Comms* comms) {
       new PulseCounter(0, new Pin(2, 7), comms->tx_data),  // spindle encoder feedback
 
       // thermistors
-      new Thermistor(1, new Pin(1, 31), 3950, 100000, 25, servo_thread->frequency, comms->tx_data),  // spindle
-      new Thermistor(2, new Pin(0, 26), 3950, 100000, 25, servo_thread->frequency, comms->tx_data),  // power supply
+      new ADC(1, new Pin(1, 31), comms->tx_data),  // spindle
+      new ADC(2, new Pin(0, 26), comms->tx_data),  // power supply
 
       // output pins
       new OutputPin(0, new Pin(2, 0), comms->rx_data),               // work light

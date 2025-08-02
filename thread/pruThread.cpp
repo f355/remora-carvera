@@ -2,7 +2,6 @@
 
 #include "module.h"
 
-// Thread constructor
 PRUThread::PRUThread(const uint32_t timer_number, const uint32_t frequency, const uint32_t priority)
     : frequency(frequency) {
   this->timer = lpc_timers[timer_number];

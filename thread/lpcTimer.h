@@ -29,7 +29,6 @@ class LPCTimer {
 
   void start();
   void handle_interrupt() const;
-  void stop();
 };
 
 extern LPCTimer* lpc_timers[NUM_TIMERS];

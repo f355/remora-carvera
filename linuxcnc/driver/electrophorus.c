@@ -162,7 +162,7 @@ int rtapi_app_main(void) {
     return -1;
   }
 
-  if (!rt_peripheral_init()) {
+  if (rt_peripheral_init() < 0) {
     rtapi_print_msg(RTAPI_MSG_ERR, "rt_peripheral_init failed.\n");
     return -1;
   }

@@ -5,13 +5,13 @@
 #include "pin.h"
 
 class ResetPin final : public Module {
-  volatile bool* ptr_reset;  // pointer to the data source
+  volatile bool* reset;  // pointer to the data source
 
   Pin* pin;
 
  public:
-  ResetPin(volatile bool& ptr_reset, Pin* pin);
-  void update() override;
+  ResetPin(volatile bool& reset, Pin* pin);
+  void run() override;
 };
 
 #endif

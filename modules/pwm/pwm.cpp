@@ -11,7 +11,7 @@ PWM::PWM(const int var_number, Pin* pin, const int period_us, volatile rxData_t*
   this->pwm_pin->period_us(this->period_us);
 }
 
-void PWM::update() {
+void PWM::run() {
   if (*this->set_duty_cycle != this->duty_cycle) {
     // PWM duty has changed
     this->duty_cycle = *this->set_duty_cycle;

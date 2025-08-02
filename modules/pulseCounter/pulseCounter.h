@@ -1,6 +1,7 @@
 #ifndef PULSECOUNTER_H
 #define PULSECOUNTER_H
 
+#include "comms.h"
 #include "module.h"
 #include "pin.h"
 

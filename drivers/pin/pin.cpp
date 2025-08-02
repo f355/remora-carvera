@@ -3,7 +3,7 @@
 #include "port_api.h"
 
 Pin::Pin(const unsigned char port, const unsigned char pin) : inverting(false), pin(pin), port_number(port) {
-  LPC_GPIO_TypeDef* gpios[5] = {LPC_GPIO0, LPC_GPIO1, LPC_GPIO2, LPC_GPIO3, LPC_GPIO4};
+  LPC_GPIO_TypeDef* gpios[] = {LPC_GPIO0, LPC_GPIO1, LPC_GPIO2, LPC_GPIO3, LPC_GPIO4};
   this->port = gpios[port];
   this->port->FIOMASK &= ~(1 << this->pin);
 }
@@ -150,12 +150,6 @@ PwmOut* Pin::hardware_pwm() const {
   error("Pin %d.%d is not PWM-capable!", this->port_number, this->pin);
 }
 
-InterruptIn* Pin::interrupt_pin() {
-  as_input();
-  if (port_number != 0 && port_number != 2) {
-    error("Pin is not interrupt-capable!");
-  }
-  return new InterruptIn(this->to_pin_name());
-}
+InterruptIn* Pin::interrupt_pin() const { return new InterruptIn(this->to_pin_name()); }
 
 PinName Pin::to_pin_name() const { return port_pin(static_cast<PortName>(port_number), pin); }

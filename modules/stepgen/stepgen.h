@@ -1,15 +1,16 @@
 #ifndef STEPGEN_H
 #define STEPGEN_H
 
+#include "comms.h"
 #include "module.h"
 #include "pin.h"
 
 class Stepgen : public Module {
   int joint_enable_mask;
 
-  volatile int32_t *ptr_commanded_frequency;  // pointer to the data source where to get the frequency command
-  volatile int32_t *ptr_feedback;             // pointer where to put the feedback
-  volatile uint8_t *ptr_joint_enable;
+  volatile int32_t *commanded_frequency;  // pointer to the data source where to get the frequency command
+  volatile int32_t *feedback;             // pointer where to put the feedback
+  volatile uint8_t *joint_enable;
 
   bool current_dir = true;   // direction on last iteration, used for dir setup
   bool is_stepping = false;  // true if the step pin is held high
@@ -25,7 +26,7 @@ class Stepgen : public Module {
 
   Pin *step_pin, *dir_pin;
 
-  void update() override;
+  void run() override;
 };
 
 #endif

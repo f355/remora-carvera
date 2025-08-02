@@ -1,17 +1,18 @@
 #ifndef ESTOP_H
 #define ESTOP_H
 
+#include "comms.h"
 #include "module.h"
 #include "pin.h"
 
 class eStop final : public Module {
-  volatile txData_t *ptr_tx_data;
+  volatile txData_t *tx_data;
   Pin *pin;
 
  public:
-  eStop(volatile txData_t *ptr_tx_data, Pin *pin);
+  eStop(volatile txData_t *tx_data, Pin *pin);
 
-  void update() override;
+  void run() override;
 };
 
 #endif

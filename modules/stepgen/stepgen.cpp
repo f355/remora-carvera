@@ -7,23 +7,23 @@
 Stepgen::Stepgen(const int joint_number, Pin* step_pin, Pin* dir_pin, const uint32_t thread_frequency,
                  volatile rxData_t* rx_data, volatile txData_t* tx_data)
     : joint_enable_mask(1 << joint_number),
-      ptr_commanded_frequency(&rx_data->joint_freq_command[joint_number]),
-      ptr_feedback(&tx_data->joint_feedback[joint_number]),
-      ptr_joint_enable(&rx_data->joint_enable),
+      commanded_frequency(&rx_data->joint_freq_command[joint_number]),
+      feedback(&tx_data->joint_feedback[joint_number]),
+      joint_enable(&rx_data->joint_enable),
       frequency_scale((STEP_MASK << FRACTIONAL_BITS) / thread_frequency),
       step_pin(step_pin->as_output()),
       dir_pin(dir_pin->as_output()) {
   this->dir_pin->set(this->current_dir);
 }
 
-void Stepgen::update() {
+void Stepgen::run() {
   if (this->is_stepping) {
     // bring down the step pin that was set high on the previous thread tick
     this->step_pin->set(false);
     this->is_stepping = false;
   }
 
-  if ((*this->ptr_joint_enable & this->joint_enable_mask) == 0) {
+  if ((*this->joint_enable & this->joint_enable_mask) == 0) {
     return;  // joint is disabled, nothing to do
   }
 
@@ -51,10 +51,10 @@ void Stepgen::update() {
   // bits required = log2(477 183 655) = 29
   // it fits in 29 bits, so absolutely no need for 64-bit conversions
 
-  if (this->last_commanded_frequency != *this->ptr_commanded_frequency) {
+  if (this->last_commanded_frequency != *this->commanded_frequency) {
     // the commanded frequency has changed, recalculate the increment
-    this->last_commanded_frequency = *this->ptr_commanded_frequency;
-    this->increment = (*this->ptr_commanded_frequency * static_cast<int32_t>(this->frequency_scale)) >> FRACTIONAL_BITS;
+    this->last_commanded_frequency = *this->commanded_frequency;
+    this->increment = (*this->commanded_frequency * static_cast<int32_t>(this->frequency_scale)) >> FRACTIONAL_BITS;
     // The sign of the increment indicates the desired direction
     if (const bool is_forward = (increment > 0); this->current_dir != is_forward) {
       // Direction has changed, flip dir pin and do not step this iteration to give some setup time.
@@ -84,6 +84,6 @@ void Stepgen::update() {
       this->step_count++;
     else
       this->step_count--;
-    *this->ptr_feedback = step_count;
+    *this->feedback = step_count;
   }
 }

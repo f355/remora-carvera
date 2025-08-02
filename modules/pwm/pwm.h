@@ -1,6 +1,7 @@
 #ifndef PWM_H
 #define PWM_H
 
+#include "comms.h"
 #include "module.h"
 #include "pin.h"
 
@@ -16,7 +17,7 @@ class PWM final : public Module {
  public:
   PWM(int var_number, Pin *pin, int period_us, volatile rxData_t *rx_data);
 
-  void update() override;
+  void run() override;
 };
 
 #endif

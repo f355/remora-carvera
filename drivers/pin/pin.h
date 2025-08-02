@@ -35,7 +35,7 @@ class Pin {
 
   [[nodiscard]] PwmOut* hardware_pwm() const;
 
-  InterruptIn* interrupt_pin();
+  [[nodiscard]] InterruptIn* interrupt_pin() const;
 
   [[nodiscard]] PinName to_pin_name() const;
 
