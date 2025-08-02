@@ -5,7 +5,7 @@
 #include "pin.h"
 
 class PulseCounter final : public Module {
-  volatile float* output_var;
+  volatile int32_t* variable;
   InterruptIn* interrupt;
   void interrupt_handler();
 

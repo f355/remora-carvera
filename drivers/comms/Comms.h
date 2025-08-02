@@ -2,8 +2,8 @@
 #define COMMS_H
 
 #include "MODDMA.h"
-#include "configuration.h"
 #include "mbed.h"
+#include "spi_data.h"
 
 // RPi SPI
 #define MOSI1 P0_9
@@ -11,39 +11,8 @@
 #define SCK1 P0_7
 #define SSEL1 P0_6
 
-#pragma pack(push, 1)
-
-#include "machine_definitions.h"
-
-typedef union {
-  // this allows structured access to the incoming SPI data without having to move it
-  struct {
-    uint8_t rx_buffer[SPI_BUFF_SIZE];
-  };
-  struct {
-    int32_t header;
-    volatile int32_t joint_freq_command[JOINTS];
-    float set_point[VARIABLES];
-    uint8_t joint_enable;
-    uint16_t outputs;
-    uint8_t padding;
-  };
-} rxData_t;
-
-typedef union {
-  // this allows structured access to the outgoing SPI data without having to move it
-  struct {
-    uint8_t tx_buffer[SPI_BUFF_SIZE];
-  };
-  struct {
-    int32_t header;
-    int32_t joint_feedback[JOINTS];
-    float process_variable[VARIABLES];
-    uint16_t inputs;
-  };
-} txData_t;
-
-#pragma pack(pop)
+typedef linuxCncData_t rxData_t;
+typedef pruData_t txData_t;
 
 class Comms {
   SPISlave spi_slave;
@@ -67,8 +36,8 @@ class Comms {
   Comms();
 
   volatile bool pru_reset = false;
-  rxData_t volatile* ptr_rx_data;
-  txData_t volatile* ptr_tx_data;
+  rxData_t volatile* rx_data;
+  txData_t volatile* tx_data;
 
   void tx1_callback();
   void tx2_callback();

@@ -6,9 +6,9 @@
 
 Module::Module() : update_period(0), counter(0) {}
 
-Module::Module(const int32_t thread_freq, const int32_t slow_update_freq)
+Module::Module(const uint32_t thread_freq, const uint32_t slow_update_freq)
     : update_period(thread_freq / slow_update_freq), counter(0) {
-  printf("\nCreating a slower module, updating every %d thread cycles\n", this->update_period);
+  printf("\nCreating a slower module, updating every %ld thread cycles\n", this->update_period);
 }
 
 Module::~Module() = default;

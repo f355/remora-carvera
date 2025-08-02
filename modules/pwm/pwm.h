@@ -7,10 +7,10 @@
 class PWM final : public Module {
   PwmOut *pwm_pin;  // PWM out object
 
-  volatile float *set_duty_cycle;
+  volatile int32_t *set_duty_cycle;
 
   int period_us;       // Period (us)
-  float duty_cycle;    // Pulse width (%)
+  int32_t duty_cycle;  // Pulse width (tenths of %, per mil)
   int pulse_width_us;  // Pulse width (us)
 
  public:

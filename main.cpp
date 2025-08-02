@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <cstdio>
 
 #include "Comms.h"
-#include "configuration.h"
 #include "machine_config/machine_config.h"
 #include "mbed.h"
 #include "pruThread.h"
@@ -155,9 +154,9 @@ enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET }
         // rxData.rxBuffer is volatile so need to do this the long way. memset cannot be used for volatile
         printf("   Resetting rxBuffer\n");
         {
-          int n = sizeof(comms->ptr_rx_data->rx_buffer);
+          int n = sizeof(comms->rx_data->buffer);
           while (n-- > 0) {
-            comms->ptr_rx_data->rx_buffer[n] = 0;
+            comms->rx_data->buffer[n] = 0;
           }
         }
 

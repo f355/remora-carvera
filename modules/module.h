@@ -8,12 +8,12 @@
 
 class Module {
  protected:
-  int32_t update_period;
-  int32_t counter;
+  uint32_t update_period;
+  uint32_t counter;
 
  public:
   Module();
-  Module(int32_t thread_freq, int32_t slow_update_freq);
+  Module(uint32_t thread_freq, uint32_t slow_update_freq);
 
   virtual ~Module();
   void run();

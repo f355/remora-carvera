@@ -4,6 +4,8 @@
       "target.application-profile": "bare-metal",
       "target.memory_bank_config": {
         "IROM1": {
+          // the first 16kB of ROM are taken by the bootloader code,
+          // and the bootloader flashes the firmware starting at 16kB/0x4000
           "start": 0x4000,
           "size": 0x7c000,
         }

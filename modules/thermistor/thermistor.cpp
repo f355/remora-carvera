@@ -3,7 +3,7 @@
 Thermistor::Thermistor(const int var_number, Pin* pin, const float beta, const int r0, const int t0,
                        const uint32_t thread_freq, volatile txData_t* tx_data)
     : Module(thread_freq, 1),  // slow module with 1Hz update
-      output_var(&tx_data->process_variable[var_number]),
+      variable(&tx_data->input_vars[var_number]),
       adc(new AnalogIn(pin->as_input()->to_pin_name())),
       r0(r0),
       r1(0),
@@ -18,7 +18,7 @@ Thermistor::Thermistor(const int var_number, Pin* pin, const float beta, const i
 // This is the workhorse routine that calculates the temperature
 // using the Steinhart-Hart equation for thermistors
 // https://en.wikipedia.org/wiki/Steinhart%E2%80%93Hart_equation
-float Thermistor::getTemperature() const {
+int32_t Thermistor::getTemperature() const {
   const float adcValue = this->adc->read_u16();
 
   // resistance of the thermistor in ohms
@@ -29,16 +29,16 @@ float Thermistor::getTemperature() const {
   }
 
   // use Beta value
-  return 1.0F / (this->k + this->j * logf(r / this->r0)) - 273.15F;
+  return (1.0F / (this->k + this->j * logf(r / this->r0)) - 273.15F) * 100;
 }
 
 void Thermistor::slow_update() {
-  float temperaturePV = this->getTemperature();
+  int32_t temperaturePV = this->getTemperature();
 
   if (temperaturePV <= 0) {
-    printf("Temperature sensor error, reading = %f\n", temperaturePV);
+    printf("Temperature sensor error, reading = %ld\n", temperaturePV);
     temperaturePV = 999999;
   }
 
-  *this->output_var = temperaturePV;
+  *this->variable = temperaturePV;
 }

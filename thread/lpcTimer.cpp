@@ -40,11 +40,14 @@ void LPCTimer::stop() {
 }
 
 // need these to pass to NVIC_SetVector
+void timer0_wrapper() { lpc_timers[0]->handle_interrupt(); }
 void timer1_wrapper() { lpc_timers[1]->handle_interrupt(); }
-
 void timer2_wrapper() { lpc_timers[2]->handle_interrupt(); }
+void timer3_wrapper() { lpc_timers[3]->handle_interrupt(); }
 
 void create_timers() {
+  lpc_timers[0] = new LPCTimer(LPC_TIM0, TIMER0_IRQn, 1, timer0_wrapper);
   lpc_timers[1] = new LPCTimer(LPC_TIM1, TIMER1_IRQn, 2, timer1_wrapper);
   lpc_timers[2] = new LPCTimer(LPC_TIM2, TIMER2_IRQn, 22, timer2_wrapper);
+  lpc_timers[3] = new LPCTimer(LPC_TIM3, TIMER3_IRQn, 23, timer3_wrapper);
 }
