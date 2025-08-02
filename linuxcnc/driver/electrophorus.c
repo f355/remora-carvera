@@ -29,6 +29,7 @@
 
 #include "hal.h"
 #include "rtapi.h"
+#include "rtapi_app.h"
 
 // Using BCM2835 driver library by Mike McCauley, why reinvent the wheel!
 // http://www.airspayce.com/mikem/bcm2835/index.html
