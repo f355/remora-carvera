@@ -653,7 +653,7 @@ int rt_peripheral_init(void) {
       // best.
       rp1spi_init(0, 0, SPI_MODE_0, 40000000);
   }
-  return 0;
+  return 1;
 }
 // This is the same as the standard bcm2835 library except for the use of
 // "rtapi_open_as_root" in place of "open"
