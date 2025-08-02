@@ -1,7 +1,7 @@
 #ifndef MODULE_H
 #define MODULE_H
 
-#include "Comms.h"
+#include "comms.h"
 
 // Module base class
 // All modules are derived from this base class

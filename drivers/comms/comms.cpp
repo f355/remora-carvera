@@ -1,4 +1,4 @@
-#include "Comms.h"
+#include "comms.h"
 
 Comms::Comms()
     : spi_slave(MOSI1, MISO1, SCK1, SSEL1),

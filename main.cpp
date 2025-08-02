@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <cerrno>
 #include <cstdio>
 
-#include "Comms.h"
+#include "comms.h"
 #include "machine_config/machine_config.h"
 #include "mbed.h"
 #include "pruThread.h"
