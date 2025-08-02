@@ -22,7 +22,7 @@ vector<PRUThread*> configure_threads(Comms* comms) {
   printf("\ncreating threads for CA1\n");
 
   // Args: timer number, frequency, IRQ priority
-  auto base_thread = new PRUThread(0, BASE_THREAD_FREQUENCY, 2);
+  auto base_thread = new PRUThread(1, BASE_THREAD_FREQUENCY, 2);
   printf("created base thread\n");
 
   const std::vector<Module*> base_modules = {
@@ -41,7 +41,7 @@ vector<PRUThread*> configure_threads(Comms* comms) {
   for (const auto m : base_modules) base_thread->register_module(m);
   printf("registered base modules\n");
 
-  auto servo_thread = new PRUThread(1, SERVO_THREAD_FREQUENCY, 3);
+  auto servo_thread = new PRUThread(2, SERVO_THREAD_FREQUENCY, 3);
   printf("created servo thread\n");
 
   const std::vector<Module*> servo_modules = {
@@ -54,10 +54,10 @@ vector<PRUThread*> configure_threads(Comms* comms) {
       // so don't try setting it to different values - the last one wins.
       // many bothans died to bring us this information.
 
-      new PWM(0, new Pin(2, 5), 10000, comms->rx_data),   // spindle
-      new PWM(1, new Pin(2, 1), 10000, comms->rx_data),   // spindle fan
-      new PWM(2, new Pin(2, 3), 10000, comms->rx_data),   // power supply fan
-      new PWM(3, new Pin(0, 21), 10000, comms->rx_data),  // EXT port output
+      new PWM(0, new Pin(2, 5), 10000, comms->rx_data),  // spindle
+      new PWM(1, new Pin(2, 1), 10000, comms->rx_data),  // spindle fan
+      new PWM(2, new Pin(2, 3), 10000, comms->rx_data),  // power supply fan
+      new PWM(3, new Pin(2, 2), 10000, comms->rx_data),  // EXT port output
 
       // feedback
       new PulseCounter(0, new Pin(2, 7), comms->tx_data),  // spindle encoder feedback
@@ -81,7 +81,7 @@ vector<PRUThread*> configure_threads(Comms* comms) {
       new InputPin(3, (new Pin(3, 25))->pull_up(), comms->tx_data),            // Z stall alarm
       new InputPin(4, (new Pin(1, 8))->pull_up()->invert(), comms->tx_data),   // lid sensor
       new InputPin(5, (new Pin(2, 13))->pull_up()->invert(), comms->tx_data),  // main button
-      new InputPin(6, (new Pin(2, 2))->pull_down(), comms->tx_data),           // EXT port input
+      new InputPin(6, (new Pin(0, 21))->pull_down(), comms->tx_data),          // EXT port input
       new InputPin(7, (new Pin(0, 24))->pull_up(), comms->tx_data),            // X home switch/endstop
       new InputPin(8, (new Pin(0, 25))->pull_up(), comms->tx_data),            // Y home switch/endstop
       new InputPin(9, (new Pin(1, 1))->pull_up(), comms->tx_data),             // Z home switch/endstop
