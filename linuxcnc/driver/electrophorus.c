@@ -130,7 +130,7 @@ static int rt_peripheral_init();
 static int rt_bcm2835_init();
 static int rt_rp1lib_init();
 
-static void update_freq(const void *arg, long period);
+static void update_freq(void *arg, long period);
 static void spi_write();
 static void spi_read();
 static void spi_transfer();
@@ -295,7 +295,7 @@ bool pin_err(const int retval) {
 }
 
 // TODO(f355): do we need all this? LinuxCNC's standard PID component would probably do a better job.
-void update_freq(const void *arg, const long period) {
+void update_freq(void *arg, const long period) {
   const state_t *state = arg;
 
   // calc constants related to the period of this function (LinuxCNC SERVO_THREAD)

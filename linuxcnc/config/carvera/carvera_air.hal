@@ -24,6 +24,7 @@ setp carvera.output.work-light true
 # 0/X
 setp carvera.joint.0.scale [JOINT_0]SCALE
 setp carvera.joint.0.maxaccel [JOINT_0]STEPGEN_MAX_ACC
+setp carvera.joint.0.maxvel [JOINT_0]STEPGEN_MAX_VEL
 
 net xpos-cmd joint.0.motor-pos-cmd => carvera.joint.0.pos-cmd
 net j0pos-fb carvera.joint.0.pos-fb => joint.0.motor-pos-fb
@@ -34,6 +35,7 @@ net x-home carvera.input.endstop-x => joint.0.home-sw-in => joint.0.neg-lim-sw-i
 # 1/Y
 setp carvera.joint.1.scale [JOINT_1]SCALE
 setp carvera.joint.1.maxaccel [JOINT_1]STEPGEN_MAX_ACC
+setp carvera.joint.1.maxvel [JOINT_1]STEPGEN_MAX_VEL
 
 net ypos-cmd joint.1.motor-pos-cmd => carvera.joint.1.pos-cmd
 net j1pos-fb carvera.joint.1.pos-fb => joint.1.motor-pos-fb
@@ -44,6 +46,7 @@ net y-home carvera.input.endstop-y => joint.1.home-sw-in => joint.1.neg-lim-sw-i
 # 2/Z
 setp carvera.joint.2.scale [JOINT_2]SCALE
 setp carvera.joint.2.maxaccel [JOINT_2]STEPGEN_MAX_ACC
+setp carvera.joint.2.maxvel [JOINT_2]STEPGEN_MAX_VEL
 
 net zpos-cmd joint.2.motor-pos-cmd => carvera.joint.2.pos-cmd
 net j2pos-fb carvera.joint.2.pos-fb => joint.2.motor-pos-fb
@@ -54,6 +57,7 @@ net z-home carvera.input.endstop-z => joint.2.home-sw-in => joint.2.neg-lim-sw-i
 # 3/A
 setp carvera.joint.3.scale [JOINT_3]SCALE
 setp carvera.joint.3.maxaccel [JOINT_3]STEPGEN_MAX_ACC
+setp carvera.joint.3.maxvel [JOINT_3]STEPGEN_MAX_VEL
 
 net apos-cmd joint.3.motor-pos-cmd => carvera.joint.3.pos-cmd
 net j3pos-fb carvera.joint.3.pos-fb => joint.3.motor-pos-fb
