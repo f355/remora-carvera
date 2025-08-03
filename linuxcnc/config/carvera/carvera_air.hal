@@ -5,6 +5,8 @@ loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EM
 
 loadrt electrophorus
 
+loadrt pid num_chan=5
+
 # estop loopback, SPI comms enable and feedback
 net user-enable-out iocontrol.0.user-enable-out => carvera.spi-enable => carvera.output.power-12v => carvera.output.power-24v
 net user-request-enable iocontrol.0.user-request-enable => carvera.spi-reset
@@ -15,6 +17,7 @@ net carvera-status carvera.spi-status => iocontrol.0.emc-enable-in
 addf carvera.read servo-thread
 addf motion-command-handler servo-thread
 addf motion-controller servo-thread
+addf pid.0.do-pid-calcs
 addf carvera.update-freq servo-thread
 addf carvera.write servo-thread
 
@@ -23,12 +26,13 @@ setp carvera.output.work-light true
 # joints
 # 0/X
 setp carvera.joint.0.scale [JOINT_0]SCALE
-setp carvera.joint.0.maxaccel [JOINT_0]STEPGEN_MAX_ACC
-setp carvera.joint.0.maxvel [JOINT_0]STEPGEN_MAX_VEL
+setp pid.0.maxoutput [JOINT_0]STEPGEN_MAX_VEL
+setp pid.0.maxcmdD [JOINT_0]STEPGEN_MAX_ACC
 
-net xpos-cmd joint.0.motor-pos-cmd => carvera.joint.0.pos-cmd
-net j0pos-fb carvera.joint.0.pos-fb => joint.0.motor-pos-fb
-net j0enable joint.0.amp-enable-out => carvera.joint.0.enable
+net x-enable joint.0.amp-enable-out => pid.0.enable => carvera.joint.0.enable
+net x-pid-input joint.0.motor-pos-cmd => pid.0.command
+net x-pid-output pid.0.output => carvera.joint.0.pos-cmd
+net x-pos-fb carvera.joint.0.pos-fb => pid.0.feedback => joint.0.motor-pos-fb
 net x-home carvera.input.endstop-x => joint.0.home-sw-in => joint.0.neg-lim-sw-in => joint.0.pos-lim-sw-in
 #net j0alarm carvera.input.stall-alarm-x => joint.0.amp-fault-in
 

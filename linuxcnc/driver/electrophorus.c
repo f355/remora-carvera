@@ -120,12 +120,6 @@ static double recip_dt;  // recprocal of period, avoids divides
 
 static int reset_gpio_pin = 25;  // RPI GPIO pin number used to force watchdog reset of the PRU
 
-int spi_clock_divider = 64;
-RTAPI_MP_INT(spi_clock_divider, "SPI clock divider");
-
-int pru_base_freq = -1;
-RTAPI_MP_INT(pru_base_freq, "PRU base thread frequency");
-
 static bool pin_err(int retval);
 static int rt_peripheral_init();
 static int rt_bcm2835_init();
@@ -137,16 +131,6 @@ static void spi_read();
 static void spi_transfer();
 
 int rtapi_app_main(void) {
-  // check to see if the PRU base frequency has been set at the command line
-  if (pru_base_freq != -1) {
-    if (pru_base_freq < 40000 || pru_base_freq > 120000) {
-      rtapi_print_msg(RTAPI_MSG_ERR, "ERROR: PRU base frequency incorrect\n");
-      return -1;
-    }
-  } else {
-    pru_base_freq = BASE_THREAD_FREQUENCY;
-  }
-
   // connect to the HAL, initialise the driver
   comp_id = hal_init(modname);
   if (comp_id < 0) {
@@ -319,7 +303,7 @@ void update_freq(void *arg, const long period) {
     }
 
     // calculate frequency limit
-    double max_freq = pru_base_freq;
+    double max_freq = BASE_THREAD_FREQUENCY;
 
     // check for user specified frequency limit parameter
     if (joint->maxvel <= 0.0) {
