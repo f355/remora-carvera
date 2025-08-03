@@ -10,12 +10,15 @@ DigitalOuts::DigitalOuts(const uint8_t num_pins, const outputPin_t pins[], volat
       invert_mask(0x0) {
   printf("output digital pin config:\n");
   for (uint8_t i = 0; i < num_pins; i++) {
-    const auto [name, port, pin, invert] = pins[i];
-    ports[i] = gpio_ports[port];
+    const auto [name, port_num, pin, invert] = pins[i];
+    const auto port = gpio_ports[port_num];
+    port->FIOMASK &= ~(1 << pin);
+    port->FIODIR |= 1 << pin;
+    ports[i] = port;
     pin_masks[i] = 1 << pin;
-    printf("  [%d] P%d.%d", i, port, pin);
+    printf("  [%d] P%d.%d", i, port_num, pin);
     if (invert) {
-      this->invert_mask |= 1 << pin;
+      this->invert_mask |= 1 << i;
       printf("!");
     }
     printf(" - %s\n", name);
