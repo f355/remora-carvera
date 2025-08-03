@@ -15,7 +15,7 @@ class PWM final : public Module {
   int pulse_width_us;  // Pulse width (us)
 
  public:
-  PWM(int var_number, Pin *pin, int period_us, volatile rxData_t *rx_data);
+  PWM(int var_number, const Pin *pin, int period_us, volatile rxData_t *rx_data);
 
   void run() override;
 };

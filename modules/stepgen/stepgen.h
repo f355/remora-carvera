@@ -5,7 +5,7 @@
 #include "module.h"
 #include "pin.h"
 
-class Stepgen : public Module {
+class Stepgen final : public Module {
   int joint_enable_mask;
 
   volatile int32_t *commanded_frequency;  // pointer to the data source where to get the frequency command
@@ -23,6 +23,8 @@ class Stepgen : public Module {
  public:
   Stepgen(int joint_number, Pin *step_pin, Pin *dir_pin, uint32_t thread_frequency, volatile rxData_t *rx_data,
           volatile txData_t *tx_data);
+
+  virtual ~Stepgen() = default;
 
   Pin *step_pin, *dir_pin;
 

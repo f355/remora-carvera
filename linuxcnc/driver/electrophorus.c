@@ -233,21 +233,21 @@ int rtapi_app_main(void) {
   }
 
   for (n = 0; n < OUTPUT_PINS; n++) {
-    const char *output_pin_names[OUTPUT_PINS] = OUTPUT_PIN_NAMES;
-    if (pin_err(hal_pin_bit_newf(HAL_IN, &state->outputs[n], comp_id, "%s.output.%s", prefix, output_pin_names[n])))
+    const outputPin_t output_pins[OUTPUT_PINS] = OUTPUT_PIN_DESC;
+    if (pin_err(hal_pin_bit_newf(HAL_IN, &state->outputs[n], comp_id, "%s.output.%s", prefix, output_pins[n].name)))
       return -1;
     *state->outputs[n] = 0;
   }
 
   for (n = 0; n < INPUT_PINS; n++) {
-    const char *input_pin_names[INPUT_PINS] = INPUT_PIN_NAMES;
-    if (pin_err(hal_pin_bit_newf(HAL_OUT, &state->inputs[n], comp_id, "%s.input.%s", prefix, input_pin_names[n])))
+    const inputPin_t input_pins[INPUT_PINS] = INPUT_PIN_DESC;
+    if (pin_err(hal_pin_bit_newf(HAL_OUT, &state->inputs[n], comp_id, "%s.input.%s", prefix, input_pins[n].name)))
       return -1;
     *state->inputs[n] = 0;
 
     // inverted 'not' pins offset by the number of inputs we have.
     if (pin_err(hal_pin_bit_newf(HAL_OUT, &state->inputs[n + INPUT_PINS], comp_id, "%s.input.%s.not", prefix,
-                                 input_pin_names[n])))
+                                 input_pins[n].name)))
       return -1;
     *state->inputs[n + INPUT_PINS] = 0;
   }

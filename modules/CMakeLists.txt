@@ -1,12 +1,13 @@
 add_library(epho-module STATIC
         module.cpp
-        digitalPin/digitalPin.cpp
+        adc/adc.cpp
         eStop/eStop.cpp
+        gpio/digitalIns.cpp
+        gpio/digitalOuts.cpp
         pulseCounter/pulseCounter.cpp
         pwm/pwm.cpp
         resetPin/resetPin.cpp
         stepgen/stepgen.cpp
-        adc/adc.cpp
 )
 
 target_include_directories(epho-module PUBLIC .)

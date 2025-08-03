@@ -4,6 +4,10 @@
 #include "LPC17xx.h"
 #include "mbed.h"
 
+#define NUM_PORTS 5
+
+extern LPC_GPIO_TypeDef* gpio_ports[NUM_PORTS];
+
 class Pin {
  public:
   Pin(unsigned char port, unsigned char pin);
@@ -18,11 +22,10 @@ class Pin {
     return this;
   }
 
-  Pin* as_open_drain();
-  Pin* pull_up();
-  Pin* pull_down();
-  Pin* pull_none();
-  Pin* invert();
+  Pin* invert() {
+    this->inverting = true;
+    return this;
+  };
 
   [[nodiscard]] bool get() const { return this->inverting ^ ((this->port->FIOPIN >> this->pin) & 1); }
 
@@ -33,18 +36,38 @@ class Pin {
       this->port->FIOCLR = 1 << this->pin;
   }
 
-  [[nodiscard]] PwmOut* hardware_pwm() const;
-
-  [[nodiscard]] InterruptIn* interrupt_pin() const;
-
   [[nodiscard]] PinName to_pin_name() const;
 
  private:
   bool inverting;
   LPC_GPIO_TypeDef* port;
 
-  unsigned char pin;
-  unsigned char port_number;
+  uint8_t pin;
+  uint8_t port_number;
 };
+
+inline void set_pull_down(const uint8_t port_number, const uint8_t pin) {
+  if (port_number == 0 && pin < 16) {
+    LPC_PINCON->PINMODE0 |= (3 << (pin * 2));
+  }
+  if (port_number == 0 && pin >= 16) {
+    LPC_PINCON->PINMODE1 |= (3 << ((pin - 16) * 2));
+  }
+  if (port_number == 1 && pin < 16) {
+    LPC_PINCON->PINMODE2 |= (3 << (pin * 2));
+  }
+  if (port_number == 1 && pin >= 16) {
+    LPC_PINCON->PINMODE3 |= (3 << ((pin - 16) * 2));
+  }
+  if (port_number == 2 && pin < 16) {
+    LPC_PINCON->PINMODE4 |= (3 << (pin * 2));
+  }
+  if (port_number == 3 && pin >= 16) {
+    LPC_PINCON->PINMODE7 |= (3 << ((pin - 16) * 2));
+  }
+  if (port_number == 4 && pin >= 16) {
+    LPC_PINCON->PINMODE9 |= (3 << ((pin - 16) * 2));
+  }
+}
 
 #endif

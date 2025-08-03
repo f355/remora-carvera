@@ -2,8 +2,8 @@
 
 #define PWMPERIOD 200
 
-PWM::PWM(const int var_number, Pin* pin, const int period_us, volatile rxData_t* rx_data)
-    : pwm_pin(pin->as_output()->hardware_pwm()),
+PWM::PWM(const int var_number, const Pin* pin, const int period_us, volatile rxData_t* rx_data)
+    : pwm_pin(new PwmOut(pin->to_pin_name())),
       set_duty_cycle(&rx_data->output_vars[var_number]),
       period_us(period_us),
       duty_cycle(0),

@@ -1,7 +1,6 @@
 #include "stepgen.h"
 
-#define STEP_BIT 22  // the bit location in DDS accum
-#define STEP_MASK (1 << STEP_BIT)
+#define STEP_MASK (1 << 22)  // the bit location in DDS accum
 #define FRACTIONAL_BITS 8
 
 Stepgen::Stepgen(const int joint_number, Pin* step_pin, Pin* dir_pin, const uint32_t thread_frequency,
