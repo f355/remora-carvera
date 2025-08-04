@@ -355,8 +355,8 @@ void update_freq(void *arg, const long period) {
     if (joint->deadband != 0) {
       deadband = joint->deadband;
     } else {
-      // default deadband to a single step length
-      deadband = 1 / joint->scale;
+      // default deadband to slightly more than half a step
+      deadband = 0.6 / joint->scale;
     }
 
     // use Proportional control with feed forward (pgain, ff1gain and deadband)
