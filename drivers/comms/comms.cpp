@@ -175,7 +175,7 @@ void Comms::rx2_callback() {
   dma.Prepare(rx_dma1);
 }
 
-void Comms::err_callback() { printf("err\r\n"); }
+void Comms::err_callback() { error("DMA error on channel %d!\n", dma.irqProcessingChannel()); }
 
 bool Comms::get_status() const { return this->data_ready; }
 
