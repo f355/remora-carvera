@@ -1,15 +1,19 @@
 #include "comms.h"
 
 Comms::Comms()
-    : spi_slave(MOSI1, MISO1, SCK1, SSEL1),
-      rx_dma1(new MODDMA_Config()),
+    : rx_dma1(new MODDMA_Config()),
       rx_dma2(new MODDMA_Config()),
       tx_dma1(new MODDMA_Config()),
       tx_dma2(new MODDMA_Config()),
       rx_memcpy_dma1(new MODDMA_Config()),
       rx_memcpy_dma2(new MODDMA_Config()),
       rx_data(new rxData_t()),
-      tx_data(new txData_t()) {}
+      tx_data(new txData_t()) {
+  spi_t spi;  // allocated on stack - we need to initialize the peripheral, the rest happens with DMA
+  spi_init(&spi, SPI_MOSI, SPI_MISO, SPI_SCK, SPI_SSEL);
+  spi_format(&spi, 8, 0, 1);     // 8 bits/word, mode 0, slave
+  spi_frequency(&spi, 1000000);  // shouldn't be needed for a slave
+}
 
 void Comms::init() {
   tx_dma1->channelNum(MODDMA::Channel_0)
@@ -18,7 +22,7 @@ void Comms::init() {
       ->transferSize(SPI_BUF_SIZE)
       ->transferType(MODDMA::m2p)
       ->srcConn(0)
-      ->dstConn(MODDMA::SSP1_Tx)
+      ->dstConn(MODDMA::SSP0_Tx)
       ->attach_tc(this, &Comms::tx1_callback)
       ->attach_err(this, &Comms::err_callback);
 
@@ -28,7 +32,7 @@ void Comms::init() {
       ->transferSize(SPI_BUF_SIZE)
       ->transferType(MODDMA::m2p)
       ->srcConn(0)
-      ->dstConn(MODDMA::SSP1_Tx)
+      ->dstConn(MODDMA::SSP0_Tx)
       ->attach_tc(this, &Comms::tx2_callback)
       ->attach_err(this, &Comms::err_callback);
 
@@ -37,7 +41,7 @@ void Comms::init() {
       ->dstMemAddr(reinterpret_cast<uint32_t>(&temp_rx_buffer1))
       ->transferSize(SPI_BUF_SIZE)
       ->transferType(MODDMA::p2m)
-      ->srcConn(MODDMA::SSP1_Rx)
+      ->srcConn(MODDMA::SSP0_Rx)
       ->dstConn(0)
       ->attach_tc(this, &Comms::rx1_callback)
       ->attach_err(this, &Comms::err_callback);
@@ -47,7 +51,7 @@ void Comms::init() {
       ->dstMemAddr(reinterpret_cast<uint32_t>(&temp_rx_buffer2))
       ->transferSize(SPI_BUF_SIZE)
       ->transferType(MODDMA::p2m)
-      ->srcConn(MODDMA::SSP1_Rx)
+      ->srcConn(MODDMA::SSP0_Rx)
       ->dstConn(0)
       ->attach_tc(this, &Comms::rx2_callback)
       ->attach_err(this, &Comms::err_callback);
@@ -75,8 +79,8 @@ void Comms::start() {
   dma.Prepare(tx_dma1);
 
   // Enable SSP1 for DMA
-  LPC_SSP1->DMACR = 0;
-  LPC_SSP1->DMACR = 1 << 1 | 1 << 0;  // TX,RX DMA Enable
+  LPC_SSP0->DMACR = 0;
+  LPC_SSP0->DMACR = 1 << 1 | 1 << 0;  // TX,RX DMA Enable
 }
 
 void Comms::tx1_callback() {

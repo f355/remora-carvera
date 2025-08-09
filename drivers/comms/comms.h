@@ -5,18 +5,10 @@
 #include "mbed.h"
 #include "spi_data.h"
 
-// RPi SPI
-#define MOSI1 P0_9
-#define MISO1 P0_8
-#define SCK1 P0_7
-#define SSEL1 P0_6
-
 typedef linuxCncData_t rxData_t;
 typedef pruData_t txData_t;
 
 class Comms {
-  SPISlave spi_slave;
-
   MODDMA dma;
 
   MODDMA_Config* rx_dma1;
@@ -35,7 +27,6 @@ class Comms {
  public:
   Comms();
 
-  volatile bool pru_reset = false;
   rxData_t volatile* rx_data;
   txData_t volatile* tx_data;
 

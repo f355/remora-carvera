@@ -6,6 +6,6 @@
 #include "PRUThread.h"
 #include "comms.h"
 
-vector<PRUThread*> configure_threads(Comms* comms);
+vector<PRUThread*> configure_threads(const Comms* comms);
 
 #endif

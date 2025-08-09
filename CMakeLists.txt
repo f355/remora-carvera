@@ -6,6 +6,12 @@ cmake_policy(VERSION 3.19...3.22)
 set(HAVE_PYTHON_CYSECURETOOLS TRUE)
 set(MBED_APP_JSON_PATH mbed_app.json5)
 
+if ("${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
+    set(UPLOAD_METHOD OPENOCD)
+else ()
+    set(UPLOAD_METHOD NONE)
+endif ()
+
 include(mbed-os/tools/cmake/mbed_toolchain_setup.cmake)
 
 project(firmware

@@ -86,8 +86,6 @@ typedef struct {
 
   hal_bit_t *spi_enable;  // in: are SPI comms enabled?
   hal_bit_t *spi_reset;   // in: should go low when the machine is pulled out of e-stop
-  hal_bit_t *hard_reset;  // in: will bring the PRU reset pin high. on Carvera Air, the reset pin is the ISP pin,
-                          // so this needs to be high for the PRU to boot
   hal_bit_t *spi_status;  // out: will go low if the comms are not working for some reason
 
   hal_s32_t *output_vars[OUTPUT_VARS];  // output variables: PWM controls, etc.
@@ -159,7 +157,6 @@ int rtapi_app_main(void) {
       gpio_set_fsel(reset_gpio_pin, GPIO_FSEL_OUTPUT);
   }
 
-  if (pin_err(hal_pin_bit_newf(HAL_IN, &state->hard_reset, comp_id, "%s.hard-reset", prefix))) return -1;
   if (pin_err(hal_pin_bit_newf(HAL_IN, &state->spi_enable, comp_id, "%s.spi-enable", prefix))) return -1;
   if (pin_err(hal_pin_bit_newf(HAL_IN, &state->spi_reset, comp_id, "%s.spi-reset", prefix))) return -1;
   if (pin_err(hal_pin_bit_newf(HAL_OUT, &state->spi_status, comp_id, "%s.spi-status", prefix))) return -1;
@@ -403,25 +400,6 @@ void spi_read() {
 
   // Data header
   tx_data.header = PRU_READ;
-
-  // update the PRUreset output
-  if (*(state->hard_reset)) {
-    switch (spi_driver) {
-      case BCM:
-        bcm2835_gpio_set(reset_gpio_pin);
-        break;
-      case RP1:
-        gpio_set(reset_gpio_pin);
-    }
-  } else {
-    switch (spi_driver) {
-      case BCM:
-        bcm2835_gpio_clr(reset_gpio_pin);
-        break;
-      case RP1:
-        gpio_clear(reset_gpio_pin);
-    }
-  }
 
   if (*(state->spi_enable)) {
     if ((*state->spi_reset && !state->spi_reset_old) || *state->spi_status) {

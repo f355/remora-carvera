@@ -7,12 +7,11 @@
 #include "module.h"
 #include "pulseCounter/pulseCounter.h"
 #include "pwm/pwm.h"
-#include "resetPin/resetPin.h"
 #include "stepgen/stepgen.h"
 
 // Carvera Air CA1 configuration
 
-vector<PRUThread*> configure_threads(Comms* comms) {
+vector<PRUThread*> configure_threads(const Comms* comms) {
   // the beeper is obnoxious, shut it up first thing
   (new Pin(1, 14))->as_output()->set(false);
   // the addressable LED strip needs to be bit-banged at 800kHz and there's currently no support for that,
@@ -48,9 +47,8 @@ vector<PRUThread*> configure_threads(Comms* comms) {
   const outputPin_t output_pins[OUTPUT_PINS] = OUTPUT_PIN_DESC;
 
   const std::vector<Module*> servo_modules = {
-      // "special" pins
-      new ResetPin(comms->pru_reset, new Pin(2, 10)),  // "hard" reset
-      new eStop(comms->tx_data, new Pin(0, 20)),       // e-stop button
+      // emergency stop
+      new eStop(comms->tx_data, new Pin(0, 20)),  // e-stop button
 
       new DigitalIns(INPUT_PINS, input_pins, comms->tx_data),  //
       new DigitalOuts(OUTPUT_PINS, output_pins, comms->rx_data),

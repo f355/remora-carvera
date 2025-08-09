@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET };
 
 [[noreturn]] int main() {
-  printf("\nPRU - Programmable Realtime Unit\n");
+  printf("\nProgrammable Realtime Unit booting up...\n");
 
   uint8_t reset_count = 0;
   bool threads_running = false;
@@ -84,13 +84,7 @@ enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET }
           wait_us(1000000);
         }
 
-        if (comms->pru_reset) {
-          // RPi outputs default is high until configured when LinuxCNC Remora component is started, PRUreset pin will
-          // be high stay in start state until LinuxCNC is started
-          current_state = ST_START;
-        } else {
-          current_state = ST_IDLE;
-        }
+        current_state = ST_IDLE;
 
         break;
 
@@ -107,10 +101,6 @@ enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET }
 
         if (comms->get_status()) {
           current_state = ST_RUNNING;
-        }
-
-        if (comms->pru_reset) {
-          current_state = ST_WDRESET;
         }
 
         break;
@@ -137,10 +127,6 @@ enum State { ST_SETUP = 0, ST_START, ST_IDLE, ST_RUNNING, ST_RESET, ST_WDRESET }
           printf("   Communication data error limit reached, resetting\n");
           reset_count = 0;
           current_state = ST_RESET;
-        }
-
-        if (comms->pru_reset) {
-          current_state = ST_WDRESET;
         }
 
         break;

@@ -6,7 +6,6 @@ add_library(epho-module STATIC
         gpio/digitalOuts.cpp
         pulseCounter/pulseCounter.cpp
         pwm/pwm.cpp
-        resetPin/resetPin.cpp
         stepgen/stepgen.cpp
 )
 
