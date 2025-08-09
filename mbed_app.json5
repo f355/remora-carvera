@@ -10,7 +10,7 @@
           "size": 0x7c000,
         }
       },
-      "target.c_lib": "small",
+      "target.c_lib": "std",
       "platform.stdio-baud-rate": 115200,
     }
   }

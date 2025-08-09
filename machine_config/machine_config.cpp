@@ -73,6 +73,7 @@ vector<PRUThread*> configure_threads(const Comms* comms) {
   printf("registered servo modules\n");
 
   // non-thread modules that don't require a periodic update
+  NVIC_SetPriority(EINT3_IRQn, 16);
   new PulseCounter(0, new Pin(2, 7), comms->tx_data);  // spindle encoder feedback
 
   return {base_thread, servo_thread};

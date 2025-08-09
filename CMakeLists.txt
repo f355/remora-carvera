@@ -6,12 +6,6 @@ cmake_policy(VERSION 3.19...3.22)
 set(HAVE_PYTHON_CYSECURETOOLS TRUE)
 set(MBED_APP_JSON_PATH mbed_app.json5)
 
-if ("${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
-    set(UPLOAD_METHOD OPENOCD)
-else ()
-    set(UPLOAD_METHOD NONE)
-endif ()
-
 include(mbed-os/tools/cmake/mbed_toolchain_setup.cmake)
 
 project(firmware
@@ -19,6 +13,13 @@ project(firmware
         LANGUAGES C CXX ASM)
 
 include(mbed_project_setup)
+
+if ("${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
+    set(UPLOAD_METHOD OPENOCD)
+    set(OPENOCD_CHIP_CONFIG_COMMANDS -f ${CMAKE_CURRENT_LIST_DIR}/openocd.cfg -f ${CMAKE_CURRENT_LIST_DIR}/mbed-os/targets/upload_method_cfg/openocd_cfgs/lpc1768.cfg)
+else ()
+    set(UPLOAD_METHOD NONE)
+endif ()
 
 add_subdirectory(mbed-os)
 

@@ -5,4 +5,6 @@ PulseCounter::PulseCounter(const int var_number, const Pin* pin, volatile txData
   (new InterruptIn(pin->to_pin_name()))->rise(callback(this, &PulseCounter::interrupt_handler));
 }
 
-void PulseCounter::interrupt_handler() { *this->variable++; }
+void PulseCounter::run() { *this->variable = this->counter; }
+
+void PulseCounter::interrupt_handler() { this->counter++; }
