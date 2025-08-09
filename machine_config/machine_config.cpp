@@ -53,6 +53,8 @@ vector<PRUThread*> configure_threads(const Comms* comms) {
       new DigitalIns(INPUT_PINS, input_pins, comms->tx_data),  //
       new DigitalOuts(OUTPUT_PINS, output_pins, comms->rx_data),
 
+      new PulseCounter(0, new Pin(2, 7), comms->tx_data),  // spindle encoder feedback
+
       // PWMs
       // on LPC1768, the period is shared among all PWMs,
       // so don't try setting it to different values - the last one wins.
@@ -71,10 +73,6 @@ vector<PRUThread*> configure_threads(const Comms* comms) {
 
   for (const auto m : servo_modules) servo_thread->register_module(m);
   printf("registered servo modules\n");
-
-  // non-thread modules that don't require a periodic update
-  NVIC_SetPriority(EINT3_IRQn, 16);
-  new PulseCounter(0, new Pin(2, 7), comms->tx_data);  // spindle encoder feedback
 
   return {base_thread, servo_thread};
 }
