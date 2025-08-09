@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "PRUThread.h"
 #include "comms.h"
+#include "pruThread.h"
 
 vector<PRUThread*> configure_threads(const Comms* comms);
 
