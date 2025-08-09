@@ -1,6 +1,6 @@
 add_subdirectory(MODDMA)
 
-add_library(epho-driver-comms STATIC Comms.cpp)
+add_library(epho-driver-comms STATIC comms.cpp)
 
 target_include_directories(epho-driver-comms PUBLIC .)
 
