@@ -9,6 +9,9 @@ class ADC final : public Module {
   volatile int32_t* variable;  // pointer where to put the feedback
   analogin_t adc;
 
+  uint32_t run_every;
+  uint32_t counter;
+
  public:
   ADC(int var_number, Pin* pin, volatile txData_t* tx_data);
 
