@@ -8,7 +8,6 @@ set(MBED_APP_JSON_PATH mbed_app.json5)
 
 if ("${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
     set(UPLOAD_METHOD OPENOCD)
-    set(OPENOCD_ADAPTER_SERIAL_COMMAND -f openocd-rpi.cfg CACHE INTERNAL "" FORCE)
 else ()
     set(UPLOAD_METHOD NONE)
 endif ()
