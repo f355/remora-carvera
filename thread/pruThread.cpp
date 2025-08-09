@@ -1,4 +1,4 @@
-#include "PRUThread.h"
+#include "pruThread.h"
 
 #include "module.h"
 
