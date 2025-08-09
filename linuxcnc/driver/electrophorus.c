@@ -88,11 +88,11 @@ typedef struct {
   hal_bit_t *spi_reset;   // in: should go low when the machine is pulled out of e-stop
   hal_bit_t *spi_status;  // out: will go low if the comms are not working for some reason
 
-  hal_s32_t *output_vars[OUTPUT_VARS];  // output variables: PWM controls, etc.
-  hal_s32_t *input_vars[INPUT_VARS];    // input variables: thermistors, pulse counters, etc.
-  hal_bit_t *outputs[OUTPUT_PINS];      // digital output pins
-  hal_bit_t *inputs[INPUT_PINS * 2];    // digital input pins, twice for inverted 'not' pins
-                                        // passed through to LinuxCNC
+  hal_float_t *output_vars[OUTPUT_VARS];  // output variables: PWM controls, etc.
+  hal_float_t *input_vars[INPUT_VARS];    // input variables: thermistors, pulse counters, etc.
+  hal_bit_t *outputs[OUTPUT_PINS];        // digital output pins
+  hal_bit_t *inputs[INPUT_PINS * 2];      // digital input pins, twice for inverted 'not' pins
+                                          // passed through to LinuxCNC
 
   bool spi_reset_old;
 } state_t;
@@ -199,8 +199,8 @@ int rtapi_app_main(void) {
 
   for (n = 0; n < OUTPUT_VARS; n++) {
     const char *output_var_names[OUTPUT_VARS] = OUTPUT_VAR_NAMES;
-    if (pin_err(
-            hal_pin_s32_newf(HAL_IN, &state->output_vars[n], comp_id, "%s.output-var.%s", prefix, output_var_names[n])))
+    if (pin_err(hal_pin_float_newf(HAL_IN, &state->output_vars[n], comp_id, "%s.output-var.%s", prefix,
+                                   output_var_names[n])))
       return -1;
     *state->output_vars[n] = 0;
   }
@@ -208,7 +208,7 @@ int rtapi_app_main(void) {
   for (n = 0; n < INPUT_VARS; n++) {
     const char *input_var_names[INPUT_VARS] = INPUT_VAR_NAMES;
     if (pin_err(
-            hal_pin_s32_newf(HAL_OUT, &state->input_vars[n], comp_id, "%s.input-var.%s", prefix, input_var_names[n])))
+            hal_pin_float_newf(HAL_OUT, &state->input_vars[n], comp_id, "%s.input-var.%s", prefix, input_var_names[n])))
       return -1;
     *state->input_vars[n] = 0;
   }
